@@ -46,10 +46,10 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 
 **[pipel (Contains: align, calmeth, annoation, methyPlot)]** <br>
     **[main paramaters]** <br>
-    -o &ensp Name of output file prefix<br>
+    -o &ensp; Name of output file prefix<br>
     **[alignment paramaters]** <br>
-    -i &emsp Name of input file <br>
-    -g    Name of the genome mapped against <br>
+    -i &emsp; Name of input file <br>
+    -g [TAB] Name of the genome mapped against <br>
     -n    maximum mismatches allowed due to seq. errors <br>
     -p <interger>    Launch <integer> threads <br>
     **[calmeth paramaters]** <br>

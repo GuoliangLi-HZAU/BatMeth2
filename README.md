@@ -20,7 +20,7 @@ c) Change directory into the top directory of b) "batmeth2/"
 
 d) Type " ./configure " then type " make " and finally " make copy " 
 
-e) The binary of Batmeth2 will be created in bin/
+e) The binary of BatMeth2 will be created in bin/
    
 
 BUILDING INDEX
@@ -28,45 +28,37 @@ BUILDING INDEX
    
 a) Have a fasta-formatted file ready 
 
-b) Locate the script "build_all" in "batmeth2/bin" 
+b) Type "`BatMeth2 build_index GENOME.fa`" to make the neccessary pairing data-structure based on FM-index.
 
-c) Type "`build_all GENOME.fa`" to make the neccessary pairing data-structure based on FM-index.
-   
+c) Run "`BatMeth2`" to see the details.
 
-USAGE
+Functions in BatMeth2
 ------
    
 **[1] Mapping** 
 
 **Single-end-reads** 
 
-Short reads align (length < 150) 
-
-$ `batmeth2-align -g INDEX -i INPUT -o OUTPUT_Prefix -p 6 -n 2` 
+$ `BatMeth2 aign -g INDEX -i INPUT -o OUTPUT_Prefix -p 6 -n 2` 
 
 *example: 
-    1. Left: batmeth2-align -g ./hg19/hg19.fa -i left.fq -o outPrefix1 -p 6 <br>
-    2. Right: batmeth2-align --non_directional -O -g ./hg19/hg19.fa -i right.fq -o outPrefix2 -p 6 
+    1. Left: BatMeth2 align -g ./hg19/hg19.fa -i left.fq -o outPrefix1 -p 6 <br>
+    2. Right: BatMeth2 align --non_directional -O -g ./hg19/hg19.fa -i right.fq -o outPrefix2 -p 6 
 *
-
-Long reads align (length > 150)
-
-$ ` batmeth2-l -g INDEX -i INPUT -o OUTPUT_Prefix -p 6 -n 2 ` 
-
 
 **Paired-end-reads** 
 
-$ `batmeth2-align -g INDEX -i INPUT_left -i INPUT_right -o OUTPUT_prefix --threads 16 -n 2` 
+$ `BatMeth2 align -g INDEX -i INPUT_left -i INPUT_right -o OUTPUT_prefix --threads 16 -n 2` 
 
-*example: batmeth2-align -g /data/index/hg19/hg19.fa -i CML_R1_left.fq -i CML_R2_right.fq -o out.prefix --threads 6 
+*example: BatMeth2 align -g /data/index/hg19/hg19.fa -i CML_R1_left.fq -i CML_R2_right.fq -o out.prefix --threads 6 
 *
    
 
 **[2] Get Methylation**
 
-$ `split [options] -o [FINAL_RESULT] -g GENOME -n [number of mismatches] -i [all temp(s) from batmeth] -m [methratio outfile]`
+$ `BatMeth2 calmeth [options] -o [FINAL_RESULT] -g GENOME -n [number of mismatches] -i [all temp(s) from batmeth] -m [methratio outfile]`
 
-example: split -f -o Final_Result.sam -g ../../../Genome/batmeth2/all.con -n 2 -i batmeth2outPrefix.* -m Final.methratio.txt
+example: BatMeth2 calmeth -f -o Final_Result.sam -g ../../../Genome/batmeth2/all.con -n 2 -i batmeth2outPrefix.* -m Final.methratio.txt
    
 **[3] Detect BSseq SNP using approximate Bayesian modeling** 
 
@@ -89,7 +81,7 @@ c) BS-Seq variation detection (use BS-Snper software)
    
 **[4] Gene OR TEs DNA methylation level and density** 
 
-   $ `methyGff [options] -o [OUT_PREFIX] -G GENOME -g <GFF file>/-b <bed file> -m [from Split methratio outfile] [-B] [-P]` 
+   $ `BatMeth2 methyGff [options] -o [OUT_PREFIX] -G GENOME -g <GFF file>/-b <bed file> -m [from Split methratio outfile] [-B] [-P]` 
    
 **[5] DNA methylation data visulization**  *(required R package : ggplot2{install.packages("ggplot2")})*  
 

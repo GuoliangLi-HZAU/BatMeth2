@@ -48,22 +48,22 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     **[main paramaters]** <br>
     -o &emsp; Name of output file prefix<br>
     **[alignment paramaters]** <br>
-    -i &emsp; Name of input file <br>
+    -i &emsp;&ensp; Name of input file <br>
     -g &emsp; Name of the genome mapped against <br>
     -n &emsp; maximum mismatches allowed due to seq. errors <br>
     -p <interger> &emsp; Launch <integer> threads <br>
     **[calmeth paramaters]** <br>
-    --Qual &emsp;   caculate the methratio while read QulityScore >= Q. default:10 <br>
-    --redup &emsp;  REMOVE_DUP <br>
+    --Qual &emsp;&ensp;&ensp; caculate the methratio while read QulityScore >= Q. default:10 <br>
+    --redup &emsp;&ensp; REMOVE_DUP <br>
     --region &emsp; Bins for DMR caculate , default 1000bp . <br>
     **[calmeth and annoation paramaters]** <br>
-    --coverage &emsp; >= <INT> coverage. default:5 <br>
-    --binCover &emsp; >= <INT> nCs per region. default:3 <br>
+    --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
+    --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
     --chromstep &emsp; Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
     --gtf/--bed &emsp; Gtf or gff file / bed file <br>
-    --distance &emsp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
-    --step &emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
+    --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
+    --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
 <br>
 
 Functions in BatMeth2

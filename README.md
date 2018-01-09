@@ -1,4 +1,4 @@
-"BatMeth2: ...".  
+"BatMeth2: An Integrated Package for Bisulfite DNA Methylation Data Analysis with Indel-sensitive Mapping".  
 --------------------------------------------------
 
 This is a README file for the usage of Batmeth2.

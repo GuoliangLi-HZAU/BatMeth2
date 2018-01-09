@@ -1,0 +1,7 @@
+#!/bin/bash
+SCRPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+CPATH=`dirname "$SCRPATH"`
+$CPATH/build_indexX $1 CTOT
+$CPATH/build_indexX $1 GTOA
+rm *.bin
+$CPATH/build_indexX $1 

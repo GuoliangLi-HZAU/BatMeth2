@@ -1,0 +1,8 @@
+#!/bin/bash
+SCRPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+CPATH=`dirname "$SCRPATH"`
+
+$CPATH/batman -g $1 -m 900000 -n $2 -q boundary.fq
+$CPATH/batdecode -g $1 
+$CPATH/recover_boundary output.txt
+

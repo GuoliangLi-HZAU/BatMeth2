@@ -1,0 +1,17 @@
+#methyPlot 0.025 gene.meth.Methylevel.1.txt methlevel.pdf gene.meth.AverMethylevel.1.txt elements.pdf
+filepath=$(cd "$(dirname "$0")"; pwd)
+echo "BatMeth2:  MethyPlot"
+echo
+echo "Usage:     methyPlot chromsome.bins.txt chrosome.methy.distri.pdf step<default:0.025> Infile1.from.batmeth2:methyGff out1.pdf starLabel endLabel Infile2 out2.pdf"
+echo "eg: methyPlot chromsome.bins.txt chrosome.methy.distri.pdf 0.025 gene.meth.Methylevel.1.txt methlevel.pdf TSS TTS gene.meth.AverMethylevel.1.txt elements.pdf"
+echo
+
+if [ $# -eq 9 ];
+then
+	echo "Chromsome.bins.DNA.methylevel.Outfile: " $2 
+	Rscript $filepath/chrom_distribution.batmeth2.r $1 $2 #test.bins.txt chrosome.methy.distri.pdf ##from Batmeth2:Split
+	echo "methylevel.elements.OutFile: " $5
+	Rscript $filepath/methylevel.elements.r $3 $4 $5 $6 $7 #0.025 gene.meth.Methylevel.1.txt methlevel.pdf ##from Batmeth2:methyGff
+	echo "elements.methylevel.Aver.OutFile: " $9
+	Rscript $filepath/elements.methylevel.Aver.r $8 $9 #gene.meth.AverMethylevel.1.txt elements.pdf  ##from Batmeth2:methyGff
+fi

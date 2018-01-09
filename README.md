@@ -4,7 +4,7 @@
 This is a README file for the usage of Batmeth2.
 --------------------------------------------------
 
-Please go to https://github.com/ZhouQiangwei/batmeth2
+Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
 
 1) batmeth2-master.zip (the zip of the program)
    

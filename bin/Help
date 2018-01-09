@@ -1,0 +1,26 @@
+
+BS-Snper  -- Detect the SNP according to the candidate positions
+
+Usage:
+	BS-Snper [options] --fa GENOME --input sort.bam --output snp.out
+
+	--fa	        Reference genome file in fasta format
+	--input	        Input bam file
+	--output	Temporary file storing SNP candidates
+	--minhetfreq    Threshold of frequency for calling heterozygous SNP, default: 0.1.
+	--minhomfreq    Threshold of frequency for calling homozygous SNP, default: 0.85.
+	--minquali      Threshold of base quality, default: 15.
+	--mincover      Threshold of minimum depth of covered reads, default: 10.
+	--maxcover      Threshold of maximum depth of covered reads, default: 1000.
+	--minread2      Minimum mutation reads number,default 2.
+	--errorate      Minimum mutation rate, default: 0.02.
+	--mapvalue      Minimum read mapping value,default: 20
+	SNP.out         Final SNP result file
+	--help          output help information to screen 
+
+Exmple
+	BS-Snper --fa hg19.fa --input BatMeth2.sort.bam --output snp.out
+
+Version
+       Author: Shengjie Gao, gaoshengjie@genomics.cn; Dan Zou, zoudan.nudt@gmail.com.
+       Version: 1.0,  Date: 2014-12-23, modified: 2015-12-05

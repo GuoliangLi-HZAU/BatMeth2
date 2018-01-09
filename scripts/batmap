@@ -1,0 +1,34 @@
+#!/bin/bash
+genome=
+query=
+while getopts 'g:q:o:n:m:' OPTION
+do
+  case $OPTION in
+  g)	genome="-g $OPTARG"	
+		;;
+  q)	query="-q $OPTARG"	
+		;;
+  o)	out="-o $OPTARG"	
+		;;
+  n)	mismatches="-n $OPTARG"	
+		;;
+  m)	numhits="-m $OPTARG"	
+		;;
+  ?)	printf "Usage: %s: -g index -q Reads_File -o Output_File -n Number_Of_Mismatches -m Number_Of_Hits \n" $(basename $0) >&2
+		exit 2
+		;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+RAND=$RANDOM.bin
+batman $genome $query $mismatches $numhits -o $RAND
+if [ -s $RAND ];
+then
+	batdecode $genome -i $RAND $out 
+	rm $RAND
+else
+	echo
+	echo Run Failed..
+fi
+

@@ -1,0 +1,91 @@
+#!/bin/sh
+echo -= Index Builder for Batman =-
+SCRPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+CPATH=`dirname "$SCRPATH"`
+INDEXTYPE=x
+BASEX=$1
+ORGBASE=$1
+CURDIR=$(pwd) 
+
+echo Building on $(pwd) 
+
+if [ "$2" = "color" ]
+then
+	echo Building Color-Space index
+	$CPATH/bwtformatdb $1 -p 
+	mv $1.pac $1C.pac
+	rm $1.amb $1.ann
+	$CPATH/filter.pl $1 # convert to color>$1.Filter
+	$CPATH/b2c.pl $1.filter $1C
+	rm $1.filter
+	BASEX=$1C
+	ORGBASE=$1C
+elif [ "$2" = "random" ]
+then
+	INDEXTYPE=xN
+elif [ "$2" = "CTOT" ]
+then
+	INDEXTYPE=c
+	BASEX=$1-CtoT
+elif [ "$2" = "GTOA" ]
+then
+	INDEXTYPE=g
+	BASEX=$1-GtoA
+fi
+echo Stripping $1 and filtering nucleotides...
+$CPATH/filter $ORGBASE $INDEXTYPE >$BASEX.non
+BASE=$BASEX
+BASEPATH=`dirname $BASE`
+BASENAME=${BASE##*/}
+revBASE=`echo $BASEPATH/rev$BASENAME`
+
+echo Creating FASTA file of Reverse of the Genome...
+echo ">" > $revBASE
+$CPATH/reverse -i $ORGBASE.bin -b 10000000 >> $revBASE
+
+echo Creating FM index of reverse genome...
+$CPATH/bwtformatdb $revBASE
+
+rm $revBASE
+rm $revBASE.amb
+rm $revBASE.ann
+rm $revBASE.pac
+rm $revBASE.sai
+
+echo Creating FM index of the genome...
+$CPATH/bwtformatdb $BASE.non
+rm $BASE.non
+echo Deleting auxilliary files...
+mv $BASE.non.fmv $BASE.fmv
+mv $BASE.non.bwt $BASE.bwt
+mv $BASE.non.sa $BASE.sa
+mv $BASE.non.ann $BASE.ann
+mv $BASE.non.pac $BASE.pac
+
+rm $BASE.non.amb
+rm $BASE.non.sai
+
+$CPATH/ann2loc.pl $BASE.ann
+rm $BASE.ann
+$CPATH/batmethindex -g $BASE -l 25
+#$CPATH/batmethindex -g $BASE -l 18
+
+if [ "$3" != "" ]
+then
+	mkdir -p $3 
+	cd $3
+	mv $CURDIR/$BASE.fmv ./
+	mv $CURDIR/$BASE.bwt ./
+	mv $CURDIR/$BASE.sa  ./
+	mv $CURDIR/$BASE.N  ./
+	mv $CURDIR/$BASE.bin  ./
+	mv $CURDIR/$BASE.ann.location ./
+	mv $CURDIR/$revBASE.fmv ./
+	mv $CURDIR/$revBASE.bwt ./
+	mv $CURDIR/$revBASE.sa  ./
+	if [ "$2" = "color" ]
+	then
+		mv $CURDIR/$BASE.pac  ./
+	fi
+fi
+

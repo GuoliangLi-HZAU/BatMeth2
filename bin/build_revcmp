@@ -1,0 +1,13 @@
+#!/bin/bash
+SCRPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+CPATH=`dirname "$SCRPATH"`
+$CPATH/complement.pl $1
+echo > $1.cmp.bin
+$CPATH/strip.pl $1.cmp $1.cmp.bin
+echo > $1.bin
+$CPATH/strip.pl $1 $1.bin
+echo > rev$1.cmp.bin
+$CPATH/reverse -i $1.cmp.bin -o rev$1.cmp.bin -b 1000000
+echo ">" >$1cmp
+cat $1.bin rev$1.cmp.bin >>$1cmp
+

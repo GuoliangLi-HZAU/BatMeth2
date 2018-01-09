@@ -65,6 +65,11 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
     --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
 
+OUTPUT FILE
+------
+
+Output file format and details see "output_details.pdf".<br>
+
 Functions in BatMeth2
 ------
    

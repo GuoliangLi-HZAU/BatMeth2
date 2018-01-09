@@ -32,6 +32,39 @@ b) Type "`BatMeth2 build_index GENOME.fa`" to make the neccessary pairing data-s
 
 c) Run "`BatMeth2`" to see the details.
 
+USAGE of BatMeth2
+------
+
+**BatMeth2 pipel**
+
+`BatMeth2 [mode] [paramaters]`
+mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample
+
+[build_index]
+    Usage: BatMeth2 build_index genomefile. (must run this step first)
+
+[pipel (Contains: align, calmeth, annoation, methyPlot)]
+    [main paramaters]
+    -o    Name of output file prefix
+    [alignment paramaters]
+    -i    Name of input file
+    -g    Name of the genome mapped against
+    -n    maximum mismatches allowed due to seq. errors
+    -p <interger>    Launch <integer> threads
+    [calmeth paramaters]
+    --Qual      caculate the methratio while read QulityScore >= Q. default:10
+    --redup     REMOVE_DUP
+    --region    Bins for DMR caculate , default 1000bp .
+    [calmeth and annoation paramaters]
+    --coverage    >= <INT> coverage. default:5
+    --binCover    >= <INT> nCs per region. default:3
+    --chromstep   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)
+    [annoation paramaters]
+    --gtf/--bed    Gtf or gff file / bed file
+    --distance    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000
+    --step    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%)
+
+
 Functions in BatMeth2
 ------
    
@@ -147,7 +180,7 @@ c) BS-Seq variation detection (use BS-Snper software)
         
     *filter the result:* 
     
-        $ `awk '$6<0.05 && sqrt($13*$13)>0.6 ' H9vsIMR90.gene.dmr.txt > H9vsIMR90.gene.dmr.filter.txt` 
+        $ `awk '$6<0.05 && sqrt($11*$11)>0.6 ' H9vsIMR90.gene.dmr.txt > H9vsIMR90.gene.dmr.filter.txt` 
         
 
 **[7] DM annotation** 

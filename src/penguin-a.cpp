@@ -61,7 +61,7 @@ const unsigned AUX	      =0x800;
 //}-----------------------------  INCLUDE FILES  -------------------------------------------------/
 bool DO_INDEL_SMALL=true;
 bool DO_INDEL_LARGE=false;//false;
-int SMALLSEED=30;
+int SMALLSEED=50;
 int DetectIndelLen = 120;
 int Max_Hits=3000;
 int time1=0,time2=0,time3=0,time4=0,time5=0;

@@ -59,7 +59,7 @@ const unsigned SECOND_READ    =0x80;
 const unsigned AUX	      =0x800;
 
 //}-----------------------------  INCLUDE FILES  -------------------------------------------------/
-int SMALLSEED=30;
+int SMALLSEED=50;
 int Max_Hits=60; //3000
 int time1=0,time2=0,time3=0,time4=0,time5=0;
 int N1=0,N2=0,N3=0,N4=0,N5=0;

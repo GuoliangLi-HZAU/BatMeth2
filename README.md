@@ -37,7 +37,7 @@ USAGE of BatMeth2
 
 **BatMeth2 pipel**
 
-`BatMeth2 [mode] [paramaters]`<br>
+**BatMeth2 [mode] [paramaters]**<br>
 
 mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample<br>
 
@@ -46,7 +46,7 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 
 **[pipel (Contains: align, calmeth, annoation, methyPlot)]** <br>
     **[main paramaters]** <br>
-    -o    Name of output file prefix<br>
+    -o\tName of output file prefix<br>
     **[alignment paramaters]** <br>
     -i    Name of input file <br>
     -g    Name of the genome mapped against <br>

@@ -46,24 +46,24 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 
 **[pipel (Contains: align, calmeth, annoation, methyPlot)]** <br>
     **[main paramaters]** <br>
-    -o &ensp; Name of output file prefix<br>
+    -o &emsp; Name of output file prefix<br>
     **[alignment paramaters]** <br>
     -i &emsp; Name of input file <br>
-    -g [TAB] Name of the genome mapped against <br>
-    -n    maximum mismatches allowed due to seq. errors <br>
-    -p <interger>    Launch <integer> threads <br>
+    -g &emsp; Name of the genome mapped against <br>
+    -n &emsp; maximum mismatches allowed due to seq. errors <br>
+    -p <interger> &emsp; Launch <integer> threads <br>
     **[calmeth paramaters]** <br>
-    --Qual      caculate the methratio while read QulityScore >= Q. default:10 <br>
-    --redup     REMOVE_DUP <br>
-    --region    Bins for DMR caculate , default 1000bp . <br>
+    --Qual &emsp;   caculate the methratio while read QulityScore >= Q. default:10 <br>
+    --redup &emsp;  REMOVE_DUP <br>
+    --region &emsp; Bins for DMR caculate , default 1000bp . <br>
     **[calmeth and annoation paramaters]** <br>
-    --coverage    >= <INT> coverage. default:5 <br>
-    --binCover    >= <INT> nCs per region. default:3 <br>
-    --chromstep   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
+    --coverage &emsp; >= <INT> coverage. default:5 <br>
+    --binCover &emsp; >= <INT> nCs per region. default:3 <br>
+    --chromstep &emsp; Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
-    --gtf/--bed    Gtf or gff file / bed file <br>
-    --distance    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
-    --step    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
+    --gtf/--bed &emsp; Gtf or gff file / bed file <br>
+    --distance &emsp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
+    --step &emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
 <br>
 
 Functions in BatMeth2

@@ -27,3 +27,9 @@ p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+sc
   theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
 dev.off()
 
+outpng<-paste(gsub("pdf","",outFile ,"png")
+png(OutFile,width=860,height=480)
+p <- ggplot(data,aes(x=num,y=meth,color=Context)) #rbind(data[data$Context==" CG",],data[data$Context==" CHG",],data[data$Context==" CHH",])
+p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_colour_manual(values = c(" CG" = "black"," CHG" = "purple"," CHH"="blue"))+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="blue",size=1)+
+  theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
+dev.off()

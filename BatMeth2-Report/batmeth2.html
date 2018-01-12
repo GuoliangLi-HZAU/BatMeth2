@@ -23,8 +23,8 @@
   	<!-- Begin Sidebar -->
   	<div id="sidebar" style="background:#0e8121;"> 
   		 <div id="logo" align="center"><a href="batmeth2.html"><img src="icons/MethLog.png" alt="BatMeth2" width="210", heigth="200"/></a></div>
-         <div style="text-align:center;","text-decoration:none;" >
-      <a href="http://www.guolianglab.org/">Lab</a>
+         <div id = "ourlab" style="text-align:center;" >
+      <a  style=" text-decoration: none; color: pink; font-weight:bold;" href="http://www.guolianglab.org/">OUR LAB</a>
 		</div>
 
   	<!-- Begin Menu -->
@@ -32,23 +32,23 @@
         <ul>
           <li><a href="#Running_info" class="active" style="background:#0e8121;"><font color="white">Running information</font> </a>
             <ul>
-                <li><a href="#Rplot25"><font color="green">Running summary</font></a></li>
-                <li><a href="#Rplot23"><font color="green">Paramaters</font></a></li>
+                <li><a href="#RunSumary"><font color="green">Running summary</font></a></li>
+                <li><a href="#Paramater"><font color="green">Paramaters</font></a></li>
             </ul>
           </li>
           <li><a href="#Running_statistics" class="active" style="background:#0e8121;"><font color="white">Results</font></a>
             <ul>
-              <li><a href="#Rplot2"><font color="green">Alignment results</font></a></li>
-              <li><a href="#Rplot3"><font color="green">Output files</font></a></li>
+              <li><a href="#Aligns"><font color="green">Alignment results</font></a></li>
+              <li><a href="#OutFile"><font color="green">Output files</font></a></li>
             </ul>
           </li>
-          <li><a href="#Linker_filtering_report" style="background:#0e8121;"><font color="white" >DNA methylation level</font></a>
+          <li><a href="#MethLevel" style="background:#0e8121;"><font color="white" >DNA methylation level</font></a>
           	<ul>
-          		<li><a href="#Methylevelgenome"><font color="green">DNA methylation level on chromosomes</font></a></li>
-              <li><a href="#Rplot5"><font color="green">DNA methylation level on function elements</font></a></li>
-            </ul>
+          		<li><a href="#Methylevel"><font color="green">DNA methylation level</font></a></li>
+              	        <li><a href="#Methylevelgenome"><font color="green">DNA methylation level on chromosomes</font></a></li>
+            	</ul>
           </li>   
-          <li><a href="#PET_span" style="background:#0e8121;"><font color="white">DNA methylation level distribution on function elements</font></a>
+          <li><a href="#Function_Meth" style="background:#0e8121;"><font color="white">DNA methylation level distribution on function elements</font></a>
             <ul>  
               <li><a href="#Methenrich"><font color="green">Enrichment of DNA methylation</font></a></li>
               <li><a href="#geneCG"><font color="green">DNA methylation distribution-CG</font></a></li>
@@ -61,7 +61,7 @@
           </li>
           <li><a href="#Cluster_visual" style="background:#0e8121;"><font color="white">DNA methylation distribution with function elements density</font></a>
             <ul>
-			  <li><a href="#Rplot30"><font color="green">density plot</font></a></li>
+			  <li><a href="#density"><font color="green">density plot</font></a></li>
             </ul>
           </li>
 		 <li><a href="#Cluster_visual2" style="background:#0e8121;"><font color="white">Differential DNA methylation analysis</font></a>
@@ -84,45 +84,42 @@
 
     	<h1 class="title" id="Running_info" ><font color="green">Running informatin</font></h1>
     	<div class="line" ></div>
-      <h3 id = "Rplot25" style=" text-align:center;">Running summary</h3>
+      <h3 id = "RunSumary" style=" text-align:center;">Running summary</h3>
       <h2><iframe width = 800 height = 220 src = "images/Paramater.html"></iframe></h2>
-      <h3 id = "Rplot23" style=" text-align:center;">Paramaters</h3>
+      <h3 id = "Paramater" style=" text-align:center;">Paramaters</h3>
       <h2><iframe width = 800 height = 350 src = "images/Paramater2.html"></iframe></h2>
   	
 
       <h1 class="title" id="Running_statistics"><font color="green">Results</font></h1>
       <div class="line"></div>
       
-        <h3 id = "Rplot2" style=" text-align:center;">Alignment Results</h3>
+        <h3 id = "Aligns" style=" text-align:center;">Alignment Results</h3>
         <!-- <h3><img src="images/Rplot2.png" alt=""/></h3> -->
         <h2><iframe width = 800 height = 350 src = "images/alignresults.html"></iframe></h2>  
 
 		
-        <h3 id = "Rplot3" style=" text-align:center;">Output files        </h3>
+        <h3 id = "OutFile" style=" text-align:center;">Output files        </h3>
       <h2><iframe width = 800 height = 240 src = "images/outfiles.html"></iframe>
         <!-- <h3><img src="images/Rplot2.png" alt=""/></h3> -->      </h2>
-      <h1 id = "Linker_filtering_report"><font color="green">DNA methylation level</font></h1>
+      <h1 id = "MethLevel"><font color="green">DNA methylation level</font></h1>
       <div class="line"></div> 
       
-        <h3 id = "Methylevelgenome" style=" text-align:center;">
-          <iframe width = 800 height = 300 src = "images/methratio.html"></iframe>
-        </h3>
-        <h3 style=" text-align:center;">DNA methylation level distribution on chromsome</h3>
-      <h2><img src="images/Methylevelgenome.png" alt=""/ width="700" height="300"></h2>
-        <h3 id = "Rplot6" style=" text-align:center;">&nbsp;</h3>
-
+        <h3 id = "Methylevel" style=" text-align:center;">DNA methylation Level</h3>
+         <h2><iframe width = 800 height = 300 src = "images/methratio.html"></iframe></h2>
+        <h3 id = "Methylevelgenome" style=" text-align:center;">DNA methylation level distribution on chromsome</h3>
+      <h2><img src="images/Methygenome.png" alt=""/ width="700" ></h2>
       
-      <h1 id = "PET_span" ><font color="green">DNA methylation level distribution on function elements</font></h1>
+      <h1 id = "Function_Meth" ><font color="green">DNA methylation level distribution on function elements</font></h1>
       <div class="line"></div>
             
         <h3 id = "Methenrich" style=" text-align:left;">Enrichment of DNA methylation</h3>
         <h2><img src="images/Methenrich.png" alt=""/  style = "height: 680px; width: 560px"></h2>
         <h3 id = "geneCG" style=" text-align:left;">DNA methylation distribution - CG</h3> 
-        <h2><img src="images/geneCG.png" alt=""/  style = "height: 420px; width: 680px"></h2>
+        <h2><img src="images/functionCG.png" alt=""/  style = "height: 420px; width: 680px"></h2>
         <h3 id = "geneCHG" style=" text-align:left;">DNA methylation distribution - CHG</h3>
-        <h2><img src="images/geneCHG.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
+        <h2><img src="images/functionCHG.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
         <h3 id = "geneCHH" style=" text-align:left;">DNA methylation distribution - CHH</h3>
-        <h2><img src="images/geneCHH.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
+        <h2><img src="images/functionCHH.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
   	    <h3 id = "heatmapgene-CG" style=" text-align:left;">Heatmap of genes-CG</h3>
         <h2><img src="images/heatmap-CG.png" alt=""/  style = "height: 460px; width: 480px"></h2> 
         <h3 id = "heatmapgene-CHG" style=" text-align:left;">Heatmap of genes-CHG</h3>
@@ -132,7 +129,7 @@
       
       <h1 id = "Cluster_visual"><font color="green">DNA methylation distribution with function elements density</font></h1>
       <div class="line"></div>
-		<h3 id = "Rplot30" style=" text-align:center;">Density plot</h3>
+		<h3 id = "density" style=" text-align:center;">Density plot</h3>
         <h2><img src="images/densityplot.png" alt=""/  style = "height: 460px; width: 840px"></h2> 
     
       <h1 id = "Cluster_visual2" ><font color="green">Differential DNA methylation analysis</font></h1>

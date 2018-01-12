@@ -789,18 +789,22 @@ int main(int argc, char* argv[])
 			delete [] args.Genome_Offsets;
 			delete [] args.Org_Genome;
 			
-			printf("Raw count of Met_C in CG: %lu\n",met_CG);
-			printf("Raw count of Non_Met_C in CG: %lu\n",non_met_CG);
-			printf("Raw count of Met_C in CHG: %lu\n",met_CHG);
-			printf("Raw count of Non_Met_C in CHG: %lu\n",non_met_CHG);
-			printf("Raw count of Met_C in CHH: %lu\n",met_CHH);
-			printf("Raw count of Non_Met_C in CHH: %lu\n",non_met_CHH);
-			fprintf(OUTLOG,"Raw count of Met_C in CG: %lu\n",met_CG);
-			fprintf(OUTLOG,"Raw count of Non_Met_C in CG: %lu\n",non_met_CG);
-			fprintf(OUTLOG,"Raw count of Met_C in CHG: %lu\n",met_CHG);
-			fprintf(OUTLOG,"Raw count of Non_Met_C in CHG: %lu\n",non_met_CHG);
-			fprintf(OUTLOG,"Raw count of Met_C in CHH: %lu\n",met_CHH);
-			fprintf(OUTLOG,"Raw count of Non_Met_C in CHH: %lu\n",non_met_CHH);
+			printf("Raw count of Met_C in CG:\t%lu\n",met_CG);
+			printf("Raw count of Non_Met_C in CG:\t%lu\n",non_met_CG);
+			printf("Raw count of Met_C in CHG:\t%lu\n",met_CHG);
+			printf("Raw count of Non_Met_C in CHG:\t%lu\n",non_met_CHG);
+			printf("Raw count of Met_C in CHH:\t%lu\n",met_CHH);
+			printf("Raw count of Non_Met_C in CHH:\t%lu\n",non_met_CHH);
+			fprintf(OUTLOG,"Raw count of Met_C in CG:\t%lu\n",met_CG);
+			fprintf(OUTLOG,"Raw count of Non_Met_C in CG:\t%lu\n",non_met_CG);
+			fprintf(OUTLOG,"Raw count of Met_C in CHG:\t%lu\n",met_CHG);
+			fprintf(OUTLOG,"Raw count of Non_Met_C in CHG:\t%lu\n",non_met_CHG);
+			fprintf(OUTLOG,"Raw count of Met_C in CHH:\t%lu\n",met_CHH);
+			fprintf(OUTLOG,"Raw count of Non_Met_C in CHH:\t%lu\n",non_met_CHH);
+			printf("[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+                        printf("\n[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
+                        fprintf(OUTLOG,"\n[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+                        fprintf(OUTLOG,"\n[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
 			if(Methratio)
 			{
 				FILE* mC_DENSITY=File_Open(mCdensity.c_str(),"w");
@@ -822,10 +826,6 @@ int main(int argc, char* argv[])
 				fprintf(mC_DENSITY,"\nM\t%u\nMh\t%u\nH\t%u\nhU\t%u\nU\t%u",M,Mh,H,hU,U);
 				fprintf(mC_DENSITY,"\nCpG_M\t%u\nCpG_Mh\t%u\nCpG_H\t%u\nCpG_hU\t%u\nCpG_U\t%u",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
 				
-				printf("\n[CpG]  M: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-				printf("\n[mC]   M: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
-				fprintf(OUTLOG,"\n[CpG]  M: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-				fprintf(OUTLOG,"\n[mC]   M: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
 				//+
 				printf("\nStrand+ :\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
 				printf("mCG/(CG+TG) {%ld / %ld} = %f% \n",plus_mCGcount,plusCGcount,double (100*(plus_mCGcount))/(plusCGcount) );
@@ -841,11 +841,21 @@ int main(int argc, char* argv[])
 				printf("mCG/(CG+TG) {%ld / %ld} = %f% \n",plus_mCGcount+Neg_mCGcount,plusCGcount+NegCGcount,double (100*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount) );
 				printf("mCHG/(CHG+THG) {%ld / %ld} = %f% \n",plus_mCHGcount+Neg_mCHGcount,plusCHGcount+NegCHGcount,double (100*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount) );
 				printf("mCHH/(CHH+THH) {%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
-				//
-				fprintf(OUTLOG,"\nStrand+- :\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount) );
-				fprintf(OUTLOG,"mCG/(CG+TG) {%ld / %ld} = %f% \n",plus_mCGcount+Neg_mCGcount,plusCGcount+NegCGcount,double (100*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
-				fprintf(OUTLOG,"mCHG/(CHG+THG) {%ld / %ld} = %f% \n",plus_mCHGcount+Neg_mCHGcount,plusCHGcount+NegCHGcount,double (100*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
-				fprintf(OUTLOG,"mCHH/(CHH+THH) {%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
+				//+
+                                fprintf(OUTLOG,"Strand\t+\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
+                                fprintf(OUTLOG,"mCG/(CG+TG)\t{%ld / %ld} = %f% \n",plus_mCGcount,plusCGcount,double (100*(plus_mCGcount))/(plusCGcount) );
+                                fprintf(OUTLOG,"mCHG/(CHG+THG)\t{%ld / %ld} = %f% \n",plus_mCHGcount,plusCHGcount,double (100*(plus_mCHGcount))/(plusCHGcount) );
+                                fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",plus_mCHHcount,plusCHHcount,double (100*(plus_mCHHcount))/(plusCHHcount) );
+                                //-
+                                fprintf(OUTLOG,"Strand\t-\nmC/(C+T)\t{%ld / %ld} = %f% \n",(Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount),(NegCGcount+NegCHGcount+NegCHHcount),double (100*(Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (NegCGcount+NegCHGcount+NegCHHcount) );
+                                fprintf(OUTLOG,"mCG/(CG+TG)\t{%ld / %ld} = %f% \n",Neg_mCGcount,NegCGcount,double (100*(Neg_mCGcount))/double (NegCGcount) );
+                                fprintf(OUTLOG,"mCHG/(CHG+THG)\t{%ld / %ld} = %f% \n",Neg_mCHGcount,NegCHGcount,double (100*(Neg_mCHGcount))/double (NegCHGcount) );
+                                fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",Neg_mCHHcount,NegCHHcount,double (100*(Neg_mCHHcount))/double (NegCHHcount) );
+				//+ -
+				fprintf(OUTLOG,"Strand\t+-\nmC/(C+T)\t{%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount) );
+				fprintf(OUTLOG,"mCG/(CG+TG)\t{%ld / %ld} = %f% \n",plus_mCGcount+Neg_mCGcount,plusCGcount+NegCGcount,double (100*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
+				fprintf(OUTLOG,"mCHG/(CHG+THG)\t{%ld / %ld} = %f% \n",plus_mCHGcount+Neg_mCHGcount,plusCHGcount+NegCHGcount,double (100*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
+				fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
 			}
 		}
 		catch(char* Err)

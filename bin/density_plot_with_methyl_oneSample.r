@@ -1,5 +1,5 @@
 cat("BatMeth2: density_plot_with_methyl.r\n")
-cat("Usage: Rscript density_plot_with_methyl.r inputFile1 genedensityFile TEdensity output.pdf label1\n")
+cat("Usage: Rscript density_plot_with_methyl.r inputFile1 genedensityFile TEdensity output.df label1\n")
 cat("eg: Rscript density_plot_with_methyl.r Cr_DJ.bins.strand.aver.txt Cr_DJ.geneBody.count.C.gffDensity.1.txt Cr_DJ.TE.count.C.gffDensity.1.txt density.pdf Cr_DJ \n\n")
 
 Args <- commandArgs()
@@ -8,7 +8,9 @@ Infile1<-Args[6]
 genefile<-Args[7]
 TEfile<-Args[8]
 outPDF<-Args[9]
-outPDFf<-paste(gsub("pdf","",outPDF),"final.pdf")
+outPDFf<-paste(gsub("pdf","",outPDF),"final.pdf", sep="")
+outpng<-paste(gsub("pdf","",outPDF),"png", sep="")
+outpngf<-paste(gsub("pdf","",outPDF),"final.png", sep="")
 label1<-Args[10]
 #label2<-Args[12]
 #install.packages("ggplot2")
@@ -134,6 +136,16 @@ pdf(outPDF,width=12,height=7)
    ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
    )
 dev.off()
+png(outpng,width=860, height=480,res=128)
+(p7 <- p6 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","TE",chr)) ),method="auto",linetype=1)+
+   theme_bw(base_size=15)+theme(legend.position='none')+
+   scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
+   scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
+   annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
+   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
+   )
+dev.off()
 ############################legend
 empty <- ggplot()+geom_point(aes(1,1), colour="white")+
   theme(axis.ticks=element_blank(), 
@@ -149,5 +161,8 @@ bottom<-ggplot()+geom_line(aes(x=c(0,0.02),y=c(2,2)),linetype=1,colour="purple" 
   theme(panel.grid=element_blank())+ xlab('') + ylab('')+theme_bw()+theme(panel.grid=element_blank(),panel.border = element_blank(),axis.text=element_blank(),axis.ticks=element_blank(),panel.margin=unit(0,"line"))
 pdf(outPDFf,width=12,height=7)
 library(gridExtra)
+grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
+dev.off()
+png(outpngf,width=860, height=480,res=128)
 grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
 dev.off()

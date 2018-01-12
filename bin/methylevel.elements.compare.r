@@ -27,14 +27,22 @@ context<-c("CG","CHG","CHH")
 #for(line in 1:3)
 #{
 line=1
-	pdf(paste(OutFile,".",context[line],".pdf",sep=""),width=10,height=6)
+pdf(paste(OutFile,".",context[line],".pdf",sep=""),width=10,height=6)
 	data<-rbind(data.frame(num,meth=as.double(b1[line,2:lengthp]),Sample=rep(sample1,length)),data.frame(num,meth=as.double(b2[line,2:lengthp]),Sample=rep(sample2,length)) )
 	p <- ggplot(data,aes(x=num,y=meth,color=Sample)) 
 	max<-max(data$meth)
 	max<-max*1.1
 	p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+
   theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
-	dev.off()
+dev.off()
+png(paste(OutFile,".",context[line],".png",sep=""),width=860, height=480,res=126)
+p <- ggplot(data,aes(x=num,y=meth,color=Sample))
+        max<-max(data$meth)
+        max<-max*1.1
+        p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+
+  theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
+dev.off()
+
 #}
 line=2
 pdf(paste(OutFile,".",context[line],".pdf",sep=""),width=10,height=6)
@@ -45,10 +53,26 @@ max<-max*1.1
 p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
 dev.off()
 
+png(paste(OutFile,".",context[line],".png",sep=""),width=860, height=480,res=126)
+data<-rbind(data.frame(num,meth=as.double(b1[line,2:lengthp]),Sample=rep(sample1,length)),data.frame(num,meth=as.double(b2[line,2:lengthp]),Sample=rep(sample2,length)) )
+p <- ggplot(data,aes(x=num,y=meth,color=Sample))
+max<-max(data$meth)
+max<-max*1.1
+p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
+dev.off()
+
 line=3
 pdf(paste(OutFile,".",context[line],".pdf",sep=""),width=10,height=6)
 data<-rbind(data.frame(num,meth=as.double(b1[line,2:lengthp]),Sample=rep(sample1,length)),data.frame(num,meth=as.double(b2[line,2:lengthp]),Sample=rep(sample2,length)) )
 p <- ggplot(data,aes(x=num,y=meth,color=Sample)) 
+max<-max(data$meth)
+max<-max*1.1
+p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)
+dev.off()
+
+png(paste(OutFile,".",context[line],".png",sep=""),width=860, height=480,res=126)
+data<-rbind(data.frame(num,meth=as.double(b1[line,2:lengthp]),Sample=rep(sample1,length)),data.frame(num,meth=as.double(b2[line,2:lengthp]),Sample=rep(sample2,length)) )
+p <- ggplot(data,aes(x=num,y=meth,color=Sample))
 max<-max(data$meth)
 max<-max*1.1
 p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(x=c(length/3,length/3*2),linetype="dotted",color="gray",size=1)+theme(legend.key=element_rect(linetype='dashed',color="white"),axis.text.y = element_text(size=13),axis.text.x = element_text(size=18),legend.title = element_text(size=16),legend.text = element_text(size=15),legend.key.height=unit(1.2,'cm')) +ylim(0,max)

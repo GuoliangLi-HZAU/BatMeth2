@@ -7,9 +7,7 @@ Infile1<-Args[6]
 #Infile2<-Args[7]
 genefile<-Args[7]
 outPDF<-Args[8]
-outPDFf<-paste(gsub("pdf","",outPDF),"final.pdf", sep="")
-outpng<-paste(gsub("pdf","",outPDF),"png", sep="")
-outpngf<-paste(gsub("pdf","",outPDF),"final.png", sep="")
+outPDFf<-paste(gsub("pdf","",outPDF),"final.pdf")
 label1<-Args[9]
 #label2<-Args[12]
 #install.packages("ggplot2")
@@ -125,26 +123,16 @@ for (i in 1:chrNum){ndx <- which(chrDensity[, 1]==chr[i] )
 #                    if((max(posSub) - min(posSub)) < 100){chr[i]=""}
 #                    bpMidVeX[i] <- max(posSub)
 #}
-pdf(outPDF,width=12,height=7)
-(p7 <- p6 + #geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","TE",chr)) ),method="auto",linetype=1)+
-   theme_bw(base_size=15)+theme(legend.position='none')+
-   scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
-   scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
-   annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
-   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
-   )
-dev.off()
-png(outpng,width=860, height=480,res=128)
-(p7 <- p6 + #geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","TE",chr)) ),method="auto",linetype=1)+
-   theme_bw(base_size=15)+theme(legend.position='none')+
-   scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
-   scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
-   annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
-   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
-   )
-dev.off()
+#pdf(outPDF,width=12,height=7)
+#(p7 <- p6 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","TE",chr)) ),method="auto",linetype=1)+
+#   theme_bw(base_size=15)+theme(legend.position='none')+
+#   scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
+#   scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
+#   annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
+#   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+#   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
+#   )
+#dev.off()
 ############################legend
 empty <- ggplot()+geom_point(aes(1,1), colour="white")+
   theme(axis.ticks=element_blank(), 
@@ -152,7 +140,7 @@ empty <- ggplot()+geom_point(aes(1,1), colour="white")+
        axis.text.x=element_blank(), axis.text.y=element_blank(),           
        axis.title.x=element_blank(), axis.title.y=element_blank())
 
-bottom<-ggplot()+geom_line(aes(x=c(0,0.02),y=c(2,2)),linetype=1,colour="purple" ,size=1)+ #annotate("text",label="TE density",x=0.04,y=2,size=4,color="azure4")+
+bottom<-ggplot()+geom_line(aes(x=c(0,0.02),y=c(2,2)),linetype=1,colour="purple" ,size=1)+annotate("text",label="TE density",x=0.04,y=2,size=4,color="azure4")+
   geom_line(aes(x=c(0.07,0.09),y=c(2,2)),linetype=1,colour="deepskyblue",size=1 )+annotate("text",label="Gene density",x=0.12,y=2,size=4,color="azure4")+ylim(2,2)+xlim(0,0.29)+
   geom_line(aes(x=c(0.15,0.17),y=c(2,2)),linetype=1,colour="indianred1" ,size=1)+annotate("text",label="CG",x=0.18,y=2,size=4,color="azure4")+
   geom_line(aes(x=c(0.20,0.22),y=c(2,2)),linetype=2,colour="khaki4" ,size=1)+annotate("text",label="CHG",x=0.23,y=2,size=4,color="azure4")+
@@ -160,8 +148,5 @@ bottom<-ggplot()+geom_line(aes(x=c(0,0.02),y=c(2,2)),linetype=1,colour="purple" 
   theme(panel.grid=element_blank())+ xlab('') + ylab('')+theme_bw()+theme(panel.grid=element_blank(),panel.border = element_blank(),axis.text=element_blank(),axis.ticks=element_blank(),panel.margin=unit(0,"line"))
 pdf(outPDFf,width=12,height=7)
 library(gridExtra)
-grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
-dev.off()
-png(outpngf,width=860, height=480,res=128)
-grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
+grid.arrange(p6,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
 dev.off()

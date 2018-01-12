@@ -210,15 +210,16 @@ a.button.red:hover {
 
 
 #wrapper {
-	width: 1070px;
+	width: 1100px; /*1070px;*/
 	margin: 0 auto;
 	overflow: hidden;
 }
 
 #content {
-	width: 770px;
+	width: 800px; /*770px;*/
 	float: right;
 	padding: 40px 0 20px 0;
+	overflow: scroll; /*qw*/
 }
 
 #sidebar {
@@ -240,7 +241,7 @@ a.button.red:hover {
 
 #logo {
 	text-align: left;
-	padding: 40px 32px 0 45px;
+	padding: 40px 32px 0 32px; /*top right bottom left*/
 }
 
 #logo a {

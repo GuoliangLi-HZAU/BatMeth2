@@ -709,6 +709,7 @@ copy:
 	cp src/BS-Snper/Help ./bin
 	cp src/batDMR/batDMR ./bin
 	cp scripts/BatMeth2 ./bin
+	cp src/splitSam bin
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

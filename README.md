@@ -44,7 +44,7 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 **[build_index]** <br>
     Usage: BatMeth2 build_index genomefile. (must run this step first)<br>
 
-**[pipel (Contains: align, calmeth, annoation, methyPlot)]** <br>
+**[pipel (Contains: align, calmeth, annoation, methyPlot, mkreport)]** <br>
     **[main paramaters]** <br>
     -o &emsp; Name of output file prefix<br>
     **[alignment paramaters]** <br>

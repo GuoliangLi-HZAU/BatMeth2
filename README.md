@@ -39,7 +39,7 @@ USAGE of BatMeth2
 
 **BatMeth2 [mode] [paramaters]**<br>
 
-mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample<br>
+mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, mkreport<br>
 
 **[build_index]** <br>
     Usage: BatMeth2 build_index genomefile. (must run this step first)<br>
@@ -64,6 +64,8 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     --gtf/--bed &emsp; Gtf or gff file / bed file <br>
     --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
     --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
+    **[mkreport paramaters]** <br>
+    Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
 
 OUTPUT FILE
 ------

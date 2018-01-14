@@ -2,12 +2,13 @@
 import os
 import sys, getopt
 import shutil 
+import time
 
 ##alignment
 threads = 6
 mismatches = 2
 genome_index = ""
-input_prefix = ""
+input_prefix = "None"
 input_prefix1 = ""
 input_prefix2 = ""
 pairedend=False
@@ -83,10 +84,12 @@ if len(sys.argv) < 3:
     sys.exit()
 
 def detect_paramater():
-    opts, args = getopt.getopt(sys.argv[2:], "hi:1:2:o:n:g:p:", ["gtf", "bed", "coverage", "binCover", 
-        "chromstep", "step", "distance", "Qual", "region"])
+    opts, args = getopt.getopt(sys.argv[2:], "hi:1:2:o:n:g:p:", ["gtf=", "bed=", "coverage=", "binCover=", 
+        "chromstep=", "step=", "distance=", "Qual=", "region="])
     global input_prefix, input_prefix1, input_prefix2, output_prefix, genome_index, threads, mismatches, region, Qual
+    global gfffile
     for op, value in opts:
+#        print op, value
         if op == "-i":
             input_prefix = value
         if op == "-1":
@@ -96,29 +99,29 @@ def detect_paramater():
             pairedend=True
         elif op == "-o":
             output_prefix = value
-        elif op == "g":
+        elif op == "-g":
             genome_index = value
-        elif op == "p":
+        elif op == "-p":
             threads = value
-        elif op == "n":
+        elif op == "-n":
             mismatches = value
-        elif op == "gtf":
+        elif op == "--gtf":
             gfffile = value
-        elif op == "bed":
+        elif op == "--bed":
             bedfile = value
-        elif op == "coverage":
+        elif op == "--coverage":
             coverage = value
-        elif op == "binCover":
+        elif op == "--binCover":
             binCover = value
-        elif op == "chromstep":
+        elif op == "--chromstep":
             chromstep = value
-        elif op == "step":
+        elif op == "--step":
             step = value
-        elif op == "distance":
+        elif op == "--distance":
             distance = value
-        elif op == "Qual":
+        elif op == "--Qual":
             Qual = value
-        elif op == "region":
+        elif op == "--region":
             region = value
         elif op == "-h":
             usage()
@@ -162,6 +165,15 @@ def copydir(olddir, newdir):
         print newdir+' workdir done.'
         return True
 
+def printStatus():
+    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Genome: ", genome_index
+    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Annotation: gtf: ", gfffile, "bed: ", bedfile
+    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Input file: ", input_prefix, " ", input_prefix1, " ", input_prefix2
+    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Outfile prefix: ", output_prefix
+
+printStatus()
+
+print "Process Paramater file."
 oldreportdir = abspath + "/../BatMeth2-Report"
 ###paramater file
 workdir = os.getcwd()
@@ -178,11 +190,13 @@ if pairedend:
     alignmode = "Paired-end"
     infiles = input_prefix1 + ", " + input_prefix2
 
-Sparamater = "Program\tBatMeth2.v1\nWorkdir " + workdir + "\nAligner\tBatMeth2-align\nGenome\t" + genome_index + "\nAnnotation\t" + gfffile + "/" + bedfile + "\nOutput-prefix\t"+ output_prefix + "\nInput\t"+ infiles +  "\nAlignment-Mode\t" + alignmode
+Sparamater = "Program\tBatMeth2.v1\nWorkdir\t" + workdir + "\nAligner\tBatMeth2-align\nGenome\t" + genome_index + "\nAnnotation\t" + gfffile + "/" + bedfile + "\nOutput-prefix\t"+ output_prefix + "\nInput\t"+ infiles +  "\nAlignment-Mode\t" + alignmode
 
 Fparamater.write(Sparamater)
 Fparamater.close()
+
 ##paramater2
+print "Process Pramater file2."
 fparamater2 = mkpath + "/images/Paramater2.txt"
 Fparamater2 = open(fparamater2, "w")
 Sparamater2 = "Paramater\tValue\nThreads\t" + str(threads) + "\nCalmeth\tparamaters\n" + "Quality_Score\t" + str(Qual) + "\nredup\t1\n" + "meth region length\t" + str(region) +  "\ncalmeth and methyGff\tparamaters\n" +  "Coverage\t" + str(coverage) + "\nbinCoverage\t" + str(binCover) + "\nchromStep\t" + str(chromstep) + "\nmethyGff\tParamaters\n" + "Gene bins step\t" + str(step) + "\nDistance of upstream and downstream\t"+ str(distance)
@@ -204,10 +218,7 @@ def calmeth(genome_index, mismatches, inputf, output_prefix, threads):
     if genome_index == "":
         print "Please use -g pramater to defined the genome index location."
         sys.exit()
-    if methratio == "":
-        print "Must have methratio file (-m paramater)."
-        sys.exit()
-    if inputf == "":
+    if inputf == "None":
         print "Must have input sam file (-i paramater)."
         sys.exit()
     cmd = abspath + "/splitSam" + " -g " + genome_index + " -n " + str(mismatches) + " -i " + inputf + " -m " + output_prefix  + " -p " + str(threads)
@@ -232,7 +243,7 @@ def build_index(genome_index):
     runprogram(cmd)
 
 def alignmentSingle():
-    if (genome_index == "") or (input_prefix == "") or (output_prefix == ""):
+    if (genome_index == "") or (input_prefix == "None") or (output_prefix == "None"):
         print "Please check the pramater."
         runprogram("BatMeth2")
         sys.exit()
@@ -240,7 +251,7 @@ def alignmentSingle():
     runprogram(cmd)
 
 def alignmentPaired():
-    if (genome_index == "") or (input_prefix1 == "") or (output_prefix == "") or (input_prefix2 == ""):
+    if (genome_index == "") or (input_prefix1 == "") or (output_prefix == "None") or (input_prefix2 == ""):
         print "Please check the pramater."
         runprogram("BatMeth2")
         sys.exit()
@@ -248,10 +259,11 @@ def alignmentPaired():
     runprogram(cmd)
 
 def annoation():
+    methratio = output_prefix + ".methratio.txt"
     if gfffile != "None":
-        cmd = "methyGff" + " -o " + output_prefix + " -G " + genome_index + " -g " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
+        cmd = abspath + "/methyGff" + " -o " + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
     elif bedfile != "None":
-        cmd = "methyGff" + " -o " + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
+        cmd = abspath + "/methyGff" + " -o " + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
     elif step != 0.025:
         cmd = cmd + " -s " + step
     elif chromstep != 50000:
@@ -330,7 +342,7 @@ def printoutputfiles():
         Fouts.write(file)
     Fouts.close()
 
-def movepng():
+def mvpng():
     FileList = []
     containlocation = False
     FileList = GetFileList(workdir, [output_prefix, "png"], containlocation)
@@ -346,8 +358,8 @@ def doc2html():
     FileList = GetFileList(path, "txt", containlocation)
     for file in FileList:
         print "convert " , file, " to html."
-        cmd = abspath + doc2html.r + " " + workdir + " " + output_prefix + " " + file
-
+        cmd = "Rscript " + abspath + "/doc2html.r " + workdir + " " + output_prefix + " " + file
+        runprogram(cmd)
 
 def mkreport():
     alignsummarycmd = "samtools flagstat " + align_result + " | tail -13 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
@@ -358,39 +370,37 @@ def mkreport():
     printoutputfiles()
     doc2html()
 
-## whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
-## on gff file or bed region, DNA methylation visulization. Differentail analysis use diffmeth function.
-def runpipe():
-    align_result = output_prefix + ".sam"
-    if pairedend:
-        alignmentPaired()
-    else:
-        alignmentSingle()
-    alignsummarycmd = "samtools flagstat " + align_result + " | tail -13 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
-    runprogram(alignsummarycmd)
-    calmeth(genome_index, mismatches, align_result, output_prefix, threads)
-    annoation()
-    methratioLogfile = output_prefix + ".log.txt"
-    newlogfile = mkpath + "/images/methratio.txt"
-    shutil.copyfile(methratioLogfile,newlogfile) 
-    methyPlot()
-    mvpng()
-    printoutputfiles()
-    doc2html()
-
 def methyPlot():
     ##
-    cmd = "methyPlot {output_prefix}.methBins.txt {output_prefix}.chrosome.methy.distri.pdf {step} {output_prefix}.Methylevel.1.txt {output_prefix}.methlevel.pdf {output_prefix}.AverMethylevel.1.txt {output_prefix}.elements.pdf"
+    cmd = abspath + "/methyPlot " + output_prefix + ".methBins.txt " + output_prefix + ".chrosome.methy.distri.pdf " + str(step) + " " +output_prefix + ".Methylevel.1.txt " + output_prefix + ".methlevel.pdf TSS TTS " + output_prefix + ".AverMethylevel.1.txt " + output_prefix + ".elements.pdf"
     cmd = cmd.format(**locals())
     runprogram(cmd)
-    path1 = os.path.dirname(__file__) 
-    abspath = os.path.abspath(path1)
-    cmd = "Rscript {abspath}/density_plot_with_methyl_oneSample_oneGff.r {output_prefix}.methBins.txt {output_prefix}.annoDensity.1.txt {output_prefix}.density.pdf {output_prefix} "
+    cmd = "Rscript "+ abspath + "/density_plot_with_methyl_oneSample_oneGff.r "+ output_prefix + ".methBins.txt " + output_prefix + ".annoDensity.1.txt " + output_prefix + ".density.pdf " + output_prefix
     cmd = cmd.format(**locals())
     runprogram(cmd)
 
 def visul2sample():
-    cmd = "GeneMethHeatmap {sample1_prefix} {sample2_prefix} {CG} {CHG} {CHG}"
+    cmd = abspath + "/GeneMethHeatmap {sample1_prefix} {sample2_prefix} {CG} {CHG} {CHG}"
+
+## whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
+## on gff file or bed region, DNA methylation visulization. Differentail analysis use diffmeth function.
+def runpipe():
+    align_result = output_prefix + ".sam"
+    #if pairedend:
+    #    alignmentPaired()
+    #else:
+    #    alignmentSingle()
+    #alignsummarycmd = "samtools flagstat " + align_result + " | tail -13 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    #runprogram(alignsummarycmd)
+    #calmeth(genome_index, mismatches, align_result, output_prefix, threads)
+    annoation()
+    #methratioLogfile = output_prefix + ".log.txt"
+    #newlogfile = mkpath + "/images/methratio.txt"
+    #shutil.copyfile(methratioLogfile,newlogfile) 
+    methyPlot()
+    mvpng()
+    printoutputfiles()
+    doc2html()
 
 #"pipel", "index", "align", "calmeth", "anno", "visul", "diffmeth", "visuldiff", DManno"
 command = sys.argv[1]

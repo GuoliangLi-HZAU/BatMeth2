@@ -5,7 +5,6 @@ echo
 echo "Usage:     methyPlot chromsome.bins.txt chrosome.methy.distri.pdf step<default:0.025> Infile1.from.batmeth2:methyGff out1.pdf starLabel endLabel Infile2 out2.pdf"
 echo "eg: methyPlot chromsome.bins.txt chrosome.methy.distri.pdf 0.025 gene.meth.Methylevel.1.txt methlevel.pdf TSS TTS gene.meth.AverMethylevel.1.txt elements.pdf"
 echo
-
 if [ $# -eq 9 ];
 then
 	echo "Chromsome.bins.DNA.methylevel.Outfile: " $2 

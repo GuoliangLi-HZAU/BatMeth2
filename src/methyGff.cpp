@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
 			unsigned pos;float methratio=0;int countC=0,countCT=0;
 			//int revG=0,revGA=0;
 			//start to read batman hit file
-			char Buf[BATBUF],Meth[BATBUF],Chrom[CHROMSIZE],Strand,context[BATBUF],effCT[BATBUF];
+			char Buf[BATBUF],Meth[BATBUF],Chrom[CHROMSIZE], noChrom[CHROMSIZE], Strand,context[BATBUF],effCT[BATBUF];
 			printf("\nLoading methyratio file...\n");
 			FILE* INFILE;//=File_Open(methInfileName,"r");
 		for(int f=InFileStart;f<=InFileEnd;f++)
@@ -491,9 +491,9 @@ int main(int argc, char* argv[])
 					//string id="";
 					if(InputGff)
 					{
-//						sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^;]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
-						if(GTF) sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%s\t%s",Chrom,temp,temp,&start,&end,temp,&Strand,temp,temp,Symbol);
-						else sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^\n\t]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
+						sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^;]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
+//						if(GTF) sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%s\t%s",Chrom,temp,temp,&start,&end,temp,&Strand,temp,temp,Symbol);
+//						else sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^\n\t]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
 						id = Symbol;
 					}else if(InputBed)
 					{
@@ -513,7 +513,13 @@ int main(int argc, char* argv[])
 							}
 						}
 					}
-					
+					if(!strcmp(noChrom, Chrom)) continue;
+                        	        map<string, int>::iterator it= String_Hash.find(Chrom);
+                	                if(it == String_Hash.end()) {
+        	                                printf("%s not detected meth\n", Chrom);
+	                                        strcpy(noChrom,Chrom);
+                                        	continue;
+                                	}
 					int H=String_Hash[Chrom];
 					if(start>distance && end+distance <Genome_Offsets[H+1].Offset ) //&& end-start > nLevel 
 					{

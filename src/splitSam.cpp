@@ -414,7 +414,7 @@ int main(int argc, char* argv[])
 				methOutfileName=Prefix;methOutfileName+=".methratio.txt";
 				FILE* METHOUTFILE=File_Open(methOutfileName.c_str(),"w");
 				methWigOutfileName=Prefix;methWigOutfileName+=".meth.wig";
-				FILE* METHWIGOUTFILE=File_Open(methOutfileName.c_str(),"w");
+				FILE* METHWIGOUTFILE=File_Open(methWigOutfileName.c_str(),"w");
 				binsOutfileName=Prefix;binsOutfileName+=".methBins.txt";
 				FILE* BINsOUTFILE=File_Open(binsOutfileName.c_str(),"w");
 				//---DMR
@@ -803,8 +803,8 @@ int main(int argc, char* argv[])
 			fprintf(OUTLOG,"Raw count of Non_Met_C in CHH:\t%lu\n",non_met_CHH);
 			printf("[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
                         printf("\n[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
-                        fprintf(OUTLOG,"\n[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-                        fprintf(OUTLOG,"\n[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
+                        fprintf(OUTLOG,"[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+                        fprintf(OUTLOG,"[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
 			if(Methratio)
 			{
 				FILE* mC_DENSITY=File_Open(mCdensity.c_str(),"w");

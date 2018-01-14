@@ -33,10 +33,10 @@ for (i in 1:chrNum){ ndx <- which(chrMethyl[, 1]==chr[i] )
          if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
          if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
+as.factor(gsub("Chr|chr","CG",chr) )
 
-p <- ggplot() + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CG",chr) )),method="auto",linetype=1)  +
-  theme_bw(base_size=15)+theme(legend.position='none')
-
+p <- ggplot() + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CG",chr) )),method="auto",linetype=1)  + theme_bw(base_size=15)+theme(legend.position='none')
+p <- ggplot(data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor("CG" ))) + geom_point() + theme_bw(base_size=15)+theme(legend.position='none')
 #p <- ggplot() #chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(chr))
 #(p2 <- p  + stat_smooth(se=F,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(chr)),method="auto",linetype=1) )# + geom_point()
            #(p2 <- p + geom_line(aes(x=pos, y=Methyl, size=3.5, colour=as.factor(chr)), alpha=1/3))
@@ -57,8 +57,9 @@ for (i in 1:chrNum){ ndx <- which(chrMethyl[, 1]==chr[i] )
                      if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
 
-(p1 <- p + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CHG",chr) )),method="auto",linetype=2)  +
-  theme_bw(base_size=15)+theme(legend.position='none') )
+#(p1 <- p + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CHG",chr) )),method="auto",linetype=2)  +
+#  theme_bw(base_size=15)+theme(legend.position='none') )
+p1<- p + geom_point(data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor("CHG" ))) + theme_bw(base_size=15)+theme(legend.position='none')
  
 ##############################CHH
 chrMethyl<-Methyl[Methyl$context=="CHH",]
@@ -71,8 +72,9 @@ for (i in 1:chrNum){ ndx <- which(chrMethyl[, 1]==chr[i] )
 }
 
 #p <- ggplot() #chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(chr))
-(p2 <- p1 + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CHH",chr) )),method="auto",linetype=3)  +
-   theme_bw(base_size=15)+theme(legend.position='none') )
+#(p2 <- p1 + stat_smooth(se=F,size=1,data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor(gsub("Chr|chr","CHH",chr) )),method="auto",linetype=3)  +
+#   theme_bw(base_size=15)+theme(legend.position='none') )
+p2<- p1 + geom_point(data=chrMethyl,aes(x=pos, y=Methyl,colour=as.factor("CHH" ))) + theme_bw(base_size=15)+theme(legend.position='none')
  
 ####################gene density
 
@@ -99,8 +101,9 @@ for (i in 1:chrNum){ndx <- which(chrDensity[, 1]==chr[i] )
                     bpMidVeX[i] <- max(posSub)
 }
 
-(p6 <- p2 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","gene",chr)) ),method="auto",linetype=1)+
-   theme_bw(base_size=15)+theme(legend.position='none') )
+#(p6 <- p2 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,colour=as.factor(gsub("Chr|chr","gene",chr)) ),method="auto",linetype=1)+
+#   theme_bw(base_size=15)+theme(legend.position='none') )
+p6<- p2 + geom_point(data=chrDensity,aes(x=pos, y=density,colour=as.factor("gene" ))) + theme_bw(base_size=15)+theme(legend.position='none')
 
 ##########################TE gff density
 #density <- read.table(TEfile,sep="\t")  #"Cr_DJ.TE.count.C.gffDensity.1.txt"
@@ -131,8 +134,8 @@ pdf(outPDF,width=12,height=7)
    scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
    scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
    annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
-   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
+   geom_vline(xintercept=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(yintercept=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.spacing=unit(0,"line") )
    )
 dev.off()
 png(outpng,width=860, height=480,res=128)
@@ -141,8 +144,8 @@ png(outpng,width=860, height=480,res=128)
    scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
    scale_y_continuous(breaks=c(0,0.5,1,1.5,2),labels=c("0","0.5","0","0.5","1") )+
    annotate("text", label = c(label1,"Density","CHH","CHG","CG"), x = c(100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
-   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
+   geom_vline(xintercept=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(yintercept=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+   ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.spacing=unit(0,"line") )
    )
 dev.off()
 ############################legend
@@ -157,7 +160,7 @@ bottom<-ggplot()+geom_line(aes(x=c(0,0.02),y=c(2,2)),linetype=1,colour="purple" 
   geom_line(aes(x=c(0.15,0.17),y=c(2,2)),linetype=1,colour="indianred1" ,size=1)+annotate("text",label="CG",x=0.18,y=2,size=4,color="azure4")+
   geom_line(aes(x=c(0.20,0.22),y=c(2,2)),linetype=2,colour="khaki4" ,size=1)+annotate("text",label="CHG",x=0.23,y=2,size=4,color="azure4")+
   geom_line(aes(x=c(0.25,0.27),y=c(2,2)),linetype=3,colour="cyan1" ,size=1)+annotate("text",label="CHH",x=0.28,y=2,size=4,color="azure4")+
-  theme(panel.grid=element_blank())+ xlab('') + ylab('')+theme_bw()+theme(panel.grid=element_blank(),panel.border = element_blank(),axis.text=element_blank(),axis.ticks=element_blank(),panel.margin=unit(0,"line"))
+  theme(panel.grid=element_blank())+ xlab('') + ylab('')+theme_bw()+theme(panel.grid=element_blank(),panel.border = element_blank(),axis.text=element_blank(),axis.ticks=element_blank(),panel.spacing=unit(0,"line"))
 pdf(outPDFf,width=12,height=7)
 library(gridExtra)
 grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))

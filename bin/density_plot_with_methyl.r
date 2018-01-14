@@ -172,7 +172,7 @@ pdf(outPDF,width=12,height=7)
    scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
    scale_y_continuous(breaks=c(0,0.5,1,1.5,2,2.5,3),labels=c("0","0.5","0","0.5","0","0.5","1") )+
    annotate("text", label = c(label1,label2,"Density","CHH","CHG","CG"), x = c(100,100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,2.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+   geom_vline(xintercept=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(yintercept=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
    ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
    )
 dev.off()
@@ -182,7 +182,7 @@ png(outpng,width=860, height=480,res=128)
    scale_x_continuous(labels=as.character(gsub("Chr|chr","",chr[1:chrNum]) ), breaks=bpMidVec)+
    scale_y_continuous(breaks=c(0,0.5,1,1.5,2,2.5,3),labels=c("0","0.5","0","0.5","0","0.5","1") )+
    annotate("text", label = c(label1,label2,"Density","CHH","CHG","CG"), x = c(100,100,100,bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)],bpMidVeX[length(bpMidVeX)]), y = c(0.8,1.8,2.8,0.06,0.35,0.6), size = 4, colour = "azure4")+
-   geom_vline(x=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(y=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
+   geom_vline(xintercept=bpMidVeX, linetype=2, col='gray', lwd=0.5)+geom_hline(yintercept=c(0,1,2), linetype=5, col='gray', lwd=0.2,alpha=0.6)+
    ggtitle('Chromsome') + xlab('') + ylab('Methylation.Level') + theme(panel.grid=element_blank(),panel.margin=unit(0,"line") )
    )
 dev.off()

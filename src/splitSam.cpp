@@ -617,10 +617,10 @@ int main(int argc, char* argv[])
 							else fprintf(METHOUTFILE,"%s\t%d\t+\t%s\t%d\t%d\t%f\tnull\t%d\t%d\t%s\t%s\n",args.Genome_Offsets[i].Genome,l+1,context.c_str(),C_count,(C_count+T_count),PlusMethratio,rev_G,(rev_A+rev_G),category.c_str(),Fivecontext.c_str());
 							//wig file
 							if(!printwigheader) {
-								fprintf(METHWIGOUTFILE,"variableStep chrom=%s", Genome);
+								fprintf(METHWIGOUTFILE,"variableStep chrom=%s\n", Genome);
 								printwigheader=true;
 							}
-							fprintf(METHWIGOUTFILE,"%d\t%0.001f", l+1, PlusMethratio);
+							fprintf(METHWIGOUTFILE,"%d\t%0.001f\n", l+1, PlusMethratio);
 							if(!strcmp(context.c_str(),"CG")) fprintf(LOC_OUT_CG,"%s\t%d\t+\tCG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 							else if(!strcmp(context.c_str(),"CHG")) fprintf(LOC_OUT_CHG,"%s\t%d\t+\tCHG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 							else if(!strcmp(context.c_str(),"CHH")) fprintf(LOC_OUT_CHH,"%s\t%d\t+\tCHH\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
@@ -742,10 +742,10 @@ int main(int argc, char* argv[])
 
 							//wig
 							if(!printwigheader) {
-                                                                fprintf(METHWIGOUTFILE,"variableStep chrom=%s", Genome);
+                                                                fprintf(METHWIGOUTFILE,"variableStep chrom=%s\n", Genome);
                                                                 printwigheader=true;
                                                         }
-                                                        fprintf(METHWIGOUTFILE,"%d\t-%0.001f", l+1, NegMethratio);
+                                                        fprintf(METHWIGOUTFILE,"%d\t-%0.001f\n", l+1, NegMethratio);
 
 							if(!strcmp(context.c_str(),"CG")) fprintf(LOC_OUT_CG,"%s\t%d\t-\tCG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 							else if(!strcmp(context.c_str(),"CHG")) fprintf(LOC_OUT_CHG,"%s\t%d\t-\tCHG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
@@ -795,6 +795,7 @@ int main(int argc, char* argv[])
 			printf("Raw count of Non_Met_C in CHG:\t%lu\n",non_met_CHG);
 			printf("Raw count of Met_C in CHH:\t%lu\n",met_CHH);
 			printf("Raw count of Non_Met_C in CHH:\t%lu\n",non_met_CHH);
+			fprintf(OUTLOG,"Case\tValue\n");
 			fprintf(OUTLOG,"Raw count of Met_C in CG:\t%lu\n",met_CG);
 			fprintf(OUTLOG,"Raw count of Non_Met_C in CG:\t%lu\n",non_met_CG);
 			fprintf(OUTLOG,"Raw count of Met_C in CHG:\t%lu\n",met_CHG);
@@ -842,7 +843,7 @@ int main(int argc, char* argv[])
 				printf("mCHG/(CHG+THG) {%ld / %ld} = %f% \n",plus_mCHGcount+Neg_mCHGcount,plusCHGcount+NegCHGcount,double (100*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount) );
 				printf("mCHH/(CHH+THH) {%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
 				//+
-                                fprintf(OUTLOG,"Strand\t+\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
+                                fprintf(OUTLOG,"Strand\t+\nmC/(C+T)\t{%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
                                 fprintf(OUTLOG,"mCG/(CG+TG)\t{%ld / %ld} = %f% \n",plus_mCGcount,plusCGcount,double (100*(plus_mCGcount))/(plusCGcount) );
                                 fprintf(OUTLOG,"mCHG/(CHG+THG)\t{%ld / %ld} = %f% \n",plus_mCHGcount,plusCHGcount,double (100*(plus_mCHGcount))/(plusCHGcount) );
                                 fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",plus_mCHHcount,plusCHHcount,double (100*(plus_mCHHcount))/(plusCHHcount) );

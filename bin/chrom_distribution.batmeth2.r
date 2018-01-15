@@ -29,7 +29,7 @@ for(i in 1:length(l))
 }
 dev.off()
 
-png(paste(gsub("pdf","",outFile),"Methylgenome.png", sep=""), width=860, height= (800 * length(l)),res=128)
+png(paste(gsub("pdf","",outFile),"png", sep=""), width=860, height= (800 * length(l)),res=128)
 par(mfrow=c(length(l) * length(c),1), mar=c(4,4,3,2))
 for(i in 1:length(l)) ##chr
 {

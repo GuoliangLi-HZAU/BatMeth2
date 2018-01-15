@@ -203,7 +203,7 @@ pdf(outPDFf,width=12,height=7)
 library(gridExtra)
 grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
 dev.off()
-png(outpngf,width=860, height=480,res=128)
+png(outpngf,width=860, height=580,res=96)
 grid.arrange(p7,empty, bottom, empty, ncol=2, nrow=2, widths=c(1, 0.06),heights=c(7.6,1) ,padding= unit(0, "line"))
 dev.off()
 

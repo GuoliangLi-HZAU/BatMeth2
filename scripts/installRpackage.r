@@ -25,3 +25,4 @@ check_pkg <- function(pkg) {
 
 check_pkg("ggplot2")
 check_pkg("xtable")
+check_pkg("pheatmap")

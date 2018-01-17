@@ -151,6 +151,7 @@ int main(int argc, char* argv[])
 		{
 			binspan=atof(argv[++i]);
 			nLevel=ceil(1/(double)binspan)-1;
+			printf("binspn: %f, nLevel: %d\n", binspan, nLevel);
 		}
 		else if(!strcmp(argv[i], "--bins"))
 		{
@@ -317,6 +318,7 @@ int main(int argc, char* argv[])
 //				sscanf(Meth,"%s%u%s%s%*s%*s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);//,&revG,&revGA
 				sscanf(Meth,"%s%u%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);	
 				if(countCT<Coverage) continue;
+if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 				int H=String_Hash[Chrom];
 				pos--;//0-- for array start 0
 				//int whichBins = (int)floor((double)pos/binsStep);//1000
@@ -521,7 +523,7 @@ int main(int argc, char* argv[])
                                         	continue;
                                 	}
 					int H=String_Hash[Chrom];
-					if(start>distance && end+distance <Genome_Offsets[H+1].Offset ) //&& end-start > nLevel 
+					if(start>distance && end+distance <Genome_Offsets[H+1].Offset && end-start > nLevel ) //&& end-start > nLevel 
 					{
 						start--;end--;
 						if(Strand=='-')
@@ -646,6 +648,8 @@ int main(int argc, char* argv[])
 				{
 					for(int j=0;j<nLevel;j++)
 					{
+						if(methGff_List[i].CG_C[j] > methGff_List[i].CG_CT[j])
+							printf("\nError bin %d, %ld %ld", i, methGff_List[i].CG_C[j], methGff_List[i].CG_CT[j]);
 						fprintf(MethGffOUTFILE,"\t%f",(double)methGff_List[i].CG_C[j]/(double)methGff_List[i].CG_CT[j]);
 					}
 				}
@@ -755,8 +759,8 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
         methGff_List.AverPerCHG=0;methGff_List.AverCHG=0;
         methGff_List.AverPerCHH=0;methGff_List.AverCHH=0;
         
-            int countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
-            int countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
+            unsigned long countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
+            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
             for(int i=start;i<=end;i++)
             {
             	GeneD_List.PN_Cover[i]=1;
@@ -822,6 +826,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
                 if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
+if((countperCG+countperCG_1) > (countCG+countCG_1) || (countperCG+countperCG_1)>10000000) printf("\nSSSaa %d %ld %ld\n", start,(countperCG+countperCG_1), (countCG+countCG_1));
                     	if(Strand=='+' || Strand=='.')
                     	{
 	                            methGff_List.CG_C[nbins-1] += (countperCG+countperCG_1);
@@ -855,8 +860,8 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
         methGff_List.AverPerCHG=0;methGff_List.AverCHG=0;
         methGff_List.AverPerCHH=0;methGff_List.AverCHH=0;
         
-            int countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
-            int countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
+            unsigned long countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
+            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
             for(int i=start;i<=end;i++)
             {
 	                //context
@@ -907,6 +912,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
                 if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
+if((countperCG+countperCG_1) > (countCG+countCG_1) || (countperCG+countperCG_1)>10000000) printf("\nSSS %d %ld %ld\n", start,(countperCG+countperCG_1), (countCG+countCG_1));
                     	if(Strand=='+' || Strand=='.')
                     	{
 	                            methGff_List.CG_C[nbins-1] += (countperCG+countperCG_1);

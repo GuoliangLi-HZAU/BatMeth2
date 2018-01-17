@@ -36,7 +36,7 @@ dev.off()
 
 ####CG
 pdf(gsub(".pdf","CG.pdf", OutFile),width=10,height=6)
-max<-max(data$meth)
+max<-max(data[data$Context==" CG",]$meth)
 max<-max*1.1
 p <- ggplot(data[data$Context==" CG",],aes(x=num,y=meth,color=Context)) #rbind(data[data$Context==" CG",],data[data$Context==" CHG",],data[data$Context==" CHH",])
 p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_colour_manual(values = c(" CG" = "black"," CHG" = "purple"," CHH"="blue"))+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(xintercept=c(length/3,length/3*2),linetype="dotted",color="blue",size=1)+
@@ -52,7 +52,7 @@ dev.off()
 
 ####CHG
 pdf(gsub(".pdf","CHG.pdf", OutFile),width=10,height=6)
-max<-max(data$meth)
+max<-max(data[data$Context==" CHG",]$meth)
 max<-max*1.1
 p <- ggplot(data[data$Context==" CHG",],aes(x=num,y=meth,color=Context)) #rbind(data[data$Context==" CG",],data[data$Context==" CHG",],data[data$Context==" CHH",])
 p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_colour_manual(values = c(" CG" = "black"," CHG" = "purple"," CHH"="blue"))+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(xintercept=c(length/3,length/3*2),linetype="dotted",color="blue",size=1)+
@@ -68,7 +68,7 @@ dev.off()
 
 ####CHH
 pdf(gsub(".pdf","CHH.pdf", OutFile),width=10,height=6)
-max<-max(data$meth)
+max<-max(data[data$Context==" CHH",]$meth)
 max<-max*1.1
 p <- ggplot(data[data$Context== " CHH",],aes(x=num,y=meth,color=Context)) #rbind(data[data$Context==" CG",],data[data$Context==" CHG",],data[data$Context==" CHH",])
 p + geom_line(lwd=0.70)+xlab("")+theme_bw()+theme(panel.grid=element_blank())+scale_colour_manual(values = c(" CG" = "black"," CHG" = "purple"," CHH"="blue"))+scale_x_continuous("",limits=c(0, length-1),breaks=c(0,length/3,length/3*2,length-1),labels=c("up",start,end,"down"))+geom_vline(xintercept=c(length/3,length/3*2),linetype="dotted",color="blue",size=1)+

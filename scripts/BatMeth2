@@ -57,17 +57,17 @@ def usage():
     print "    -n    maximum mismatches allowed due to seq. errors"
     print "    -p <interger>    Launch <integer> threads"
     print "    [calmeth paramaters]"
-    print "    --Qual      caculate the methratio while read QulityScore >= Q. default:10"
-    print "    --redup     REMOVE_DUP"
-    print "    --region    Bins for DMR caculate , default 1000bp ."
+    print "    --Qual=      caculate the methratio while read QulityScore >= Q. default:10"
+    print "    --redup=     REMOVE_DUP"
+    print "    --region=    Bins for DMR caculate , default 1000bp ."
     print "    [calmeth and annoation paramaters]"
-    print "    --coverage    >= <INT> coverage. default:5"
-    print "    --binCover    >= <INT> nCs per region. default:3"
-    print "    --chromstep   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)"
+    print "    --coverage=    >= <INT> coverage. default:5"
+    print "    --binCover=    >= <INT> nCs per region. default:3"
+    print "    --chromstep=   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)"
     print "    [annoation paramaters]"
-    print "    --gtf/--bed    Gtf or gff file / bed file"
-    print "    --distance    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000"
-    print "    --step    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%)"
+    print "    --gtf=/--bed=    Gtf or gff file / bed file"
+    print "    --distance=    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000"
+    print "    --step=    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%)"
     print "    [mkreport paramaters]"
     print "    make a html report."
 
@@ -371,11 +371,19 @@ def doc2html():
         cmd = "Rscript " + abspath + "/doc2html.r " + workdir + " " + output_prefix + " " + file
         runprogram(cmd)
 
+def alignmentstate():
+    alignresults = output_prefix + ".alignresults.txt"
+    Falignresults = open(alignresults, "w")
+    Falignresults.write("Value\tState\n")
+    Falignresults.close()
+    alignsummarycmd = "samtools flagstat " + output_prefix + ".sam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    runprogram(alignsummarycmd)
+
 def mkreport():
     copydir(oldreportdir, mkpath)
     printparamter1()
     printparamter2()
-    alignsummarycmd = "samtools flagstat " + align_result + " | tail -13 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    alignmentstate()
     methratioLogfile = output_prefix + ".log.txt"
     newlogfile = mkpath + "/images/methratio.txt"
     shutil.copyfile(methratioLogfile,newlogfile) 
@@ -392,7 +400,7 @@ def methyPlot():
     cmd = "Rscript "+ abspath + "/density_plot_with_methyl_oneSample_oneGff.r "+ output_prefix + ".methBins.txt " + output_prefix + ".annoDensity.1.txt " + output_prefix + ".density.pdf " + output_prefix
     ##cmd = cmd.format(**locals())
     runprogram(cmd)
-    cmd = abspath + "/GeneMethHeatmap " + output_prefix + " None " + CG + " " + CHG + " " + CHG
+    cmd = abspath + "/GeneMethHeatmap " + output_prefix + " None " + str(CG) + " " + str(CHG) + " " + str(CHH)
     runprogram(cmd)
 
 def visul2sample():
@@ -411,8 +419,7 @@ def runpipe():
     #else:
     #    alignmentSingle()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment summary ..."
-    alignsummarycmd = "samtools flagstat " + align_result + " > " + output_prefix + ".alignresults.txt && tail -13 " + output_prefix + ".alignresults.txt | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
-    runprogram(alignsummarycmd)
+    alignmentstate()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Methylation Status ..."
     calmeth(genome_index, mismatches, align_result, output_prefix, threads)
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Annotation ..."

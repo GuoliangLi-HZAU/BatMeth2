@@ -189,7 +189,6 @@ def printparamter1():
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Process Paramater file."
     ###paramater file
     #mkdir(mkpath)
-    copydir(oldreportdir, mkpath)
     fparamater = mkpath + "/images/Paramater.txt"
     Fparamater = open(fparamater, "w")
 
@@ -372,10 +371,19 @@ def doc2html():
         cmd = "Rscript " + abspath + "/doc2html.r " + workdir + " " + output_prefix + " " + file
         runprogram(cmd)
 
+def alignmentstate():
+    alignresults = output_prefix + ".alignresults.txt"
+    Falignresults = open(alignresults, "w")
+    Falignresults.write("Value\tState\n")
+    Falignresults.close()
+    alignsummarycmd = "samtools flagstat " + output_prefix + ".sam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    runprogram(alignsummarycmd)
+
 def mkreport():
+    copydir(oldreportdir, mkpath)
     printparamter1()
     printparamter2()
-    alignsummarycmd = "samtools flagstat " + align_result + " | tail -13 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    alignmentstate()
     methratioLogfile = output_prefix + ".log.txt"
     newlogfile = mkpath + "/images/methratio.txt"
     shutil.copyfile(methratioLogfile,newlogfile) 
@@ -392,7 +400,7 @@ def methyPlot():
     cmd = "Rscript "+ abspath + "/density_plot_with_methyl_oneSample_oneGff.r "+ output_prefix + ".methBins.txt " + output_prefix + ".annoDensity.1.txt " + output_prefix + ".density.pdf " + output_prefix
     ##cmd = cmd.format(**locals())
     runprogram(cmd)
-    cmd = abspath + "/GeneMethHeatmap " + output_prefix + " None " + CG + " " + CHG + " " + CHG
+    cmd = abspath + "/GeneMethHeatmap " + output_prefix + " None " + str(CG) + " " + str(CHG) + " " + str(CHH)
     runprogram(cmd)
 
 def visul2sample():
@@ -401,6 +409,7 @@ def visul2sample():
 ## whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
 ## on gff file or bed region, DNA methylation visulization. Differentail analysis use diffmeth function.
 def runpipe():
+    copydir(oldreportdir, mkpath)
     printparamter1()
     printparamter2()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment ..."
@@ -410,8 +419,7 @@ def runpipe():
     #else:
     #    alignmentSingle()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment summary ..."
-    alignsummarycmd = "samtools flagstat " + align_result + " > " + output_prefix + ".alignresults.txt && tail -13 " + output_prefix + ".alignresults.txt | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
-    runprogram(alignsummarycmd)
+    alignmentstate()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Methylation Status ..."
     calmeth(genome_index, mismatches, align_result, output_prefix, threads)
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Annotation ..."

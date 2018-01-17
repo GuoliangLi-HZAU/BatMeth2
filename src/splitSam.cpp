@@ -67,6 +67,7 @@ struct Threading
 	void *ret;
 	ARGS Arg;
 };
+bool RELESEM = false;
 bool printheader = true;
 using namespace std;
 bool Collision=false;
@@ -136,6 +137,7 @@ bool SamSeqBeforeBS=false;
 int RegionBins=1000;
 
 int NTHREAD=6;
+pthread_mutex_t mark_mutex = PTHREAD_MUTEX_INITIALIZER;
 int main(int argc, char* argv[])
 {
 	time_t Start_Time,End_Time;
@@ -288,7 +290,7 @@ int main(int argc, char* argv[])
 			if(!fread(args.Org_Genome,Genome_Size,1,BINFILE)) throw ("Error reading file..\n");
 			args.Marked_Genome=new char[Genome_Size+1];if(!args.Marked_Genome) throw("Insufficient memory to Mark genome..\n"); 
 			args.Marked_GenomeE=new char[Genome_Size+1];if(!args.Marked_GenomeE) throw("Insufficient memory to Mark genome..\n"); 
-			
+
 			printf("Splitting Genome.. %s\n", Geno.c_str());
 
 			while (fgets(Temp_OR.Genome,39,Location_File)!=0)//count genomes..
@@ -767,27 +769,9 @@ int main(int argc, char* argv[])
 			}//end methratio
 			//Print_Mismatch_Quality(OUTFILE_MM_QUALITY, Read_Len);
 	//}
-			if(args.OUTFILE!=NULL) fclose(args.OUTFILE);
-			
-			for ( int i=0;i<Genome_Count;i++)
-			{
-				if(Methratio)
-				{
-					delete[] args.Methy_List[i].plusG;
-					delete[] args.Methy_List[i].plusA ;
-					delete[] args.Methy_List[i].NegG;
-					delete[] args.Methy_List[i].NegA;
-					//delete[] args.Methy_List[i].MethContext ;
-					delete[] args.Methy_List[i].plusMethylated ;
-					delete[] args.Methy_List[i].plusUnMethylated;
-					delete[] args.Methy_List[i].NegMethylated ;
-					delete[] args.Methy_List[i].NegUnMethylated ;
-				}
-			}
-			delete [] args.Genome_List;
-			delete [] args.Methy_List;
-			delete [] args.Genome_Offsets;
-			delete [] args.Org_Genome;
+			printf("genome process done!\n");
+			//if(args.OUTFILE!=NULL) fclose(args.OUTFILE);
+			if(Sam && strcmp(Output_Name,"None") ) fclose(args.OUTFILE);
 			
 			printf("Raw count of Met_C in CG:\t%lu\n",met_CG);
 			printf("Raw count of Non_Met_C in CG:\t%lu\n",non_met_CG);
@@ -857,6 +841,29 @@ int main(int argc, char* argv[])
 				fprintf(OUTLOG,"mCG/(CG+TG)\t{%ld / %ld} = %f% \n",plus_mCGcount+Neg_mCGcount,plusCGcount+NegCGcount,double (100*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
 				fprintf(OUTLOG,"mCHG/(CHG+THG)\t{%ld / %ld} = %f% \n",plus_mCHGcount+Neg_mCHGcount,plusCHGcount+NegCHGcount,double (100*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
 				fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
+			}
+
+//delete
+			printf("Done and release memory!\n");
+			if(RELESEM){
+        	                for ( int i=0;i<Genome_Count;i++)
+	                        {
+                        	        if(Methratio)
+                	                {
+        	                                delete[] args.Methy_List[i].plusG;
+	                                        delete[] args.Methy_List[i].plusA ;
+                                        	delete[] args.Methy_List[i].NegG;
+                                	        delete[] args.Methy_List[i].NegA;
+                        	                delete[] args.Methy_List[i].plusMethylated ;
+                	                        delete[] args.Methy_List[i].plusUnMethylated;
+        	                                delete[] args.Methy_List[i].NegMethylated ;
+	                                        delete[] args.Methy_List[i].NegUnMethylated ;
+                	                }
+        	                }
+	                        delete [] args.Genome_List;
+	                        delete [] args.Methy_List;
+	                        delete [] args.Genome_Offsets;
+                        	delete [] args.Org_Genome;
 			}
 		}
 		catch(char* Err)
@@ -1276,8 +1283,10 @@ void *Process_read(void *arg)
 			    funlockfile(((ARGS *)arg)->OUTFILE);
                         }
 		}
+		pthread_mutex_lock(&mark_mutex);
 		((ARGS *)arg)->Marked_Genome[pos+G_Skip] |= Flag;
 		((ARGS *)arg)->Marked_GenomeE[pos+G_Skip+readString.size()] |= Flag;
+		pthread_mutex_unlock(&mark_mutex);
 	}
 
 }

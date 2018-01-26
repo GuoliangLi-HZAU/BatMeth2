@@ -477,6 +477,7 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 				string id="";
 				char Symbol[BATBUF];
 				unsigned start=0,end=0;
+				Strand = '.';
 				while(!feof(GFFINFILE))
 				{
 					Total_Reads++;
@@ -760,7 +761,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
         methGff_List.AverPerCHH=0;methGff_List.AverCHH=0;
         
             unsigned long countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
-            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
+            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,countCHG_1=0,countCHH_1=0;    
             for(int i=start;i<=end;i++)
             {
             	GeneD_List.PN_Cover[i]=1;
@@ -826,7 +827,6 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
                 if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
-if((countperCG+countperCG_1) > (countCG+countCG_1) || (countperCG+countperCG_1)>10000000) printf("\nSSSaa %d %ld %ld\n", start,(countperCG+countperCG_1), (countCG+countCG_1));
                     	if(Strand=='+' || Strand=='.')
                     	{
 	                            methGff_List.CG_C[nbins-1] += (countperCG+countperCG_1);
@@ -861,7 +861,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
         methGff_List.AverPerCHH=0;methGff_List.AverCHH=0;
         
             unsigned long countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
-            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;    
+            unsigned long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,countCHG_1=0,countCHH_1=0;    
             for(int i=start;i<=end;i++)
             {
 	                //context
@@ -912,7 +912,6 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
                 if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
-if((countperCG+countperCG_1) > (countCG+countCG_1) || (countperCG+countperCG_1)>10000000) printf("\nSSS %d %ld %ld\n", start,(countperCG+countperCG_1), (countCG+countCG_1));
                     	if(Strand=='+' || Strand=='.')
                     	{
 	                            methGff_List.CG_C[nbins-1] += (countperCG+countperCG_1);

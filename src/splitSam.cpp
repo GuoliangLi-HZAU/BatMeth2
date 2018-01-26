@@ -109,7 +109,7 @@ unsigned ALL_Map_Remdup=0;
 int UPPER_MAX_MISMATCH=2;
 bool REMOVE_DUP=false; //true; //true to removeDup, false will not remove PCR-dup
 unsigned Mismatch_Qual[255][255][255]; //[readLength][255][255]
-int QualCut=0;
+int QualCut=10;
 const int POWLIMIT=300;
 float POW10[POWLIMIT];
 int QUALITYCONVERSIONFACTOR=33;
@@ -149,14 +149,14 @@ int main(int argc, char* argv[])
 		"\t-p|--threads          the number of threads.\n"
 		"\t-n|--Nmismatch        Number of mismatches\n"
 		"\t-m|--methratio        [MethFileNamePrefix]  Predix of methratio output file\n"
-		"\t-Q [int]              caculate the methratio while read QulityScore >= Q. default:0\n"
+		"\t-Q [int]              caculate the methratio while read QulityScore >= Q. default:10\n"
 		"\t-C|--coverage         >= <INT> coverage. default:5\n"
-		"\t-nC		             >= <INT> nCs per region. default:5\n"
+		"\t-nC		         >= <INT> nCs per region. default:5\n"
 		"\t-R |--Regions         Bins for DMR caculate , default 1kb .\n"
 		"\t-b|--binsfile         DNA methylation level distributions in chrosome, default output file: {methratioPrefix}.methBins.txt\n"
 		"\t-s|--step             Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n"
 		"\t-r|--remove_dup       REMOVE_DUP, default:false\n"
-		"\t-f|--sam [outfile]        f for sam format outfile contain methState. default: sam format.\n"
+		"\t-f|--sam [outfile]    f for sam format outfile contain methState. default: sam format.\n"
 		"\t--sam-seq-beforeBS    Converting BS read to the genome sequences.\n"
 		"\t-h|--help";
 

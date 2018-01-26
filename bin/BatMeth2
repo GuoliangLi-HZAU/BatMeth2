@@ -57,17 +57,17 @@ def usage():
     print "    -n    maximum mismatches allowed due to seq. errors"
     print "    -p <interger>    Launch <integer> threads"
     print "    [calmeth paramaters]"
-    print "    --Qual      caculate the methratio while read QulityScore >= Q. default:10"
-    print "    --redup     REMOVE_DUP"
-    print "    --region    Bins for DMR caculate , default 1000bp ."
+    print "    --Qual=      caculate the methratio while read QulityScore >= Q. default:10"
+    print "    --redup=     REMOVE_DUP"
+    print "    --region=    Bins for DMR caculate , default 1000bp ."
     print "    [calmeth and annoation paramaters]"
-    print "    --coverage    >= <INT> coverage. default:5"
-    print "    --binCover    >= <INT> nCs per region. default:3"
-    print "    --chromstep   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)"
+    print "    --coverage=    >= <INT> coverage. default:5"
+    print "    --binCover=    >= <INT> nCs per region. default:3"
+    print "    --chromstep=   Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)"
     print "    [annoation paramaters]"
-    print "    --gtf/--bed    Gtf or gff file / bed file"
-    print "    --distance    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000"
-    print "    --step    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%)"
+    print "    --gtf=/--bed=    Gtf or gff file / bed file"
+    print "    --distance=    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000"
+    print "    --step=    Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%)"
     print "    [mkreport paramaters]"
     print "    make a html report."
 
@@ -179,7 +179,8 @@ def printStatus():
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Input file: ", input_prefix, " ", input_prefix1, " ", input_prefix2
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Outfile prefix: ", output_prefix
 
-printStatus()
+if(sys.argv[1] != "build_index")
+	printStatus()
 
 oldreportdir = abspath + "/../BatMeth2-Report"
 workdir = os.getcwd()
@@ -244,11 +245,11 @@ def calmeth(genome_index, mismatches, inputf, output_prefix, threads):
     runprogram(cmd)
     return
 
-def build_index(genome_index):
-    if genome_index == "":
+def build_index():
+    if len(sys.argv) < 2:
         print "Must have genome file."
         sys.exit()
-    cmd = abspath + "/build_all " + genome
+    cmd = abspath + "/build_all " + sys.argv[2]
     runprogram(cmd)
 
 def alignmentSingle():
@@ -414,10 +415,10 @@ def runpipe():
     printparamter2()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment ..."
     align_result = output_prefix + ".sam"
-    #if pairedend:
-    #    alignmentPaired()
-    #else:
-    #    alignmentSingle()
+    if pairedend:
+        alignmentPaired()
+    else:
+        alignmentSingle()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment summary ..."
     alignmentstate()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Methylation Status ..."
@@ -440,7 +441,7 @@ def runpipe():
 #"pipel", "index", "align", "calmeth", "anno", "visul", "diffmeth", "visuldiff", DManno"
 command = sys.argv[1]
 if command == "build_index":
-    build_index(genome_index)
+    build_index()
 elif command == "pipel":
     runpipe()
 elif command == "align":

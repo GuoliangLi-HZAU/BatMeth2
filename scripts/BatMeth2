@@ -179,7 +179,8 @@ def printStatus():
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Input file: ", input_prefix, " ", input_prefix1, " ", input_prefix2
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Outfile prefix: ", output_prefix
 
-printStatus()
+if(sys.argv[1] != "build_index")
+	printStatus()
 
 oldreportdir = abspath + "/../BatMeth2-Report"
 workdir = os.getcwd()
@@ -244,11 +245,11 @@ def calmeth(genome_index, mismatches, inputf, output_prefix, threads):
     runprogram(cmd)
     return
 
-def build_index(genome_index):
-    if genome_index == "":
+def build_index():
+    if len(sys.argv) < 2:
         print "Must have genome file."
         sys.exit()
-    cmd = abspath + "/build_all " + genome
+    cmd = abspath + "/build_all " + sys.argv[2]
     runprogram(cmd)
 
 def alignmentSingle():
@@ -414,10 +415,10 @@ def runpipe():
     printparamter2()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment ..."
     align_result = output_prefix + ".sam"
-    #if pairedend:
-    #    alignmentPaired()
-    #else:
-    #    alignmentSingle()
+    if pairedend:
+        alignmentPaired()
+    else:
+        alignmentSingle()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment summary ..."
     alignmentstate()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Methylation Status ..."
@@ -440,7 +441,7 @@ def runpipe():
 #"pipel", "index", "align", "calmeth", "anno", "visul", "diffmeth", "visuldiff", DManno"
 command = sys.argv[1]
 if command == "build_index":
-    build_index(genome_index)
+    build_index()
 elif command == "pipel":
     runpipe()
 elif command == "align":

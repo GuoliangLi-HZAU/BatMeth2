@@ -106,7 +106,7 @@ AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aut
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/public/home/qwzhou/software/packagesR/include
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
@@ -126,7 +126,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/public/home/qwzhou/software/packagesR/lib
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
@@ -709,6 +709,7 @@ copy:
 	cp src/BS-Snper/Help ./bin
 	cp src/batDMR/batDMR ./bin
 	cp scripts/BatMeth2 ./bin
+	cp src/splitSam bin
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

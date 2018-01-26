@@ -77,7 +77,7 @@ AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aut
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/public/home/qwzhou/software/packagesR/include
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
@@ -97,7 +97,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/public/home/qwzhou/software/packagesR/lib
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 

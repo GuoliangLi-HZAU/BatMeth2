@@ -5522,8 +5522,7 @@ void Print_Aux_Hit(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pa
 	int ed = Get_ED(Aux.CIG);
 	if(Aux.swscore >= R.Real_Len*0.4) //Aux.Quality_Score>20 && 
 	{
-printf("\nswscoren %d %d %d %s ||  %s %d\n", Aux.swscore, Aux.Score, Aux.SW_Score, Aux.CIG.c_str(), Aux.CIG, Aux.Mismatch);
-if( Aux.swscore == 99) {printf("\n%s\n", R.Description); exit(0);}
+//if( Aux.swscore == 99) {printf("\n%s\n", R.Description); exit(0);}
 		Alignment_Pair Pai; 
 		Pai.chrom1=Ann1.Name;Pai.Loc1=Aux.Loc;Pai.Flag1=Aux.Flag;Pai.source1=source;Pai.Mismatch1=Aux.Mismatch;Pai.ReadLen1=R.Real_Len;Pai.Cigar1=Aux.CIG;
 		strcpy(Pai.Description1,R.Description);strcpy(Pai.Tag_Copy1,RawR.Raw_Tag_Copy);strcpy(Pai.Quality1,RawR.Quality);	

@@ -179,7 +179,7 @@ def printStatus():
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Input file: ", input_prefix, " ", input_prefix1, " ", input_prefix2
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Outfile prefix: ", output_prefix
 
-if(sys.argv[1] != "build_index")
+if(sys.argv[1] != "build_index"):
 	printStatus()
 
 oldreportdir = abspath + "/../BatMeth2-Report"

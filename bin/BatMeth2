@@ -440,27 +440,32 @@ def runpipe():
 
 #"pipel", "index", "align", "calmeth", "anno", "visul", "diffmeth", "visuldiff", DManno"
 command = sys.argv[1]
+para = ""
+if(command != "pipel"):
+    for i in range(2, len(sys.argv)):
+        para = para + " " + sys.argv[i]
+
 if command == "build_index":
     build_index()
 elif command == "pipel":
     runpipe()
 elif command == "align":
-    cmd = abspath + "/batmeth2-align "
+    cmd = abspath + "/batmeth2-align " + para
     runprogram(cmd)
 elif command == "calmeth":
-    cmd = abspath + "/splitSam "
+    cmd = abspath + "/splitSam " + para
     runprogram(cmd)
 elif command == "anno":
-    cmd = abspath + "/methyGff "
+    cmd = abspath + "/methyGff " + para
     runprogram(cmd)
 elif command == "visul":
-    cmd = abspath + "/methyPlot" 
+    cmd = abspath + "/methyPlot" + para
     runprogram(cmd)
 elif command == "diffmeth":
-    cmd = abspath + "/batDMR" 
+    cmd = abspath + "/batDMR" + para
     runprogram(cmd)
 elif command == "DManno":
-    cmd = abspath + "/DMCannotationPlot" 
+    cmd = abspath + "/DMCannotationPlot" + para
     runprogram(cmd)
 elif command == "mkreport":
     mkreport()

@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
 	Char2Comp['T']=Char2Comp['t']='A';
 	Char2Comp['N']=Char2Comp['n']='N';
 	int Genome_CountX=0;
-	char* Output_Name = "None";
+	char* Output_Name;
 	string Prefix="None";
 	string methOutfileName;
 	string methWigOutfileName;
@@ -265,14 +265,16 @@ int main(int argc, char* argv[])
 	{
 		printf("\nBatMeth2::Split v2.0\n");
 		string log;
-                if(strcmp(Output_Name, "None")) log=Output_Name;
-                else log=Prefix;
+                log=Prefix;
                 log+=".log.txt";
 		FILE* OUTLOG=File_Open(log.c_str(),"w");
 		string mCdensity;
-                if(strcmp(Output_Name, "None")) mCdensity=Output_Name;
-                else mCdensity=Prefix;  
+                mCdensity=Prefix;  
                 mCdensity+=".mCdensity.txt";
+
+		string mCcatero;
+                mCcatero=Prefix;
+                mCcatero+=".mCcatero.txt";
 		
                 try
 		{
@@ -649,8 +651,7 @@ int main(int argc, char* argv[])
 								if(l>=2 ) Fivecontext= Genome_Seq.substr(l-2,4)+"N";
 								else if(l==1) Fivecontext = "N" + Genome_Seq.substr(l-1,3)+"N";
 								else if(l==0) Fivecontext = "NN" + Genome_Seq.substr(l,2)+"N";
-							}else
-							{
+							}else{
 								if(l>=2 ) Fivecontext= Genome_Seq.substr(l-2,3)+"NN";
 								else if(l==1) Fivecontext = "N" + Genome_Seq.substr(l-1,2)+"NN";
 								else if(l==0) Fivecontext = "NN" + Genome_Seq.substr(l,1)+"NN";
@@ -808,9 +809,12 @@ int main(int argc, char* argv[])
 				{
 					fprintf(mC_DENSITY,"\t%lu",mCHHdensity[i]);
 				}
-				fprintf(mC_DENSITY,"\nM\t%u\nMh\t%u\nH\t%u\nhU\t%u\nU\t%u",M,Mh,H,hU,U);
-				fprintf(mC_DENSITY,"\nCpG_M\t%u\nCpG_Mh\t%u\nCpG_H\t%u\nCpG_hU\t%u\nCpG_U\t%u",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-				
+				fclose(mC_DENSITY);
+
+				FILE* mC_catero=File_Open(mCcatero.c_str(),"w");
+				fprintf(mC_catero,"\nM\t%u\nMh\t%u\nH\t%u\nhU\t%u\nU\t%u",M,Mh,H,hU,U);
+				fprintf(mC_catero,"\nCpG_M\t%u\nCpG_Mh\t%u\nCpG_H\t%u\nCpG_hU\t%u\nCpG_U\t%u",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+				fclose(mC_catero);
 				//+
 				printf("\nStrand+ :\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
 				printf("mCG/(CG+TG) {%ld / %ld} = %f% \n",plus_mCGcount,plusCGcount,double (100*(plus_mCGcount))/(plusCGcount) );

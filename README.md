@@ -26,11 +26,11 @@ e) The binary of BatMeth2 will be created in bin/
 BUILDING INDEX
 -------
    
-a) Have a fasta-formatted file ready 
+a) Have a fasta-formatted reference file ready 
 
 b) Type "`BatMeth2 build_index GENOME.fa`" to make the neccessary pairing data-structure based on FM-index.
 
-c) Run "`BatMeth2`" to see the details.
+c) Run "`BatMeth2`" to see information on usage.
 
 USAGE of BatMeth2
 ------
@@ -53,13 +53,13 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     -n &emsp; maximum mismatches allowed due to seq. errors <br>
     -p <interger> &emsp; Launch <integer> threads <br>
     **[calmeth paramaters]** <br>
-    --Qual &emsp;&ensp;&ensp; caculate the methratio while read QulityScore >= Q. default:10 <br>
+    --Qual &emsp;&ensp;&ensp; calculate the methratio while read QulityScore >= Q. default:10 <br>
     --redup &emsp;&ensp; REMOVE_DUP <br>
     --region &emsp; Bins for DMR caculate , default 1000bp . <br>
     **[calmeth and annoation paramaters]** <br>
     --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
     --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
-    --chromstep &emsp; Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
+    --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
     --gtf/--bed &emsp; Gtf or gff file / bed file <br>
     --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
@@ -79,11 +79,11 @@ Functions in BatMeth2
 
 **Single-end-reads** 
 
-$ `BatMeth2 aign -g INDEX -i INPUT -o OUTPUT_Prefix -p 6 -n 2` 
+$ `BatMeth2 align -g INDEX -i INPUT -o OUTPUT_Prefix -p 6 -n 2` 
 
 *example: 
-    1. Left: BatMeth2 align -g ./hg19/hg19.fa -i left.fq -o outPrefix1 -p 6 <br>
-    2. Right: BatMeth2 align --non_directional -O -g ./hg19/hg19.fa -i right.fq -o outPrefix2 -p 6 
+    1. Left: BatMeth2 align -g ./hg19/hg19.fa -i single.fq -o outPrefix1 -p 6 <br>
+    2. Right: BatMeth2 align --non_directional -O -g ./hg19/hg19.fa -i single.fq -o outPrefix2 -p 6 
 *
 
 **Paired-end-reads** 
@@ -104,12 +104,12 @@ example: BatMeth2 calmeth -f -o Final_Result.sam -g ../../../Genome/batmeth2/all
 
 a) Convert Sam files into BAM files
 
-   $ `samtools view -bS Final_Result.sam > Final_Result.bam` 
+   $ `sambamba view -t 6 -S -f bam Final_Result.sam > Final_Result.bam` 
    
 
 b) Sort the bam file 
 
-   $ `samtools sort Final_Result.bam -f Final_Result.sort.bam` 
+   $ `sambamba sort -t 6 --memory-limit=32GB -o Final_Result.sort.bam Final_Result.bam` 
    
    $ `rm Final_Result.bam` 
    

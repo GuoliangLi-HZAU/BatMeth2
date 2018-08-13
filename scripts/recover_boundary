@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+
+open F,$ARGV[0]  or die;
+open UNIQ,">$ARGV[0].unique"  or die;
+open LEAST,">$ARGV[0].least"  or die;
+$Least_Hit=0;$Unique_Hit=0;@All_Least=();
+while ($L=<F>)
+{
+	chomp $L;
+	if ($L eq "@")
+	{
+		if($Least_Hit)
+		{
+			print LEAST $Head;
+			foreach ( @All_Least)
+			{
+				print LEAST $_;
+			}
+		}
+		if ($Unique_Hit)
+		{
+			print UNIQ $Head;
+			print UNIQ "1\t$LChr\t$LSign\t$LLoc\t$LMM\n";
+		}
+		$Head=<F>;
+		$Least_MM=400;
+		$Least_Hit=0;$Unique_Hit=0;
+	}
+	else
+	{
+		split (/\t/,$L);
+		if($_[0] ne "*")
+		{
+			$Chr=$_[1];$Sign=$_[2];$Loc=$_[3];$MM=$_[4];
+			if($Least_MM>$MM) #First pass
+			{
+				$Least_MM=$MM;
+				$Least_Hit=1;
+				$Unique_Hit=1;
+				$LChr=$_[1];$LSign=$_[2];$LLoc=$_[3];$LMM=$_[4];
+				@All_Least=();
+				push @All_Least,"1\t$LChr\t$LSign\t$LLoc\t$LMM\n";
+			}
+			elsif ($Least_MM == $MM)
+			{
+				push @All_Least,"1\t$Chr\t$Sign\t$Loc\t$MM\n";
+				$Unique_Hit=0;
+			}
+		}
+	}
+}
+
+if($Least_Hit)
+{
+	print LEAST $Head;
+	print LEAST "1\t$LChr\t$LSign\t$LLoc\t$LMM\n";
+}
+if ($Unique_Hit)
+{
+	print UNIQ $Head;
+	print UNIQ "1\t$LChr\t$LSign\t$LLoc\t$LMM\n";
+}

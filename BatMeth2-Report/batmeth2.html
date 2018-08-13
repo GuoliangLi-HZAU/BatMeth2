@@ -1,0 +1,173 @@
+  <!DOCTYPE HTML>
+  <html lang="en-US">
+  <head>
+  <meta charset="UTF-8">
+  <title>BatMeth2 Tool</title>
+  <link rel="stylesheet" type="text/css" href="style.css" media="all" />
+   <script src="./jquery.min.js" type="text/javascript"></script>
+   <script src="./script.js"></script> 
+   <link rel="icon" href="icons/favicon.ico" mce_href="icons/favicon.ico" type="image/x-icon">
+   <link rel="shortcut icon" href="icons/favicon.ico" mce_href="icons/favicon.ico" type="image/x-icon">
+  <!-- <script>
+       $(function(){
+           var $helpIcon = $("<span></span>");
+           var $img = $("<img></img>");
+           $("h3").append($helpIcon);
+           $("span").attr("class", "help");
+           $("span").append($img);
+           $("span img").attr("src", "icons/help.png");
+       }) 
+   </script> -->
+  </head>
+  <body>
+
+  <!-- Begin Wrapper -->
+  <div id="wrapper">
+  	<!-- Begin Sidebar -->
+  	<div id="sidebar" style="background:#0e8121;"> 
+  		 <div id="logo" align="center"><a href="batmeth2.html"><img src="icons/MethLog.png" alt="BatMeth2" width="210", heigth="200"/></a></div>
+         <div id = "ourlab" style="text-align:center;" >
+      <a  style=" text-decoration: none; color: pink; font-weight:bold;" href="http://www.guolianglab.org/">OUR LAB</a>
+		</div>
+
+  	<!-- Begin Menu -->
+      <div id="menu" class="menu-v">   
+        <ul>
+          <li><a href="#Running_info" class="active" style="background:#0e8121;"><font color="white">Running information</font> </a>
+            <ul>
+                <li><a href="#RunSumary"><font color="green">Running summary</font></a></li>
+                <li><a href="#Paramater"><font color="green">Paramaters</font></a></li>
+            </ul>
+          </li>
+          <li><a href="#Running_statistics" class="active" style="background:#0e8121;"><font color="white">Results</font></a>
+            <ul>
+              <li><a href="#Aligns"><font color="green">Alignment results</font></a></li>
+              <li><a href="#OutFile"><font color="green">Output files</font></a></li>
+            </ul>
+          </li>
+          <li><a href="#MethLevel" style="background:#0e8121;"><font color="white" >DNA methylation level</font></a>
+          	<ul>
+          		<li><a href="#Methylevel"><font color="green">DNA methylation level</font></a></li>
+              <li><a href="#Methyleveldensity"><font color="green">DNA methylation level density</font></a></li>
+              <li><a href="#Methylevelcatero"><font color="green">DNA methylation level category</font></a></li>
+              <li><a href="#Methylevelgenome"><font color="green">DNA methylation level on chromosomes</font></a></li>
+              
+            	</ul>
+          </li>   
+          <li><a href="#Function_Meth" style="background:#0e8121;"><font color="white">DNA methylation level distribution on function elements</font></a>
+            <ul>  
+              <li><a href="#Methenrich"><font color="green">Enrichment of DNA methylation</font></a></li>
+              <li><a href="#geneCG"><font color="green">DNA methylation distribution-CG</font></a></li>
+              <li><a href="#geneCHG"><font color="green">CHG</font></a></li>
+              <li><a href="#geneCHH"><font color="green">CHH</font></a></li>
+              <li><a href="#heatmapgene-CG"><font color="green">Heatmap of gene's DNA methylation-CG</font></a></li>
+              <li><a href="#heatmapgene-CHG"><font color="green">Heatmap-CHG</font></a></li>
+              <li><a href="#heatmapgene-CHH"><font color="green">Heatmap-CHH</font></a></li>
+            </ul>
+          </li>
+          <li><a href="#Cluster_visual" style="background:#0e8121;"><font color="white">DNA methylation distribution with function elements density</font></a>
+            <ul>
+			  <li><a href="#density"><font color="green">density plot</font></a></li>
+            </ul>
+          </li>
+		 <li><a href="#Cluster_visual2" style="background:#0e8121;"><font color="white">Differential DNA methylation analysis</font></a>
+            <ul>
+			  <li><a href="#DM"><font color="green">Differential results</font></a></li>
+              <li><a href="#DMA"><font color="green">Differential annotation</font></a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!-- End Menu -->
+     
+
+      
+  	</div> 
+  	<!-- End Sidebar -->
+  	
+  	<!-- Begin Content -->
+  	<div id="content">
+
+    	<h1 class="title" id="Running_info" ><font color="green">Running informatin</font></h1>
+    	<div class="line" ></div>
+      <h3 id = "RunSumary" style=" text-align:center;">Running summary</h3>
+      <h2><iframe width = 800 height = 290 src = "images/Paramater.html"></iframe></h2>
+      <h3 id = "Paramater" style=" text-align:center;">Paramaters</h3>
+      <h2><iframe width = 800 height = 400 src = "images/Paramater2.html"></iframe></h2>
+  	
+
+      <h1 class="title" id="Running_statistics"><font color="green">Results</font></h1>
+      <div class="line"></div>
+      
+        <h3 id = "Aligns" style=" text-align:center;">Alignment Results</h3>
+        <!-- <h3><img src="images/Rplot2.png" alt=""/></h3> -->
+        <h2><iframe width = 800 height = 350 src = "images/alignresults.html"></iframe></h2>  
+
+		
+        <h3 id = "OutFile" style=" text-align:center;">Output files        </h3>
+      <h2><iframe width = 800 height = 480 src = "images/outfiles.html"></iframe>
+        <!-- <h3><img src="images/Rplot2.png" alt=""/></h3> -->      </h2>
+      <h1 id = "MethLevel"><font color="green">DNA methylation level</font></h1>
+      <div class="line"></div> 
+
+        <h3 id = "Methylevel" style=" text-align:center;">DNA methylation Level</h3>
+         <h2><iframe width = 800 height = 700 src = "images/methratio.html"></iframe></h2>
+
+         <h3 id = "Methyleveldensity" style=" text-align:center;">DNA methylation level density</h3>
+      <h2><div style='border:0px;padding:3px; PADDING:0px; width:720px; height:600px; LINE-HEIGHT: 20px; OVERFLOW: auto;'><img src="images/mCdensity.png" alt=""/ width="720" ></div></h2>
+
+        <h3 id = "Methylevelcatero" style=" text-align:center;">DNA methylation level category</h3>
+      <h2><div style='border:0px;padding:3px; PADDING:0px; width:720px; height:450px; LINE-HEIGHT: 20px; OVERFLOW: auto;'><img src="images/mCcatero.png" alt=""/ width="720" ></div></h2>
+
+        <h3 id = "Methylevelgenome" style=" text-align:center;">DNA methylation level distribution on chromsome</h3>
+       <!-- <h2><iframe width = 760 height = 600 src = "images/Methygenome.html"></iframe> -->
+       <!-- <h2><img src="images/Methygenome.png" alt=""/ width="700" ></h2>  -->
+	<h2><div style='border:0px;padding:3px; PADDING:0px; width:760px; height:600px; LINE-HEIGHT: 20px; OVERFLOW: auto;'><img src="images/Methygenome.png" alt=""/ width="720" ></div></h2>
+
+      <h1 id = "Function_Meth" ><font color="green">DNA methylation level distribution on function elements</font></h1>
+      <div class="line"></div>
+            
+        <h3 id = "Methenrich" style=" text-align:left;">Enrichment of DNA methylation</h3>
+        <h2><img src="images/Methenrich.png" alt=""/  style = "height: 680px; width: 680px"></h2>
+        <h3 id = "geneCG" style=" text-align:left;">DNA methylation distribution - CG</h3> 
+        <h2><img src="images/functionCG.png" alt=""/  style = "height: 420px; width: 680px"></h2>
+        <h3 id = "geneCHG" style=" text-align:left;">DNA methylation distribution - CHG</h3>
+        <h2><img src="images/functionCHG.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
+        <h3 id = "geneCHH" style=" text-align:left;">DNA methylation distribution - CHH</h3>
+        <h2><img src="images/functionCHH.png" alt=""/  style = "height: 420px; width: 680px"></h2> 
+  	    <h3 id = "heatmapgene-CG" style=" text-align:left;">Heatmap of genes-CG</h3>
+        <h2><img src="images/heatmap-CG.png" alt=""/  style = "height: 460px; width: 480px"></h2> 
+        <h3 id = "heatmapgene-CHG" style=" text-align:left;">Heatmap of genes-CHG</h3>
+        <h2><img src="images/heatmap-CHG.png" alt=""/  style = "height: 460px; width: 480px"></h2> 
+        <h3 id = "heatmapgene-CHH" style=" text-align:left;">Heatmap of genes-CHH</h3>
+        <h2><img src="images/heatmap-CHH.png" alt=""/  style = "height: 460px; width: 480px"></h2> 
+      
+      <h1 id = "Cluster_visual"><font color="green">DNA methylation distribution with function elements density</font></h1>
+      <div class="line"></div>
+		<h3 id = "density" style=" text-align:center;">Density plot</h3>
+        <h2><div style='border:0px;padding:3px; PADDING:0px; width:800px; height:600px; LINE-HEIGHT: 20px; OVERFLOW: auto;'><img src="images/densityplot.png" alt=""/  style = "height: 560px; width: 1700px"></h2> 
+    
+      <h1 id = "Cluster_visual2" ><font color="green">Differential DNA methylation analysis</font></h1>
+      <div class="line"></div>
+		<h3 id = "DM" style=" text-align:center;">Differential results</h3>
+        <h2><iframe width = 800 height = 150 src = "images/DM.html"></iframe></h2>
+        <h3 id = "DMA" style=" text-align:center;">Differential annotation</h3>
+        <h2><img src="images/DM.png" alt=""/  style = "height: 460px; width: 460px"></h2> 
+        
+        <div class="intro"></div>
+        <div class="intro"></div>
+      <div id="footer">
+      <p>1. Please use Chrome, Firefox or Safari for better browsing experience.</p>
+      <p>2. Detailed explanation can be found at <a href="https://github.com/GuoliangLi-HZAU/BatMeth2" target="_blank">https://github.com/GuoliangLi-HZAU/BatMeth2</a>.</p>
+      </div>
+     
+  	</div>
+
+  	
+  </div>
+  <div class="helpNote" style="display:none">
+      <div id="Rplot1_note">dd</div>
+  </div>
+
+  </body>
+  </html>

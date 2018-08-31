@@ -10,7 +10,7 @@ Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
 
 REQUIREMENTS
 -------
-1) gcc, gsl library
+1) gcc, gsl library, zlib
 
 2) R
 
@@ -118,7 +118,22 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>
     **[mkreport paramaters]** <br>
     Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
+    **-o [outprefix]** <br>
 
+    [align paramaters:] <br>
+    see the details in 'BatMeth2 align' <br>
+    [calmeth paramaters:] <br>
+    see the details in 'BatMeth2 calmeth' <br>
+    [annotion paramaters:] <br>
+    see the details in 'BatMeth2 annoation' <br>
+    [methyPlot paramaters:] <br>
+    see the details in 'BatMeth2 methyPlot' <br>
+    [batDMR paramaters:] <br>
+    see the details in 'BatMeth2 batDMR' <br>
+    [visul2sample paramaters:] <br>
+    see the details in 'BatMeth2 visul2sample' <br>
+
+    -h|--help   usage <br>
 
 
 ## OUTPUT FILE

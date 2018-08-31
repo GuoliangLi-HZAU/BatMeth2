@@ -67,7 +67,7 @@ struct Methy_Hash
 };
 struct Offset_Record
 {
-	char Genome[40];
+	char Genome[400];
 	unsigned Offset;
 } Temp_OR; 
 typedef struct {

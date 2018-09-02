@@ -62,6 +62,7 @@ def usage():
     print "    -i    Name of input file, if paired-end. please use -1, -2"
     print "    -1    Name of input file left end, if single-end. please use -i"
     print "    -2    Name of input file right end"
+    print "    -i/-1/-2 can be comma-separated lists (no whitespace), only supported in BatMeth2 aligner."
     print "    -g    Name of the genome mapped against, make sure build index first."
     print "    -n    maximum mismatches allowed due to seq. default 0.05 percentage of the read length. [0-0.3]"
     print "    -p <interger>    Launch <integer> threads"

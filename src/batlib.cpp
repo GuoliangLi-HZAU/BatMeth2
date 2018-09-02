@@ -119,7 +119,7 @@ void Analyze_File(INFILE & I,LEN & L)
 		if(Quality[0] != '+' || Description[0] != '@') {if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Init_Variables: Cannot determine file type ...\n");printf("Init_Variables: Cannot determine file type ...\n");exit(1);}
 	}
 	if(I.filegz == '1') gzrewind(I.gzfp);
-	else fseek(I.Input_File,Last,SEEK_SET);//go top
+	else fseek(I.Input_File,0,SEEK_SET);//go top
 	if (!TRIM_LENGTH && L.STRINGLENGTH>75) TRIM_LENGTH=75; 
 	TRIM_LENGTH=75;
 	if (TRIM_LENGTH) L.STRINGLENGTH=TRIM_LENGTH;

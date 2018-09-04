@@ -223,7 +223,15 @@ def printStatus():
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Input file: ", input_prefix, " ", input_prefix1, " ", input_prefix2
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Outfile prefix: ", output_prefix
 
-#if(sys.argv[1] != "build_index"):
+if mode == "align" and aligner == "BatMeth2":
+    if len(sys.argv) < 4:
+        cmd = abspath + "batmeth2-align"
+        runprogram(cmd)
+        sys.exit()
+
+if mode == "pipel" or mode == "align" or mode == "mkreport":
+    detect_paramater()
+
 if(sys.argv[1] == "pipel"):
 	printStatus()
 
@@ -566,15 +574,6 @@ def detect_mode():
         sys.exit()
 
         
-if mode == "align" and aligner == "BatMeth2":
-    if len(sys.argv) < 4:
-        cmd = abspath + "batmeth2-align"
-        runprogram(cmd)
-        sys.exit()
-
-if mode == "pipel" or mode == "align" or mode == "mkreport":
-    detect_paramater()
-
 if len(sys.argv) < 4:
     if mode == "pipel":
         usage()

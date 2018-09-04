@@ -46,7 +46,7 @@
 		//unsigned Location_Array[80];
 		int LEAST_MIS=6;
 
-		int MAX_MISMATCHES=5;
+		int MAX_MISMATCHES=4;
 		float SW_EDIT_PERC=0;
 		int SW_EDIT_DIST_MAX=9;
 		int TRIM_LENGTH=0;

@@ -67,7 +67,7 @@ struct Methy_Hash
 };
 struct Offset_Record
 {
-	char Genome[400];
+	char Genome[40];
 	unsigned Offset;
 } Temp_OR; 
 typedef struct {
@@ -123,7 +123,7 @@ unsigned Tot_Unique_Org=0;//total unique hits obtained
 unsigned ALL_MAP_Org=0;
 unsigned Tot_Unique_Remdup=0;//total unique hits obtained after removing dups...
 unsigned ALL_Map_Remdup=0;
-int UPPER_MAX_MISMATCH=0.05;
+int UPPER_MAX_MISMATCH=0.06;
 bool REMOVE_DUP=false; //true; //true to removeDup, false will not remove PCR-dup
 unsigned Mismatch_Qual[255][255][255]; //[readLength][255][255]
 int QualCut=10;
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 		"\t-i|--input            Sam format file, sorted by chrom.\n"
 		"\t-b|--binput           Bam format file, sorted by chrom.\n"
 		//"\t-p|--threads          the number of threads.\n"
-		"\t-n|--Nmismatch [float]  Number of mismatches, default 0.05 percentage of read length. [0-1]\n"
+		"\t-n|--Nmismatch [float]  Number of mismatches, default 0.06 percentage of read length. [0-1]\n"
 		"\t-m|--methratio        [MethFileNamePrefix]  Predix of methratio output file\n"
 		"\t-Q [int]              caculate the methratio while read QulityScore >= Q. default:10\n"
 		"\t-c|--coverage         >= <INT> coverage. default:5\n"
@@ -365,6 +365,7 @@ int main(int argc, char* argv[])
 			Genome_Count--;
 			args.OUTFILE = NULL;
 			assert(longestChr>0);
+			printf("\nLongest chr: %d\n",longestChr);
 			if(Sam && strcmp(Output_Name,"None") ) args.OUTFILE=File_Open(Output_Name,"w");
 
 			char* Split_Point=args.Org_Genome;//split and write...
@@ -380,6 +381,7 @@ int main(int argc, char* argv[])
 			}
 			if(Methratio)
 			{
+				try{
 				args.Methy_List.plusG = new int[longestChr];
 				args.Methy_List.plusA = new int[longestChr];
 				args.Methy_List.NegG = new int[longestChr];
@@ -392,8 +394,10 @@ int main(int argc, char* argv[])
 				args.Methy_List.NegUnMethylated = new int[longestChr];
 				//Methy_List[i].NegCover = new int[Genome_Offsets[i+1].Offset];
 				//=========Genome_List[i].Genome;
+				}catch(std::bad_alloc){
+					fprintf(stderr, "\nbad alloc in main array!\n");
+				}
 			}
-			printf("Loaded\n");
 			
 			fclose(BINFILE);
 			fclose(Location_File);
@@ -461,7 +465,7 @@ int main(int argc, char* argv[])
 					}
 				}
 				}
-				//threads
+				//nothreads
 				Process_read(&args);
 				Done_Progress();
 				if(!bamformat) fclose(args.samINFILE);
@@ -711,6 +715,8 @@ char* process_cigar(const char* cig,int Read_Len)
     		continue;//break;
 		}
 	}
+	delete []cigar_rm;
+	delete []buffer_cigar;
 	return cigar_rm;
 }
 string getstring(char* seq, int l, int len){
@@ -1073,8 +1079,8 @@ int conutMismatch(string CIGr, int chrLen, char* Genome_seq, string readString, 
 		{
 			int i;temp[n]='\0';int length=atoi(temp);
 			lens+=length;
-            RLens+=length;
-            cigr++;n=0;
+	        	RLens+=length;
+        	    	cigr++;n=0;
 		}else if(*cigr=='M')
 		{
 			temp[n]='\0';int length=atoi(temp);
@@ -1082,7 +1088,7 @@ int conutMismatch(string CIGr, int chrLen, char* Genome_seq, string readString, 
 			{
 				if (pos+g-1 >= chrLen) break;
 
-				char genome_Char = toupper(Genome_seq[pos+g-1]);//
+				char genome_Char = toupper(Genome_seq[pos+g-1]);
 				if (hitType==1 || hitType==3) {
 					if (readString[k] != genome_Char && !(readString[k]=='T' && genome_Char=='C')) 
 					{
@@ -1116,12 +1122,119 @@ int conutMismatch(string CIGr, int chrLen, char* Genome_seq, string readString, 
 	return Nmismatch;
 }
 
+int processbamread(const bam_header_t *header, const bam1_t *b, char* Dummy,int &Flag,char* Chrom,int &pos,int &mapQuality,char* CIG,char* Chrom_P,int &pos_P,int &Insert_Size,char* forReadString,char* forQuality, int &hitType)
+{
+        uint8_t *s = bam1_seq(b), *t = bam1_qual(b);
+        int i;
+        const bam1_core_t *c = &b->core;
+	strcpy(Dummy,  bam1_qname(b));
+	Flag = c->flag;
+
+	if( (Flag & 0x100) || (Flag & 0x200) || (Flag & 0x400) || (Flag & 0x800) || (Flag & 0x4))
+        	return -1;
+	if( !(Flag & 0x1) )
+        {
+        	if(Flag==0)
+                	hitType=1;
+                else if(Flag==16)
+                	hitType=4;
+        }else if( !(Flag & 0x10)  && (Flag & 0x40) )
+        	hitType=1;
+       	else if( !(Flag & 0x10)  && (Flag & 0x80) )
+        	hitType=2;
+        else if( (Flag & 0x10)  && (Flag & 0x80) )
+        	hitType=3;
+        else if( (Flag & 0x10)  && (Flag & 0x40) )
+        	hitType=4;
+        if(hitType==0) return -1;
+
+
+        if (c->tid < 0) return -1;
+        else {
+                if (header) strcpy(Chrom, header->target_name[c->tid]); 
+                else sprintf(Chrom, "%d", c->tid); 
+        }
+	pos = c->pos + 1;
+	mapQuality = c->qual;
+
+	//define
+	if(mapQuality < QualCut || Flag==4 || (int)pos <= 0 ) return -1;
+	char strtemp[256];int j=0;
+        if (c->n_cigar == 0) return -1;
+        else {
+                for (i = 0; i < c->n_cigar; ++i) {
+                    	sprintf(strtemp, "%d%c", bam1_cigar(b)[i]>>BAM_CIGAR_SHIFT, "MIDNSHP=X"[bam1_cigar(b)[i]&BAM_CIGAR_MASK]);
+			for(int l= 0; l<strlen(strtemp); ++l,j++) CIG[j] = strtemp[l];
+                }
+        }
+	CIG[j] = '\0';
+        if (c->mtid < 0) Chrom_P[0] =  '*';
+        else if (c->mtid == c->tid) sprintf(Chrom_P, "="); 
+        else {
+                if (header) strcpy(Chrom_P, header->target_name[c->mtid]); 
+                else sprintf(Chrom_P, "%d", c->mtid); 
+        }
+	if(strcmp(Chrom_P, "*") == 0) {
+        	pos_P = 0;
+                Insert_Size = 0;
+        }else{
+		pos_P = c->mpos + 1;
+		Insert_Size=c->isize;
+	}
+        if (c->l_qseq) {
+                for (i = 0; i < c->l_qseq; ++i) forReadString[i] = bam_nt16_rev_table[bam1_seqi(s, i)];
+		forReadString[i] = '\0';
+                if (t[0] == 0xff) forQuality[0] =  '*';
+                else for (i = 0; i < c->l_qseq; ++i) forQuality[i] = (char)(t[i] + 33); 
+		if(i!=0) forQuality[i] = '\0';
+        } else {forReadString[0] = '*'; forQuality[0] =  '*';}
+	
+	return 1;
+
+        s = bam1_aux(b);
+	char read[100];
+        while (s < b->data + b->data_len) {
+                uint8_t type, key[2];
+                key[0] = s[0]; key[1] = s[1];
+                s += 2; type = *s; ++s;
+                sprintf(read, "\t%s:", (char*)key); 
+                if (type == 'A') { sprintf(read, "A:%c", *s); ++s; }
+                else if (type == 'C') { sprintf(read, "i:%d", *s); ++s; }
+                else if (type == 'c') { sprintf(read, "i:%d", *(int8_t*)s); ++s; }
+                else if (type == 'S') { sprintf(read, "i:%d", *(uint16_t*)s); s += 2; }
+                else if (type == 's') { sprintf(read, "i:%d", *(int16_t*)s); s += 2; }
+                else if (type == 'I') { sprintf(read, "i:%d", *(uint32_t*)s); s += 4; }
+                else if (type == 'i') { sprintf(read, "i:%d", *(int32_t*)s); s += 4; }
+                else if (type == 'f') { sprintf(read, "f:%g", *(float*)s); s += 4; }
+                else if (type == 'd') { sprintf(read, "d:%lg", *(double*)s); s += 8; }
+                else if (type == 'Z' || type == 'H') { sprintf(read, "%c:", type); while (*s) sprintf(read, "%c", *s++); ++s; }
+                else if (type == 'B') {
+                        uint8_t sub_type = *(s++);
+                        int32_t n;
+                        memcpy(&n, s, 4);
+                        s += 4; // no point to the start of the array
+                    	sprintf(read, "%c:%c", type, sub_type);
+                        for (i = 0; i < n; ++i) {
+                                sprintf(read,",");
+                                if ('c' == sub_type || 'c' == sub_type) { sprintf(read, "%d", *(int8_t*)s); ++s; }
+                                else if ('C' == sub_type) { sprintf(read, "%d", *(uint8_t*)s); ++s; }
+                                else if ('s' == sub_type) { sprintf(read, "%d", *(int16_t*)s); s += 2; }
+                                else if ('S' == sub_type) { sprintf(read, "%d", *(uint16_t*)s); s += 2; }
+                                else if ('i' == sub_type) { sprintf(read, "%d", *(int32_t*)s); s += 4; }
+                                else if ('I' == sub_type) { sprintf(read, "%d", *(uint32_t*)s); s += 4; }
+                                else if ('f' == sub_type) { sprintf(read, "%g", *(float*)s); s += 4; }
+                        }
+                }
+        }
+        
+}
+
 void *Process_read(void *arg)
 {
 	unsigned Total_Reads=0;
 	int Progress=0;Number_of_Tags=INITIAL_PROGRESS_READS;
 	Init_Progress();
-	int mismatch=0;long pos=0;int Top_Penalty=0;int mapQuality=0;int Flag=-1;
+	int mismatch=0;int pos=0;int Top_Penalty=0;int mapQuality=0;int Flag=-1;
 	string readString="";
 	int hitType=0;
         int fileprocess = 0;
@@ -1129,7 +1242,9 @@ void *Process_read(void *arg)
 	string hits[MAX_HITS_ALLOWED];
 	char Comp_String[MAXTAG];for (int i=1;i<MAXTAG;Comp_String[i++]=0);
 	//start to read batman hit file
-	char s2t[BATBUF],Dummy[BATBUF],forReadString[BATBUF],Chrom[CHROMSIZE];
+	char *s2t = (char*) malloc(600);
+	char read_Methyl_Info[600];char rawReadBeforeBS[600];char temp[5];
+	char Dummy[BATBUF],forReadString[BATBUF],Chrom[CHROMSIZE];
 	char Chrom_P[CHROMSIZE];int pos_P=0;int Insert_Size=0;int Qsingle=0; //Paired-end reads
 	string CIGr;char CIG[BATBUF];
 	char forQuality[BATBUF],rcQuality[BATBUF],Quality[BATBUF];
@@ -1142,37 +1257,31 @@ void *Process_read(void *arg)
 		if(r < -1) {
 			fprintf(stderr, "\ntruncated file.\n");
 		}
+		hitType = 0;
+		Total_Reads++;
+                Progress++;
+                fileprocess++;
+
 		if(bamformat) 
 		{
 			(r = samread(( (ARGS *)arg)->BamInFile, b));
-			char *tmp = bam_format1_core( ((ARGS *)arg)->header , b, 0); //2 >>2&3
-			strcpy(s2t, tmp);
-			free(tmp);
+			//bam_tostring(((ARGS *)arg)->header , b, s2t);
+			int ct = processbamread(((ARGS *)arg)->header, b, Dummy,Flag,Chrom,pos,mapQuality,CIG,Chrom_P,pos_P,Insert_Size,forReadString,forQuality, hitType);
+			if(ct == -1) continue;
 		}
-		Total_Reads++;
-		Progress++;
-        	fileprocess++;
-        /*
-		if ( Progress>=Number_of_Tags && ( ((ARGS *)arg)->ThreadID==1 || !NTHREAD ) ) 
-		{
-			off64_t Current_Pos=ftello64(((ARGS *)arg)->INFILE);
-			off64_t Average_Length=Current_Pos/Total_Reads+1;//+1 avoids divide by zero..
-			Number_of_Tags=( ((ARGS *)arg)->File_Size/Average_Length )/20;
-			Progress=0;
-			Show_Progress(Current_Pos*100/((ARGS *)arg)->File_Size);
-		}
-		*/
+		
 		if ( fileprocess>=1000000  ) {
                         fprintf_time(stderr, "Processed %d reads.\n", Total_Reads);
                         fileprocess = 0;
-        }
+        	}
 
 		if(s2t[0]=='@') 
 		{
 			continue;
 		}
                 printheader = false;
-		sscanf(s2t,"%s%d%s%d%d%s%s%d%d%s%s",Dummy,&Flag,Chrom,&pos,&mapQuality,CIG,Chrom_P,&pos_P,&Insert_Size,forReadString,forQuality);
+		if(!bamformat)
+			sscanf(s2t,"%s%d%s%d%d%s%s%d%d%s%s",Dummy,&Flag,Chrom,&pos,&mapQuality,CIG,Chrom_P,&pos_P,&Insert_Size,forReadString,forQuality);
 		map<string, int>::iterator iter;
 		int H = -1;
 		if(strcmp(newchr.c_str(), Chrom) != 0 ) newchr = Chrom;
@@ -1188,17 +1297,19 @@ void *Process_read(void *arg)
 	        processingchr = Chrom;
 		}
 
- 		if(mapQuality < QualCut || Flag==4 || (int)pos < 0 /*|| strlen(forReadString)<75*/ ) continue;
-		if(strcmp(Chrom_P, "*") == 0) {
-			pos_P = 0;
-			Insert_Size = 0;
+		if(!bamformat){
+ 			if(mapQuality < QualCut || Flag==4 || (int)pos <= 0 ) continue;
+			if(strcmp(Chrom_P, "*") == 0) {
+				pos_P = 0;
+				Insert_Size = 0;
+			}
 		}
 
 		readString=forReadString;
 		int Read_Len=readString.length();
 		CIGr=CIG;
 		//for(;forReadString[Read_Len]!=0 && forReadString[Read_Len]!='\n' && forReadString[Read_Len]!='\r';Read_Len++);
-	    iter = String_Hash.find(processingchr.c_str());
+	    	iter = String_Hash.find(processingchr.c_str());
 		H = -1;
 		if(iter != String_Hash.end()){
 			H = iter->second;
@@ -1206,26 +1317,27 @@ void *Process_read(void *arg)
 
 		if(Flag==-1) printf("\n%s\n", Dummy);
 		assert(Flag!=-1);
-		if( (Flag & 0x100) || (Flag & 0x200) || (Flag & 0x400) || (Flag & 0x800) || (Flag & 0x4))
-            continue;
-		if( !(Flag & 0x1) )
-		{
-			if(Flag==0)
+		if(!bamformat){
+			if( (Flag & 0x100) || (Flag & 0x200) || (Flag & 0x400) || (Flag & 0x800) || (Flag & 0x4))
+        	    		continue;
+			if( !(Flag & 0x1) )
+			{
+				if(Flag==0)
+					hitType=1;
+				else if(Flag==16)
+					hitType=4;
+			}else if( !(Flag & 0x10)  && (Flag & 0x40) )
 				hitType=1;
-			else if(Flag==16)
+			else if( !(Flag & 0x10)  && (Flag & 0x80) )
+				hitType=2;
+			else if( (Flag & 0x10)  && (Flag & 0x80) )
+				hitType=3;
+			else if( (Flag & 0x10)  && (Flag & 0x40) )
 				hitType=4;
-		}else if( !(Flag & 0x10)  && (Flag & 0x40) )
-			hitType=1;
-		else if( !(Flag & 0x10)  && (Flag & 0x80) )
-			hitType=2;
-		else if( (Flag & 0x10)  && (Flag & 0x80) )
-			hitType=3;
-		else if( (Flag & 0x10)  && (Flag & 0x40) )
-			hitType=4;
-		if(hitType==0) continue;
-
+			if(hitType==0) continue;
+		}
 		int Nmismatch=conutMismatch(CIGr, ((ARGS *)arg)->Genome_Offsets[H+1].Offset, ((ARGS *)arg)->Genome_List[H].Genome, readString, pos, hitType);
-		if(Nmismatch > 0.05 + UPPER_MAX_MISMATCH * strlen(readString.c_str())) continue;
+		if(Nmismatch > 0.5 + UPPER_MAX_MISMATCH * strlen(readString.c_str())) continue;
 		//char* Genome;
 		//
 		//Genome=((ARGS *)arg)->Genome_List[H].Genome;//load current genome..
@@ -1241,8 +1353,8 @@ void *Process_read(void *arg)
             if( !REMOVE_DUP || (!Mark || !(Mark & Flag_rm)) || (!MarkE || !(MarkE & Flag_rm)) )
 		{
 			int Hash_Index=((ARGS *)arg)->Genome_List[H].Index;//load current genome..
-			char read_Methyl_Info[Read_Len*5];char rawReadBeforeBS[Read_Len*5];strcpy(rawReadBeforeBS,readString.c_str());
-			char temp[5];unsigned lens=0;int Glens=0;int RLens=0;
+			strcpy(rawReadBeforeBS,readString.c_str());
+			unsigned lens=0;int Glens=0;int RLens=0;
 			unsigned n=0;bool CONTINUE=false;
 			const char* cigr=CIGr.c_str();
 			while(*cigr!='\0')//RLens--READs Length \\ lens--raw reads length \\ GLens--genome Lens
@@ -1455,7 +1567,7 @@ void *Process_read(void *arg)
 			((ARGS *)arg)->Marked_GenomeE[pos+G_Skip+readString.size()] |= Flag;
 		}
 	}
-
+	free(s2t);
 }
 
 void Print_Mismatch_Quality(FILE* OUTFILE_MM, int L) {

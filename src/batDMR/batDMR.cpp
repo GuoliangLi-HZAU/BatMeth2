@@ -20,6 +20,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
+#if __GNUC__>2
+//#include <ext/hash_set>
+#include <ext/hash_map>
+using namespace __gnu_cxx;
+#else
+//#include <hash_set>
+#include <hash_map>
+using namespace stdext;
+#endif
+
 
 #define BUFSIZE 1000000
 
@@ -38,6 +48,23 @@ using std::floor;
 using std::map;
 map <string,int> String_Hash;
 bool geneid=false;
+int Genome_Count = 0;
+
+struct str_hash{
+        size_t operator()(const string& str) const
+        {
+                return __stl_hash_string(str.c_str());
+        }
+};
+
+struct compare_str{
+        bool operator()(const std::string& p1, const std::string& p2) const{
+                return p1 == p2;
+        }
+};
+
+typedef hash_map<std::string, int, str_hash, compare_str> chrposMap;
+
 /*
  *this paragram part from cufdiff: Benjamani-Hochberg procedure and fisher test studied bedtools. in addation, the beta-binomail distribution from RADmeth software 
 */
@@ -103,7 +130,7 @@ void chromLengthExact(string & refSeqFile)
         fclose(oFPtr);
         
         return;
-}
+};
 
 void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encoding, double cutoff,double methdiff) {
   string record, chrom, context, sign;string name;
@@ -144,7 +171,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
     			<< "\t" <<  name.c_str() << "\n" ;
   }
   return;
-}
+};
 
 /*
 bool p_value_lt(const SampleDifference* lhs, const SampleDifference* rhs)
@@ -201,14 +228,14 @@ static inline double log_sum_log(const double p, const double q) {
   const double larger = (p > q) ? p : q;
   const double smaller = (p > q) ? q : p;
   return larger + log(1.0 + exp(smaller - larger));
-}
+};
 
 // p(k) =  C(n1, k) C(n2, t - k) / C(n1 + n2, t)
 static double log_hyper_g(const size_t k, const size_t n1, const size_t n2, const size_t t) {
   return (gsl_sf_lnfact(n1) - gsl_sf_lnfact(k) - gsl_sf_lnfact(n1 - k) +
           gsl_sf_lnfact(n2) - gsl_sf_lnfact(t - k) - gsl_sf_lnfact(n2 - (t - k)) -
           (gsl_sf_lnfact(n1 + n2) - gsl_sf_lnfact(t) - gsl_sf_lnfact(n1 + n2 - t)));
-}
+};
 
 
 static double fishers_exact(size_t a, size_t b, size_t c, size_t d) {
@@ -223,7 +250,7 @@ static double fishers_exact(size_t a, size_t b, size_t c, size_t d) {
       p = log_sum_log(p, curr);
   }
   return exp(p);
-}
+};
 
 struct DNAmethException {
   DNAmethException(std::string m) : message(m) {}
@@ -269,13 +296,45 @@ Cpg::Cpg(string encoding) {
 	  if (!(encoding_stream >> chrom_ >> locus_ >> strand_ >> context_ >> meth_ >> total_))
 		throw (std::logic_error("Couldn't parse a line \"" + encoding + "\".\n"));
 	if(geneid) encoding_stream >> name_;
-}
+};
+
 struct Methy_Hash
 {
-	int *positiveSample;
-	int *Neg_positiveSample;
+	//int *positiveSample;
+	//int *Neg_positiveSample;
+	chrposMap positiveMap;
+	chrposMap Neg_positiveMap;
 	int Index;
 };
+
+std::string int_to_String(int n)
+{
+    int max = 100;
+    int m = n;
+    char s[max];
+    char ss[max];
+    int i=0,j=0;
+    if (n < 0)
+    {
+        m = 0 - m;
+        j = 1;
+        ss[0] = '-';
+    }    
+    while (m>0)
+    {
+        s[i++] = m % 10 + '0';
+        m /= 10;
+    }
+    s[i] = '\0';
+    i = i - 1;
+    while (i >= 0)
+    {
+        ss[j++] = s[i--];
+    }    
+    ss[j] = '\0';    
+    return ss;
+}
+
 void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &count_table, ostream &count_inform_table , unsigned Sample1Size,Methy_Hash* Methy_List,std::map <string,int> &String_Hash) {
   
   vector<string>::const_iterator it = names.begin();
@@ -304,8 +363,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
   	  ++meth_it;
   }
 
-  unsigned int FileEnd=0;
-  //unsigned int File2End=0;
+  std::string methTmp;
   while(true)
   {
   	vector<istream*>::iterator meth_it = methylomes_fstream.begin();
@@ -315,26 +373,28 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 		if (encoding.empty()) 
 		{
 			meth_it = methylomes_fstream.erase(meth_it);
-			FileEnd++;
-			//meth_it++;
 			continue;
 		}
-		//printf("\n%s\n",encoding.c_str());
 		Cpg cpg(encoding);
 		if(String_Hash.find(cpg.chrom())==String_Hash.end()) 
 		{
-			meth_it++;
+			//meth_it++;
 			continue;
 		}
 		int H=String_Hash[cpg.chrom()];
 		if(cpg.total()>0) 
 		{
-			if(cpg.strand()=="+")
-				Methy_List[H].positiveSample[(int)cpg.locus()-1]++;
-			else if(cpg.strand()=="-")
-				Methy_List[H].Neg_positiveSample[(int)cpg.locus()-1]++;
+			if(!geneid){
+				methTmp = cpg.chrom() + "_";
+				methTmp = methTmp + int_to_String(cpg.locus());
+			}else methTmp = cpg.name();
+			if(cpg.strand()=="+"){
+				Methy_List[H].positiveMap[methTmp]++;	
+			}else if(cpg.strand()=="-"){
+                                Methy_List[H].Neg_positiveMap[methTmp]++;
+			}
 		}
-		meth_it++;
+		//meth_it++;
 	}
 
 	if( methylomes_fstream.size()==0 )
@@ -342,14 +402,6 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 		methylomes_fstream.clear();
 		break;
 	}
-	/*if( (FileEnd-File2End)== methylomes.size())
-	{
- 		 for(size_t ind = 0; ind < methylomes_fstream.size(); ++ind)
-   			delete methylomes_fstream[ind];
-		methylomes_fstream.clear();
-		break;
-	}
-	File2End=FileEnd;*/
   }
   meth_it = methylomes.begin();
   while(meth_it != methylomes.end())
@@ -372,22 +424,30 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
     int H=String_Hash[cpg1.chrom()];
     unsigned int loci=cpg1.locus();
     string strand=cpg1.strand();
-    while(  (strand=="+" && Methy_List[H].positiveSample[(int)loci-1] != (int)methylomes.size())  || 
-    		(strand=="-" && Methy_List[H].Neg_positiveSample[(int)loci-1] != (int)methylomes.size() )  )
+    if(!geneid){
+	    methTmp = cpg1.chrom() + "_";
+	    methTmp = methTmp + int_to_String(loci);
+    }else methTmp = cpg1.name();
+    while(  (strand=="+" && Methy_List[H].positiveMap[methTmp] != (int)methylomes.size())  || 
+    		(strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] != (int)methylomes.size() )  )
     {
     	getline(*(*meth_it), encoding);
     	if (encoding.empty())
       	break;
     	Cpg cpg(encoding);
     	cpg1=cpg;
-    	if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;    	
+    	if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+	if(!geneid){
+		methTmp = cpg1.chrom() + "_";
+		methTmp = methTmp + int_to_String(cpg1.locus());
+	}else methTmp = cpg1.name();
     	H=String_Hash[cpg1.chrom()];
     	loci=cpg1.locus();
     	strand=cpg1.strand();
     }
     
-    if(  ( (strand=="+" && Methy_List[H].positiveSample[(int)loci-1] == (int)methylomes.size())  || 
-    		(strand=="-" && Methy_List[H].Neg_positiveSample[(int)loci-1] == (int)methylomes.size() ) ) && cpg1.total()>0)
+    if(  ( (strand=="+" && Methy_List[H].positiveMap[methTmp] == (int)methylomes.size())  || 
+    		(strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] == (int)methylomes.size() ) ) && cpg1.total()>0)
     	count_table << cpg1.chrom() << ":" << cpg1.locus() << ":" << cpg1.strand() << ":" << cpg1.context() 
                 << "\t" << cpg1.meth() << "\t" << cpg1.total();
     
@@ -397,7 +457,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 	while( getline(*(*meth_it), encoding) )
 	{
     		  Cpg cpg2(encoding);
-	    	  if( H==String_Hash[cpg2.chrom()] &&  cpg1.locus()==cpg2.locus() && cpg1.strand()==cpg2.strand() && cpg2.total()>0 )
+	    	  if( (geneid && cpg2.name()==cpg1.name()) || (!geneid && H==String_Hash[cpg2.chrom()] &&  cpg1.locus()==cpg2.locus() && cpg1.strand()==cpg2.strand() && cpg2.total()>0) )
 	    	  {
       		count_table << "\t" << cpg2.meth() << "\t" << cpg2.total();
       		if(geneid) count_table << "\t" << cpg2.name();
@@ -685,7 +745,7 @@ int main(int argc, const char **argv) {
     }
     rewind(GenomeLen);
     
-    int Genome_Count=0;
+    Genome_Count=0;
     Offset_Record Genome_Offsets[Genome_CountX];
     while (fgets(Temp_OR,190,GenomeLen)!=0)//count genomes..
     { 
@@ -698,8 +758,8 @@ int main(int argc, const char **argv) {
     for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
     {
     		String_Hash[Genome_Offsets[i].Genome]=i;
-		Methy_List[i].positiveSample = new int[Genome_Offsets[i].Offset+1];
-		Methy_List[i].Neg_positiveSample = new int[Genome_Offsets[i].Offset+1];
+		//Methy_List[i].positiveSample = new int[Genome_Offsets[i].Offset+1];
+		//Methy_List[i].Neg_positiveSample = new int[Genome_Offsets[i].Offset+1];
 		Methy_List[i].Index=i;
      }
     
@@ -727,11 +787,13 @@ int main(int argc, const char **argv) {
    	merge_methylomes(names, methylomes, combineTmp ,combineInf ,methy1End-methy1Start+1,Methy_List,String_Hash);
 
    combineInf.close();combineTmp.close();
+/*
     for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
     {
 		delete[] Methy_List[i].positiveSample;
 		delete[] Methy_List[i].Neg_positiveSample;
      }
+*/
   cout << "combined file done!\nRuning differential test ..." << endl;
   //---------------------
     // Run beta-binoimial regression or fisher test 
@@ -882,8 +944,8 @@ int main(int argc, const char **argv) {
      	 cout << "Printing result." <<endl;
      	Print_dm_result(pvals, OutFileAdjust,cutoff,methdiff);
      }
-     remove( (outTmp+"_combined.infrom.temp.txt").c_str() );
-     remove( (outTmp+"_combined.file.temp.txt").c_str() );
+//     remove( (outTmp+"_combined.infrom.temp.txt").c_str() );
+//     remove( (outTmp+"_combined.file.temp.txt").c_str() );
     }else
     {
     	printf("sample size error.");

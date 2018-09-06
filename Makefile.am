@@ -35,6 +35,7 @@ copy:
 	cp scripts/combined.element* bin
 	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
+	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
 	cp src/genome_filter bin

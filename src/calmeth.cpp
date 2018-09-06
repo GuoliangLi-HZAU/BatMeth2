@@ -480,6 +480,7 @@ int main(int argc, char* argv[])
 			int H = -1;
 			iter = String_Hash.find(newchr.c_str());
 			if(iter != String_Hash.end()){
+				fprintf(stderr, "Print output of %s\n", newchr.c_str());
 				H = iter->second;
 				print_meth_tofile(H, &args);
 			}

@@ -232,6 +232,11 @@ if mode == "align" and aligner == "BatMeth2":
 if mode == "pipel" or mode == "align" or mode == "mkreport":
     detect_paramater()
 
+if mode == "pipel" and genome_index == "" and genome_others != "":
+    cmd = abspath + "preGenome " + genome_others
+    runprogram(cmd)
+    genome_index = genome_others
+
 if(sys.argv[1] == "pipel"):
 	printStatus()
 
@@ -250,7 +255,7 @@ def printparamter1():
     infiles = input_prefix
     if pairedend == "True":
         alignmode = "Paired-end"
-        infiles = input_prefix1 + ", " + input_prefix2
+        infiles = input_prefix1 + " || " + input_prefix2
     Sparamater = "Program\tBatMeth2.v1\nWorkdir\t" + workdir + "\nAligner\tBatMeth2-align\nGenome\t" + genome_index + "\nAnnotation\t" + gfffile + "/" + bedfile + "\nOutput-prefix\t"+ output_prefix + "\nInput\t"+ infiles +  "\nAlignment-Mode\t" + alignmode
     Fparamater.write(Sparamater)
     Fparamater.close()
@@ -573,7 +578,6 @@ def detect_mode():
         usage()
         sys.exit()
 
-        
 if len(sys.argv) < 4:
     if mode == "pipel":
         usage()

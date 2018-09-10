@@ -167,8 +167,8 @@ int coverage=5;
 int binspan=50000;
 int nCs=5;
 //
-unsigned int M=0,Mh=0,H=0,hU=0,U=0;
-unsigned int M_CG=0,Mh_CG=0,H_CG=0,hU_CG=0,U_CG=0;
+unsigned long M=0,Mh=0,H_AllC=0,hU=0,U=0;
+unsigned long M_CG=0,Mh_CG=0,H_CG=0,hU_CG=0,U_CG=0;
 unsigned long mCGdensity[100]={0},mCHGdensity[100]={0},mCHHdensity[100]={0};
 unsigned long plus_mCGcount=0,plus_mCHGcount=0,plus_mCHHcount=0;
 unsigned long plusCGcount=0,plusCHGcount=0,plusCHHcount=0;
@@ -515,10 +515,10 @@ int main(int argc, char* argv[])
 			fprintf(OUTLOG,"Raw count of Non_Met_C in CHG:\t%lu\n",non_met_CHG);
 			fprintf(OUTLOG,"Raw count of Met_C in CHH:\t%lu\n",met_CHH);
 			fprintf(OUTLOG,"Raw count of Non_Met_C in CHH:\t%lu\n",non_met_CHH);
-			printf("[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-            printf("\n[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
-            fprintf(OUTLOG,"[CpG]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-            fprintf(OUTLOG,"[mC]\tM: %u Mh: %u H: %u hU: %u U: %u\n",M,Mh,H,hU,U);
+			printf("[CpG]\tM: %lu Mh: %lu H: %lu hU: %lu U: %lu\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+            printf("\n[mC]\tM: %lu Mh: %lu H: %lu hU: %lu U: %lu\n",M,Mh,H_AllC,hU,U);
+            fprintf(OUTLOG,"[CpG]\tM: %lu Mh: %lu H: %lu hU: %lu U: %lu\n",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+            fprintf(OUTLOG,"[mC]\tM: %lu Mh: %lu H: %lu hU: %lu U: %lu\n",M,Mh,H_AllC,hU,U);
 			if(Methratio)
 			{
 				FILE* mC_DENSITY=File_Open(mCdensity.c_str(),"w");
@@ -540,8 +540,8 @@ int main(int argc, char* argv[])
 				fclose(mC_DENSITY);
 
 				FILE* mC_catero=File_Open(mCcatero.c_str(),"w");
-				fprintf(mC_catero,"\nM\t%u\nMh\t%u\nH\t%u\nhU\t%u\nU\t%u",M,Mh,H,hU,U);
-				fprintf(mC_catero,"\nCpG_M\t%u\nCpG_Mh\t%u\nCpG_H\t%u\nCpG_hU\t%u\nCpG_U\t%u",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+				fprintf(mC_catero,"\nM\t%lu\nMh\t%lu\nH\t%lu\nhU\t%lu\nU\t%lu",M,Mh,H_AllC,hU,U);
+				fprintf(mC_catero,"\nCpG_M\t%lu\nCpG_Mh\t%lu\nCpG_H\t%lu\nCpG_hU\t%lu\nCpG_U\t%lu",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
 				fclose(mC_catero);
 				//+
 				printf("\nStrand+ :\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );
@@ -897,7 +897,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 			                  category="Mh";
 			                  if(!strcmp(context.c_str(),"CG")) Mh_CG++;
 			              }else if(PlusMethratio >=0.4){
-			                  H++;
+			                  H_AllC++;
 			                  category="H";
 			                  if(!strcmp(context.c_str(),"CG")) H_CG++;
 			              }else if(PlusMethratio >=0.2){
@@ -1020,7 +1020,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 			                  category="Mh";
 			                  if(!strcmp(context.c_str(),"CG")) Mh_CG++;
 			              }else if(NegMethratio >=0.4){
-			                  H++;
+			                  H_AllC++;
 			                  category="H";
 			                  if(!strcmp(context.c_str(),"CG")) H_CG++;
 			              }else if(NegMethratio >=0.2){

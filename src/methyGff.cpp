@@ -1067,7 +1067,10 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 					fprintf(methGffcg,"\t0");
 					fprintf(methGffcg_matrix,"\tnan");
 				}else fprintf(methGffcg,"\t0");
-			}else fprintf(methGffcg,"\t%f",Smeth_cg[i]);
+			}else {
+				fprintf(methGffcg,"\t%f",Smeth_cg[i]);
+				fprintf(methGffcg_matrix,"\t%f", Smeth_cg[i]);
+			}
 	        	if(BeginNo_chg==0 && !strcmp(type,"TSS"))
 	        	{	
 		        	if(i>=cut)
@@ -1083,7 +1086,10 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
                                         fprintf(methGffchg,"\t0");
                                         fprintf(methGffchg_matrix,"\tnan");
                                 }else fprintf(methGffchg,"\t0");
-                        }else fprintf(methGffchg,"\t%f",Smeth_chg[i]);
+                        }else {
+				fprintf(methGffchg,"\t%f",Smeth_chg[i]);
+				fprintf(methGffchg_matrix,"\t%f",Smeth_chg[i]);
+			}
 	        	if(BeginNo_chh==0 && !strcmp(type,"TSS"))
 	        	{	
 		        	if(i>=cut)
@@ -1099,7 +1105,10 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
                                         fprintf(methGffchh,"\t0");
                                         fprintf(methGffchh_matrix,"\tnan");
                                 }else fprintf(methGffchh,"\t0");
-                        }else fprintf(methGffchh,"\t%f",Smeth_chh[i]);
+                        }else {
+				fprintf(methGffchh,"\t%f",Smeth_chh[i]);
+				fprintf(methGffchh_matrix,"\t%f", Smeth_chh[i]);
+			}
 	        }
         }
         

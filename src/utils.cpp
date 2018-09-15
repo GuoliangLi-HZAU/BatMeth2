@@ -1,10 +1,14 @@
 #include <stdio.h>
 #include "utils.h"
-unsigned Get_File_Size(FILE* File)
+#include "limits.h"
+
+long Get_File_Size(FILE* File)
 {
 	fseek (File , 0 , SEEK_END);
-	unsigned Size = ftell (File);
+	long Size = ftell (File);
+//printf("\n===ss= %ld %u %lu %d %ld\n", Size, UINT_MAX, ftell(File), INT_MAX, LONG_MAX);
 	rewind (File);
+	if(Size < 0) Size = 0;
 	return Size;
 }
 

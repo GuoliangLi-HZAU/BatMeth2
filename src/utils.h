@@ -108,7 +108,7 @@ extern "C"
 
 
 
-unsigned Get_File_Size(FILE* File);
+long Get_File_Size(FILE* File);
 unsigned log2(unsigned v); // 32-bit word to find the log of
 FILE* File_Open(const char* File_Name,const char* Mode);
 BWT* initFMI(const char* BWTCodeFileName,const char* BWTOccValueFileName, const char* SAFile);

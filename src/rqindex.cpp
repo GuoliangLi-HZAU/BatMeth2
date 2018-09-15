@@ -9,7 +9,7 @@ extern int Genome_Count;
 extern unsigned Conversion_Factor;
 extern char* LOG_SUCCESS_FILE;
 extern FILE* Log_SFile;
-unsigned Block_Size = 0;
+unsigned long Block_Size = 0;
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  Load_Hits_File
@@ -240,7 +240,7 @@ void Load_Range_Index(RQINDEX & R,int STRINGLENGTH,FMFILES F,unsigned & Entries)
 {
 #undef READ_ASSERT
 #define READ_ASSERT(X,Y) {if ((X)<(Y)) {if(LOG_SUCCESS_FILE)fprintf(Log_SFile,"Load_Range_Index(): Read error...\n"); printf("Load_Range_Index(): Read error...\n");exit(-1);}}
-	unsigned Index_Size = 0; //,Block_Size;
+	unsigned long Index_Size = 0; //,Block_Size;
 	int T1=strlen(F.INDFILE);
 	int T2=strlen(F.BLKFILE);
 
@@ -250,6 +250,7 @@ void Load_Range_Index(RQINDEX & R,int STRINGLENGTH,FMFILES F,unsigned & Entries)
 	FILE* Blocks=File_Open(F.BLKFILE,"rb");
 	R.SA_Index=(SA*)malloc((Index_Size=Get_File_Size(Index)));//contains the index to blocks...
 	R.SA_Blocks=(int*)malloc((Block_Size=Get_File_Size(Blocks)));
+	//memset(R.SA_Blocks, 0, Block_Size);
 	if (!R.SA_Index || !R.SA_Blocks)
 	{
 		if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Load_Range_Index(): Memory allocation failed!..\n");
@@ -644,6 +645,7 @@ unsigned Get_Location(BWT* revfmi,RQINDEX & R,Tag_Info & Tag, unsigned Offset,un
 	}
 	else
 	{
+		//if(Tag.Block_Start+Offset >= Block_Size/sizeof(int) && Tag.Block_Start+Offset < Block_Size) printf("\nSIZE %ld %ld %ld %ld %d %p\n", Tag.Block_Start, Offset, Block_Size, Tag.Block_Start+Offset, Tag.First, R.SA_Blocks);
 		if(Tag.Block_Start+Offset >= Block_Size) return Tag.First;
 		return (unsigned)R.SA_Blocks[Tag.Block_Start+Offset];
 	}

@@ -42,7 +42,7 @@ BUILDING INDEX
 
 a) Have a fasta-formatted reference file ready 
 
-b) Type "`BatMeth2 build_index wgbs GENOME.fa`"  for WGBS or `BatMeth2 build_index rrbs GENOME.fa` for RRBS to make the neccessary pairing data-structure based on FM-index.
+b) Type "`BatMeth2 build_index GENOME.fa`"  for WGBS or `BatMeth2 build_index rrbs GENOME.fa` for RRBS to make the neccessary pairing data-structure based on FM-index.
 
 c) Run "`BatMeth2`" to see information on usage.
 
@@ -84,7 +84,7 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 **[build_index]** <br>
     Usage:  (must run this step first)
 
-1. BatMeth2 build_index wgbs genomefile.<br>
+1. BatMeth2 build_index genomefile.<br>
 
 2. BatMeth2 build_index rrbs genomefile. <br>
 

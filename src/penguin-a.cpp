@@ -207,11 +207,27 @@ std::vector<int> Estimate;
 //}-----------------------------  FUNCTION PRTOTYPES  -------------------------------------------------/*
 std::string GetFilePosfix(const char* path)
 {
-    std::cout << strlen(path) << std::endl;
+//    std::cout << strlen(path) << std::endl;
     std::string str(path);
     str=str.substr(str.length()-2,2);
     std::transform(str.begin(),str.end(),str.begin(),::tolower);   
     return str;    
+}
+
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+{
+  std::string::size_type pos1, pos2;
+  pos2 = s.find(c);
+  pos1 = 0;
+  while(std::string::npos != pos2)
+  {
+    v.push_back(s.substr(pos1, pos2-pos1));
+
+    pos1 = pos2 + c.size();
+    pos2 = s.find(c, pos1);
+  }
+  if(pos1 != s.length())
+    v.push_back(s.substr(pos1));
 }
 
 #undef DEBUG
@@ -239,7 +255,7 @@ bool STACK_LOWQ=false;
 const int DEFAULTFASTAQUAL=35;//40;
 LEN L_Main;
 In_File IN;
-INFILE Head_File;
+//INFILE Head_File;
 INFILE Tail_File;
 time_t Start_Time,End_Time;
 FILE* Main_Out;
@@ -256,6 +272,13 @@ int Genome_CountX=0;
 Offset_Record* Genome_Offsets;
 std::map <std::string,int> String_Hash;
 bool gzinfile = false;
+std::vector <std::string> filelist1;
+std::vector <std::string> filelist2;
+pthread_mutex_t flists;
+std::vector <INFILE> Ffilelist1;
+std::vector <INFILE> Ffilelist2;
+std::vector <INFILE>::size_type fi = 0;
+int processed = -1;
 //{---------------------------- GLOBAL VARIABLES -------------------------------------------------
 
 
@@ -333,18 +356,25 @@ int main(int argc, char* argv[])
 
 	Match_FA_Score= -10*log10(Pr(DEFAULTFASTAQUAL));
 	Mis_FA_Score= -10*log10((1-Pr(DEFAULTFASTAQUAL))/3);
-    std::string filefm = GetFilePosfix(BP.PATTERNFILE);
-    if(filefm=="gz") gzinfile=true;
-    if(gzinfile){
-        Head_File.gzfp = gzopen(BP.PATTERNFILE, "rb");
-        if(PAIRED) if(PAIRED) Tail_File.gzfp = gzopen(BP.PATTERNFILE1, "rb");
-        Head_File.filegz = Tail_File.filegz = '1';
-    }else{
-        Head_File.Input_File=File_Open(BP.PATTERNFILE,"r");
-        if(PAIRED) Tail_File.Input_File=File_Open(BP.PATTERNFILE1,"r");
-        Head_File.filegz = Tail_File.filegz = '0';
-    }
-	Analyze_File(Head_File,L_Main);
+	SplitString(BP.PATTERNFILE, filelist1, ",");
+        if(PAIRED) SplitString(BP.PATTERNFILE1, filelist2, ",");
+        std::string filefm = GetFilePosfix(filelist1[0].c_str());
+        if(filefm=="gz") gzinfile=true;
+
+	for(std::vector <std::string>::size_type i = 0;i<filelist1.size();i++){
+		INFILE Head_File;
+	        if(gzinfile){
+        	        Head_File.gzfp = gzopen(filelist1[i].c_str(), "rb");
+	                if(PAIRED) Tail_File.gzfp = gzopen(filelist2[i].c_str(), "rb");
+                	Head_File.filegz = Tail_File.filegz = '1';
+        	}else{
+	                Head_File.Input_File=File_Open(filelist1[i].c_str(),"r");
+                	if(PAIRED) Tail_File.Input_File=File_Open(filelist2[i].c_str(),"r");
+        	        Head_File.filegz = Tail_File.filegz = '0';
+	        }
+		Analyze_File(Head_File,L_Main);
+		Ffilelist1.push_back(Head_File);
+	}
 	IN.HEAD_LENGTH=IN.TAIL_LENGTH=IN.STRINGLENGTH=L_Main.STRINGLENGTH;
 
 	//Load_Range_Index(RQ,L_Main.STRINGLENGTH/3,FMFiles,Entries);
@@ -353,7 +383,7 @@ int main(int argc, char* argv[])
 	if(FASTDECODE) {Load_Range_Index(RQHALF_GA,L_Main.STRINGLENGTH/2,GA,Entries_Half_GA);Load_Range_Index(RQHALF_CT,L_Main.STRINGLENGTH/2,CT,Entries_Half_CT);}
 	
 	//Init(IN,FMFiles,RQ,BP,Head_File.SOLID,0,L_Main);
-	Init(IN,GA,RQ_GA,BP,Head_File.SOLID,0,L_Main);
+	Init(IN,GA,RQ_GA,BP,Ffilelist1[0].SOLID,0,L_Main);
 	printf("==============================================================\nLoading genome: %s ...\n",GENOME);
 	//Init(IN,CT,RQ_CT,BP,Head_File.SOLID,0,L_Main); 
 	//---------------------------------------------------------------------------------------------------------------------------------
@@ -410,7 +440,9 @@ int main(int argc, char* argv[])
 			std::ostringstream ostr;
 			ostr << (rand()%(INT_MAX));
 			RGID=ostr.str();
-			fprintf(Main_Out,"@RG\tID:%s\tSM:%s\tLB:%s\n",RGID.c_str(),Current_Dir,BP.PATTERNFILE);
+			if(PAIRED)
+                                fprintf(Main_Out,"@RG\tID:%s\tSM:%s\tLB:%s,%s\n",RGID.c_str(),Current_Dir,BP.PATTERNFILE,BP.PATTERNFILE1);
+                        else fprintf(Main_Out,"@RG\tID:%s\tSM:%s\tLB:%s\n",RGID.c_str(),Current_Dir,BP.PATTERNFILE);
 			fprintf(Main_Out,"@PG\tID:PEnGuin\tCL:%s",BP.CMD_Buffer);
 		}
 	}
@@ -433,24 +465,9 @@ int main(int argc, char* argv[])
 		READS_TO_ESTIMATE=0;//READS_TO_ESTIMATE/THREAD;
 		//Launch_Threads(THREAD, Map_And_Pair_Solexa,T);
 		//Estimate_Insert(INSERTSIZE,STD);
-		//fclose(Head_File.Input_File);
-        if(gzinfile) {
-            gzclose(Head_File.Input_File);
-            Head_File.gzfp = gzopen(BP.PATTERNFILE, "rb");
-            
-        }else{
-            fclose(Head_File.Input_File);Head_File.Input_File=File_Open(BP.PATTERNFILE,"r");
-        }
-        if(PAIRED) 
-        {
-            if(gzinfile) {
-                gzclose(Tail_File.Input_File);
-                Tail_File.gzfp = gzopen(BP.PATTERNFILE1, "rb");
-            }else{
-                fclose(Tail_File.Input_File);Tail_File.Input_File=File_Open(BP.PATTERNFILE1,"r");
-            }
-        }
+
 		ESTIMATE=false;
+		fi=0;
 		time(&Start_Time);
 		Launch_Threads(THREAD, Map_And_Pair_Solexa,T);
 	}
@@ -536,7 +553,7 @@ void *Map_And_Pair_Solexa(void *T)
 	{
 		//Verbose(CT.BWTFILE,CT.OCCFILE,CT.REVBWTINDEX,CT.REVOCCFILE,BP.PATTERNFILE,CT.OUTPUTFILE,CT.LOCATIONFILE,Inter_MM,BP.Patternfile_Count,BP.PATTERNFILE1,Head_File.FILETYPE,L,BP.FORCESOLID);
 		//Verbose(GA.BWTFILE,GA.OCCFILE,GA.REVBWTINDEX,GA.REVOCCFILE,BP.PATTERNFILE,GA.OUTPUTFILE,GA.LOCATIONFILE,Inter_MM,BP.Patternfile_Count,BP.PATTERNFILE1,Head_File.FILETYPE,L,BP.FORCESOLID);
-		FileInfo(BP.PATTERNFILE,GA.OUTPUTFILE,Inter_MM,BP.Patternfile_Count,BP.PATTERNFILE1,Head_File.FILETYPE,L,BP.FORCESOLID);
+		FileInfo(BP.PATTERNFILE,GA.OUTPUTFILE,Inter_MM,BP.Patternfile_Count,BP.PATTERNFILE1,Ffilelist1[0].FILETYPE,L,BP.FORCESOLID);
 	}
 	if(!USE_MULTI_OUT)
 	{
@@ -663,12 +680,13 @@ void *Map_And_Pair_Solexa(void *T)
 	unsigned Conversion_Factor;
 
 	bwase_initialize(); 
-	INPUT_FILE_TYPE=Head_File.FILETYPE;
+	INPUT_FILE_TYPE=Ffilelist1[0].FILETYPE;
 	MAX_SW_sav=MAX_SW;
-	int Read_Length=Head_File.TAG_COPY_LEN;
+	int Read_Length=Ffilelist1[0].TAG_COPY_LEN;
 	SW_THRESHOLD=80*Read_Length*match/100;
 //}--------------------------- INIT STUF ---------------------------------------
-	while ((gzinfile && Read_Tag_gz(Head_File.gzfp,Tail_File.gzfp, Head_File.FILETYPE,R, M)) || (!gzinfile && Read_Tag(Head_File.Input_File,Tail_File.Input_File, Head_File.FILETYPE,R, M)))
+    for(; fi < filelist1.size(); ){
+	while ((gzinfile && Read_Tag_gz(Ffilelist1[fi].gzfp,Tail_File.gzfp, Ffilelist1[fi].FILETYPE,R, M)) || (!gzinfile && Read_Tag(Ffilelist1[fi].Input_File,Tail_File.Input_File, Ffilelist1[fi].FILETYPE,R, M)))
 	{
 		RECOVER_N=0;
 		R.Tag_Number=FIRST_READ;
@@ -681,21 +699,21 @@ void *Map_And_Pair_Solexa(void *T)
 		if (READS_TO_PROCESS && READS_TO_PROCESS <= Total_Reads) break;
 		if (ESTIMATE && READS_TO_ESTIMATE <= Total_Reads) break;
 
-        if(gzinfile){
-            if ( Progress>=100000 && Thread_ID==1 ) {
-                fprintf_time(stderr, "Processed %d reads.\n", Total_Reads);
-                Progress = 0;
-            }
-        }
+        	if(gzinfile){
+        	    if ( Progress>=100000 && Thread_ID==1 ) {
+        	        fprintf_time(stderr, "Processed %d reads.\n", Total_Reads);
+        	        Progress = 0;
+        	    }
+        	}
 		if (Thread_ID==1 && Progress>Number_of_Tags && PROGRESSBAR) 
-		{//printf("\n%d %d %d\n",ntemp,Total_Reads,Nindel);
-			off64_t Current_Pos=ftello64(Head_File.Input_File);
+		{
+			off64_t Current_Pos=ftello64(Ffilelist1[fi].Input_File);
 			off64_t Average_Length=Current_Pos/Actual_Tag+1;
-			Number_of_Tags=(Head_File.File_Size/Average_Length)/100;
+			Number_of_Tags=(Ffilelist1[fi].File_Size/Average_Length)/100;
 			Progress=0;
-			Show_Progress(Current_Pos*100/Head_File.File_Size);
+			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-//Read Head start ..
+		//Read Head start ..
 		R.Real_Len=0;
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
 		M.Real_Len=0;
@@ -738,7 +756,7 @@ void *Map_And_Pair_Solexa(void *T)
 		FreeQ_Hits(Align_Hits_CT);FreeQ_Hits(Align_Hits_CT_P);
 		Align_Hits_CT.nMisNow = -1;
 		//===init
-//printf("\n%s", R.Description);
+		//printf("\n%s %s %d\n", R.Description, R.Tag_Copy, Thread_ID);
 		int align_mis=0;
 		char source1 = '1', source2 = '0';
 		int cutfortrcalQS = 30;
@@ -960,9 +978,11 @@ void *Map_And_Pair_Solexa(void *T)
 //		}//END FOR INDEL
 		}
 	}
-//printf("\n%d %d %d\n",ntemp,Total_Reads,Nindel);
-//printf("\nTime&N %d %d %d %d %d %d %d %d %d %d\nNN %d %d %d %d %d %d\n",time1,time2,time3,time4,time5,N1,N2,N3,N4,N5,NN1,NN2,NN3,NN4,NN_indels1,NN_indels2);
-//printf("\nTH %d %d %d %d %d %d %d %d %d %d %d\n",TH1,TH2_1,TH2,TH3,TH4,TH5,TH6,TH7,TH8,TH9,TH10);
+	if(fi+1 == filelist1.size()) break;
+	pthread_mutex_lock(&flists);
+	fi++;
+	pthread_mutex_unlock(&flists);
+    }
 	//--------------------------GA----------------------------
 	MF_GA.Left_Mishits.clear();MC_GA.Left_Mishits.clear();
 	MF_GA.Right_Mishits.clear();MC_GA.Right_Mishits.clear();

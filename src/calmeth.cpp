@@ -123,7 +123,7 @@ unsigned Tot_Unique_Org=0;//total unique hits obtained
 unsigned ALL_MAP_Org=0;
 unsigned Tot_Unique_Remdup=0;//total unique hits obtained after removing dups...
 unsigned ALL_Map_Remdup=0;
-int UPPER_MAX_MISMATCH=0.06;
+float UPPER_MAX_MISMATCH=0.06;
 bool REMOVE_DUP=false; //true; //true to removeDup, false will not remove PCR-dup
 unsigned Mismatch_Qual[255][255][255]; //[readLength][255][255]
 int QualCut=10;

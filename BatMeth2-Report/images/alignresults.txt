@@ -1,0 +1,14 @@
+State	Value
+in total (QC-passed reads + QC-failed reads)	590045176 + 2351463
+secondary	497310 + 4569
+supplementary	0 + 0
+duplicates	0 + 0
+mapped (99.36% : 99.98%)	586287980 + 2351107
+paired in sequencing	589547866 + 2346894
+read1	294773933 + 1173447
+read2	294773933 + 1173447
+properly paired (97.01% : 0.00%)	571896886 + 0
+with itself and mate mapped	585734494 + 2346182
+singletons (0.01% : 0.02%)	56176 + 356
+with mate mapped to a different chr	1411834 + 1764
+with mate mapped to a different chr (mapQ>=5)	693127 + 455

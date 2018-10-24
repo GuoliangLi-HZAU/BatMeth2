@@ -1,0 +1,14 @@
+Paramater	Value
+Threads	6
+Calmeth	paramaters
+Quality_Score	10
+redup	1
+meth region length	1000
+calmeth and methyGff	paramaters
+Coverage	5
+maxCoverage	1000
+binCoverage	3
+chromStep	50000
+methyGff	Paramaters
+Gene bins step	0.025
+Distance of upstream and downstream	2000

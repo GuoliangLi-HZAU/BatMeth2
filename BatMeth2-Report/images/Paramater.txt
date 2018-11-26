@@ -1,7 +1,7 @@
 Program	BatMeth2.v1
-Workdir	/public/home/qwzhou/practice/Imr90_epi/BS-seq
+Workdir	/test/practice/Imr90_epi/BS-seq
 Aligner	BatMeth2-align
-Genome	/public/home/qwzhou/practice/Genome/hg38/batmeth2/hg38.fa
+Genome	/test/practice/Genome/hg38/batmeth2/hg38.fa
 Annotation	~/practice/Genome/hg38/gene.gtf/None
 Output-prefix	IMR90
 Input	None

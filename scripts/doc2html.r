@@ -38,7 +38,8 @@ library(xtable)
 filename<- convertfile
 a<-read.table(paste(output_dir, filename, sep=""), header=T, sep="\t")
 ##
-c <- xtable(a, align = c("c", "c", "c"))
+#c <- xtable(a, align = c("c", "c", "c"))
+c <- xtable(a, align = c("r", "r", "r"))
 header<-"<!DOCTYPE HTML>
 <html lang=\"en-US\">
 <meta charset=\"UTF-8\">

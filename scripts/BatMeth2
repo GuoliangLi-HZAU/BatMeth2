@@ -354,6 +354,8 @@ def alignmentPaired():
     runprogram(cmd)
 
 def annoation():
+    if gfffile == "None":
+        return
     methratio = output_prefix + ".methratio.txt"
     if gfffile != "None":
         if GTF == "True":
@@ -362,17 +364,17 @@ def annoation():
             cmd = abspath + "methyGff" + " -o " + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
     elif bedfile != "None":
         cmd = abspath + "methyGff" + " -o " + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE"
-    elif step != 0.025:
+    if step != 0.025:
         cmd = cmd + " -s " + step
-    elif chromstep != 50000:
+    if chromstep != 50000:
         cmd = cmd + " -S " + chromstep
-    elif coverage != 5:
+    if coverage != 5:
         cmd = cmd + " -c " + coverage
-    elif maxcoverage != 1000:
+    if maxcoverage != 1000:
         cmd = cmd + " -C " + maxcoverage
-    elif binCover != 3:
+    if binCover != 3:
         cmd = cmd + " -nC " + binCover
-    elif distance != 2000:
+    if distance != 2000:
         cmd = cmd + " -d " + distance
     runprogram(cmd)
 
@@ -517,7 +519,7 @@ def runpipe():
     else:
         alignmentSingle()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Alignment summary ..."
-    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Sortinf align file ..."
+    print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Sorting align file ..."
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] ", alignmentstate()
     print "[", time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "] Methylation Status ..."
     align_result = output_prefix + ".sort.bam"

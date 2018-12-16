@@ -467,9 +467,9 @@ def alignmentstate():
     Falignresults = open(alignresults, "w")
     Falignresults.write("Value\tState\n")
     Falignresults.close()
-    alignsortbam = "samtools sort -@ " + threads +" -o " + output_prefix + ".sort.bam " + output_prefix + ".sam"
+    alignsortbam = "samtools sort -@ " + str(threads) +" -o " + output_prefix + ".sort.bam " + output_prefix + ".sam"
     runprogram(alignsortbam)
-    alignsummarycmd = "samtools flagstat -@ " + threads + " " + output_prefix + ".sort.bam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
+    alignsummarycmd = "samtools flagstat -@ " + str(threads) + " " + output_prefix + ".sort.bam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt"
     runprogram(alignsummarycmd)
 
 def mkreport():

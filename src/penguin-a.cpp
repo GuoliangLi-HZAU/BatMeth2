@@ -675,6 +675,7 @@ void *Map_And_Pair_Solexa(void *T)
 //-------------------------
 
 	int Progress=0;unsigned Number_of_Tags=1000;
+	int Bindel=0;
 	if (gzinfile && PROGRESSBAR && !ESTIMATE) Init_Progress();
 	int NCount_For_SW=L.STRINGLENGTH/4;
 	unsigned Conversion_Factor;
@@ -713,6 +714,8 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
+		if(DO_INDEL_LARGE && Progress>100000 && Bindel>Progress*0.2) DO_INDEL_LARGE=false;
+
 		//Read Head start ..
 		R.Real_Len=0;
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
@@ -926,6 +929,7 @@ void *Map_And_Pair_Solexa(void *T)
 	if(DO_INDEL_LARGE){
 		source1 = '1', source2 = '0';
 		align_mis=2;
+		Bindel++;
 		ReplaceCtoT(R_CT);ReplaceGtoA(M_GA);//CTread1 GAread2 CTgenome
 		Two_Side_Hit_Finding(align_mis,Paired_Ncutoff,source1,source2,R,M,Read_Length,RQHALF_CT,RQ_CT,Original_Text_CT,Entries_CT,fwfmiCT,revfmiCT,R_CT,M_GA,B,Conversion_Factor,mF_CT,mC_CT,MF_CT,MC_CT,MF_CT2,MC_CT2,MFLH_CT,MCLH_CT,MFLT_CT,MCLT_CT,MFH_CT,MCH_CT,MFT_CT,MCT_CT, L,L_Main,L_Half,L_Third,Actual_Tag,Single_File,Mishit_File,Align_Hits_CT,Align_Hits_CT_P,Pairs,0,SEG_SIZE,SHIFT_SEG_SIZE,Alignments_Reslut);
 		//-------------------------------4 2-------------------------------------------------

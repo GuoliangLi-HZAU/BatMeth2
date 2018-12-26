@@ -96,6 +96,7 @@ bool REALN=true; //false;//true;
 //extern const int QUALITYCONVERSIONFACTOR=64;
 //extern const int QUALITYSCALEFACTOR=33;
 extern bool DO_INDEL; // = true;//
+bool DO_INDEL_LARGE=true;
 bool DASH_DEL=true;
 bool ESTIMATE=true;//
 bool FASTDECODE=false;
@@ -677,6 +678,7 @@ void *Map_And_Pair_Solexa(void *T)
 //-------------------------
 
 	int Progress=0;unsigned Number_of_Tags=1000;
+        int Bindel=0;
 	if (!gzinfile && PROGRESSBAR && !ESTIMATE) Init_Progress();
 	int NCount_For_SW=L.STRINGLENGTH/4;
 	unsigned Conversion_Factor;
@@ -707,13 +709,14 @@ void *Map_And_Pair_Solexa(void *T)
 	            }
         	}
        		else if (Thread_ID==1 && Progress>Number_of_Tags && PROGRESSBAR) 
-		{ 
+		{
 			off64_t Current_Pos=ftello64(Ffilelist1[fi].Input_File);
 			off64_t Average_Length=Current_Pos/Actual_Tag+1;
 			Number_of_Tags=(Ffilelist1[fi].File_Size/Average_Length)/100;
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
+		if(DO_INDEL_LARGE && Progress>100000 && Bindel>Progress*0.1) DO_INDEL_LARGE=false;
 		R.Real_Len=0;
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
 		M.Real_Len=0;
@@ -868,11 +871,14 @@ void *Map_And_Pair_Solexa(void *T)
 			}
 		}
 		////////////////Final
+	    if(DO_INDEL_LARGE){
+		Bindel++;
 		align_mis=2;
 		ReplaceCtoT(R_CT);ReplaceGtoA(M_GA);//CTread1 GAread2 CTgenome
 		Two_Side_Hit_Finding(align_mis,Paired_Ncutoff,'1','3',R,M,Read_Length,RQHALF_CT,RQ_CT,Original_Text_CT,Entries_CT,fwfmiCT,revfmiCT,R_CT,M_GA,B,Conversion_Factor,mF_CT,mC_CT,MF_CT,MC_CT,MF_CT2,MC_CT2,MFLH_CT,MCLH_CT,MFLT_CT,MCLT_CT,MFH_CT,MCH_CT,MFT_CT,MCT_CT, L,L_Main,L_Half,L_Third,Actual_Tag,Single_File,Mishit_File,Align_Hits_CT,Align_Hits_CT_P,Pairs,0,SEG_SIZE,SHIFT_SEG_SIZE,Alignments_Reslut);
 		//-------------------------------4 2-------------------------------------------------
 		Two_Side_Hit_Finding(align_mis,Paired_Ncutoff,'4','2',R,M,Read_Length,RQHALF_GA,RQ_GA,Original_Text_GA,Entries_GA,fwfmiGA,revfmiGA,R_CT,M_GA,B,Conversion_Factor,mF_GA,mC_GA,MF_GA,MC_GA,MF_GA2,MC_GA2,MFLH_GA,MCLH_GA,MFLT_GA,MCLT_GA,MFH_GA,MCH_GA,MFT_GA,MCT_GA,L,L_Main,L_Half,L_Third,Actual_Tag,Single_File,Mishit_File,Align_Hits_CT,Align_Hits_CT_P,Pairs,0,SEG_SIZE,SHIFT_SEG_SIZE,Alignments_Reslut);
+	    } //END DO_INDEL_LARGE
 	} //END Do_Indel
 		if(Alignments_Reslut.empty() && !ESTIMATE)
 		{

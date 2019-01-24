@@ -1,1 +1,5 @@
-# dummy
+adler32.o: adler32.c zlib.h zconf.h
+
+zlib.h:
+
+zconf.h:

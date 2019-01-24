@@ -38,7 +38,7 @@ for (i in 1:chrNum){
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
   cat(lstMeth )
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -62,7 +62,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -85,7 +85,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -113,7 +113,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrDensity[, 1]== chr[i+1] )
   if (i < chrNum) chrDensity[ndx2, 2] <- chrDensity[ndx2, 2] + lstMeth
 }
@@ -131,7 +131,7 @@ for (i in 1:chrNum){ndx <- which(chrDensity[, 1]==chr[i] )
 if(POINT) {
 	p6<- p2 + geom_point(data=chrDensity,aes(x=pos, y=density,group=as.factor(gsub("Chr|chr","gene",chr))),colour="deepskyblue") + theme_bw(base_size=15)+theme(legend.position='none')
 }else{
-	(p6 <- p2 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,group=as.factor(gsub("Chr|chr","gene",chr))) ,colour="deepskyblue",method="auto",linetype=1)+ theme_bw(base_size=15)+theme(legend.position='none') )
+	p6 <- p2 + geom_smooth(se=F,size=1,data=chrDensity,aes(x=pos, y=density,group=as.factor(gsub("Chr|chr","gene",chr))) ,colour="deepskyblue",method="auto",linetype=1)+ theme_bw(base_size=15)+theme(legend.position='none')
 }
 ##########################TE gff density
 #density <- read.table(TEfile,sep="\t")  #"Cr_DJ.TE.count.C.gffDensity.1.txt"

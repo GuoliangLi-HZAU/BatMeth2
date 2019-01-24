@@ -600,6 +600,7 @@ int main(int argc, char* argv[])
 		catch(char* Err)
 		{
 			printf(Err);
+			fprintf(stderr, "\nError cigar\n");
 			exit(-1);
 		}
 
@@ -721,10 +722,12 @@ char* process_cigar(const char* cig,int Read_Len)
 	return cigar_rm;
 }
 string getstring(char* seq, int l, int len){
-	string tmp;
+	char tmp[10];
 	for(int i=0; i<len; i++){
+//printf("\ns %d %d %c\n", l, i, seq[l+i]);
 		tmp[i] = seq[l+i];
 	}
+	if(len>0) tmp[len]='\0';
 	return tmp;
 }
 
@@ -809,12 +812,12 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					
 					string Fivecontext;
 					//char genome_Char = toupper(args->Genome_List[i].Genome[l]);
-					if(l+2 < args->Genome_Offsets[i+1].Offset)
+					if(l+2+1 < args->Genome_Offsets[i+1].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 5); //Genome_Seq.substr(l-2,5);
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 4); //Genome_Seq.substr(l-1,4);
 						else if(l==0) Fivecontext = "NN" + getstring(args->Genome_List[i].Genome, l, 3); //Genome_Seq.substr(l,3);
-					}else if(l+1 < args->Genome_Offsets[i+1].Offset)
+					}else if(l+1+1 < args->Genome_Offsets[i+1].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 4)+"N";
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 3)+"N";
@@ -934,14 +937,14 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					//context
 					string Fivecontext;
 					//char genome_Char = toupper(Genome_Seq[l]);
-					if(l+2 < args->Genome_Offsets[i+1].Offset)
+					if(l+2+1 < args->Genome_Offsets[i+1].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 5);
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 4);
 						else if(l==0) Fivecontext = "NN" + getstring(args->Genome_List[i].Genome, l, 3);
-					}else if(l+1 < args->Genome_Offsets[i+1].Offset)
+					}else if(l+1+1 < args->Genome_Offsets[i+1].Offset)
 					{
-						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 4)+"N";
+						if(l>=2) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 4)+"N";
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 3)+"N";
 						else if(l==0) Fivecontext = "NN" + getstring(args->Genome_List[i].Genome, l, 2)+"N";
 					}else{
@@ -953,6 +956,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					int stringlength=strlen(Fivecontext.c_str());
 					char Fcontext[6];
 					memcpy(Fcontext,Fivecontext.c_str(),stringlength+1);
+					if(stringlength<5) printf("\n%d %d %d %s \n",strlen(Fivecontext.c_str()), l, args->Genome_Offsets[i+1].Offset, args->Genome_Offsets[i].Genome);
 					ReverseC_Context(Fcontext,Fivecontext.c_str(),stringlength);
 					
 					char charBac1='N',charBac2='N';
@@ -2056,7 +2060,10 @@ string remove_soft_split(string & cigar,int & Read_Len,int & pos)
 
 void ReverseC_Context(char* Dest,const char* seq,int & stringlength)
 {
-	if(stringlength!=5 || strlen(seq)!=5) exit(0);
+	if(stringlength!=5 || strlen(seq)!=5) {
+		fprintf(stderr, "\nError string %d %d %s\n", stringlength, strlen(seq), seq);
+		exit(0);
+	}
 	
         for (int i=stringlength-1;i>=0;i--)
         {

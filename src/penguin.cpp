@@ -611,7 +611,7 @@ void *Map_And_Pair_Solexa(void *T)
 	//FILE* Log_File=File_Open(LOGFILE,"w");GLog_File=Log_File;
 	unsigned Mapped=0,Actual_Tag=0,Large=0; //,Total_Reads=0;
 	int ntemp=0;Nindel=0;
-	int LOOKUPSIZE,MAX_MISMATCHES=BP.MAX_MISMATCHES;
+	int LOOKUPSIZE;//MAX_MISMATCHES=BP.MAX_MISMATCHES;
 	char ONEFMINDEX=BP.ONEFMINDEX;
 	READ R;BATREAD B;
 	BATREAD B_batmethl, B_batmethr; 
@@ -716,7 +716,10 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-		if(DO_INDEL_LARGE && Progress>100000 && Bindel>Progress*0.1) DO_INDEL_LARGE=false;
+		if(DO_INDEL_LARGE && Total_Reads>10000 && Bindel>Total_Reads*0.1) {
+			DO_INDEL_LARGE=false;
+			fprintf(stderr, "\nSkip DO_INDEL_LARGE mode\n");
+		}
 		R.Real_Len=0;
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
 		M.Real_Len=0;

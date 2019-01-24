@@ -38,7 +38,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -62,7 +62,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -85,7 +85,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrMethyl[, 1]== chr[i+1] )
   if (i < chrNum) chrMethyl[ndx2, 2] <- chrMethyl[ndx2, 2] + lstMeth
 }
@@ -113,7 +113,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrDensity[, 1]== chr[i+1] )
   if (i < chrNum) chrDensity[ndx2, 2] <- chrDensity[ndx2, 2] + lstMeth
 }
@@ -150,7 +150,7 @@ for (i in 1:chrNum){
   if(i > 1) maxMeth[i] <- (lstMeth - maxMethOri[i-1])
   else maxMeth[i] <- lstMeth
   maxMethOri[i] <- lstMeth
-  if(maxMeth[i]>200) POINT=FALSE
+  if(maxMeth[i]>1000) POINT=FALSE
   if (i < chrNum) ndx2 <- which(chrDensity[, 1]== chr[i+1] )
   if (i < chrNum) chrDensity[ndx2, 2] <- chrDensity[ndx2, 2] + lstMeth
 }

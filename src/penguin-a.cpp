@@ -60,7 +60,7 @@ const unsigned AUX	      =0x800;
 
 //}-----------------------------  INCLUDE FILES  -------------------------------------------------/
 extern bool DO_INDEL_SMALL; //=true;
-bool DO_INDEL_LARGE=false;//false;
+bool DO_INDEL_LARGE=true; //false;//false;
 int SMALLSEED=50;
 int DetectIndelLen = 120;
 int Max_Hits=3000;
@@ -605,7 +605,7 @@ void *Map_And_Pair_Solexa(void *T)
 	//FILE* Log_File=File_Open(LOGFILE,"w");GLog_File=Log_File;
 	unsigned Mapped=0,Actual_Tag=0,Large=0; //,Total_Reads=0;
 	int ntemp=0;Nindel=0;
-	int LOOKUPSIZE,MAX_MISMATCHES=BP.MAX_MISMATCHES;
+	int LOOKUPSIZE; //MAX_MISMATCHES=BP.MAX_MISMATCHES;
 	char ONEFMINDEX=BP.ONEFMINDEX;
 	READ R;BATREAD B;BATREAD B_batmeth;
 	READ revR,R_CT,R_GA;//+ strand reads..
@@ -714,7 +714,7 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-		if(DO_INDEL_LARGE && Progress>100000 && Bindel>Progress*0.2) DO_INDEL_LARGE=false;
+		if(DO_INDEL_LARGE && Total_Reads>10000 && Bindel>Total_Reads*0.2) DO_INDEL_LARGE=false;
 
 		//Read Head start ..
 		R.Real_Len=0;

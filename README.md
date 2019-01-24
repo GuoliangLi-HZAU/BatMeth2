@@ -18,6 +18,7 @@ REQUIREMENTS
 
 4) samtools
 
+5) fastp, raw reads as input need
 INSTALL
 -------
 
@@ -89,48 +90,51 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 2. BatMeth2 build_index rrbs genomefile. <br>
 
 **[pipel (Contains: align, calmeth, annoation, methyPlot, mkreport)]** <br>
+    **[fastp location]** <br>
+      --fastp    fastp program location. <br>
+      If --fastp is not defined, the input file should be clean data. <br>
     **[select aligner]** <br>
-    --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no <br>
+      --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no <br>
     **[other aligners paramaters]** <br>
-    --go &emsp;&emsp;&emsp; Name of the genome, contaion index build by aligner. (bwa-meth/bismark2) <br>
+      --go &emsp;&emsp;&emsp; Name of the genome, contaion index build by aligner. (bwa-meth/bismark2) <br>
     **[main paramaters]** <br>
-    -o &emsp; Name of output file prefix<br>
+      -o &emsp; Name of output file prefix<br>
     **[alignment paramaters]** <br>
-    -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2 <br>
-    -1 &emsp;&ensp; Name of input file left end, if single-end. please use -i <br>
-    -2 &emsp;&ensp; Name of input file left end <br>
-    -g &emsp; Name of the genome mapped against <br>
-    -n &emsp; maximum mismatches allowed due to seq. errors <br>
-    -p <interger> &emsp; Launch <integer> threads <br>
+      -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2 <br>
+      -1 &emsp;&ensp; Name of input file left end, if single-end. please use -i <br>
+      -2 &emsp;&ensp; Name of input file left end <br>
+      -g &emsp; Name of the genome mapped against <br>
+      -n &emsp; maximum mismatches allowed due to seq. errors <br>
+      -p <interger> &emsp; Launch <integer> threads <br>
     **[calmeth paramaters]** <br>
-    --Qual &emsp;&ensp;&ensp; calculate the methratio while read QulityScore >= Q. default:10 <br>
-    --redup &emsp;&ensp; REMOVE_DUP, 0 or 1, default 0 <br>
-    --region &emsp; Bins for DMR calculate , default 1000bp . <br>
-    -f  &emsp;&ensp; for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file). <br>
+      --Qual &emsp;&ensp;&ensp; calculate the methratio while read QulityScore >= Q. default:10 <br>
+      --redup &emsp;&ensp; REMOVE_DUP, 0 or 1, default 0 <br>
+      --region &emsp; Bins for DMR calculate , default 1000bp . <br>
+      -f  &emsp;&ensp; for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file). <br>
     **[calmeth and annoation paramaters]** <br>
-    --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
-    --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
-    --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
+      --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
+      --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
+      --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
-    --gtf/--bed &emsp; Gtf or gff file / bed file <br>
-    --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
-    --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
-    -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>
+      --gtf/--bed &emsp; Gtf or gff file / bed file <br>
+      --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
+      --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
+      -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>
     **[mkreport paramaters]** <br>
-    Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
-    **-o [outprefix]** <br>
+      Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
+      **-o [outprefix]** <br>
     **[align paramaters:]** <br>
-    see the details in 'BatMeth2 align' <br>
+      see the details in 'BatMeth2 align' <br>
     **[calmeth paramaters:]** <br>
-    see the details in 'BatMeth2 calmeth' <br>
+      see the details in 'BatMeth2 calmeth' <br>
     **[annotion paramaters:]** <br>
-    see the details in 'BatMeth2 annoation' <br>
+      see the details in 'BatMeth2 annoation' <br>
     **[methyPlot paramaters:]** <br>
-    see the details in 'BatMeth2 methyPlot' <br>
+      see the details in 'BatMeth2 methyPlot' <br>
     **[batDMR paramaters:]** <br>
-    see the details in 'BatMeth2 batDMR' <br>
+      see the details in 'BatMeth2 batDMR' <br>
     **[visul2sample paramaters:]** <br>
-    see the details in 'BatMeth2 visul2sample' <br>
+      see the details in 'BatMeth2 visul2sample' <br>
     -h|--help   usage <br>
 
 

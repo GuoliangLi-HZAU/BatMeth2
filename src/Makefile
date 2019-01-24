@@ -64,7 +64,7 @@ am_batmethindex_OBJECTS = bfix.$(OBJEXT) index.$(OBJEXT) BWT.$(OBJEXT) \
 	TextConverter.$(OBJEXT) r250.$(OBJEXT) QSufSort.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
-	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT)
+	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) -lz -lm
 batmethindex_OBJECTS = $(am_batmethindex_OBJECTS)
 batmethindex_LDADD = $(LDADD)
 am_build_index_rrbs_OBJECTS = build_index_rrbs.$(OBJEXT)
@@ -76,7 +76,7 @@ am_bwtformatdb_OBJECTS = bwtformatdb.$(OBJEXT) BWT.$(OBJEXT) \
 	QSufSort.$(OBJEXT) iniparser.$(OBJEXT) inistrlib.$(OBJEXT) \
 	dictionary.$(OBJEXT) DNACount.$(OBJEXT) Timing.$(OBJEXT) \
 	Socket.$(OBJEXT) HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) \
-	karlin.$(OBJEXT)
+	karlin.$(OBJEXT) -lz -lm
 bwtformatdb_OBJECTS = $(am_bwtformatdb_OBJECTS)
 bwtformatdb_LDADD = $(LDADD)
 am_filter_OBJECTS = filter.$(OBJEXT)
@@ -94,7 +94,7 @@ am_penguin_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) utils.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
 	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
-	fastsw.$(OBJEXT)
+	fastsw.$(OBJEXT) -lz -lm
 penguin_OBJECTS = $(am_penguin_OBJECTS)
 penguin_LDADD = $(LDADD)
 am_penguin_a_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) \
@@ -106,7 +106,7 @@ am_penguin_a_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
 	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
-	fastsw.$(OBJEXT)
+	fastsw.$(OBJEXT) -lz -lm
 penguin_a_OBJECTS = $(am_penguin_a_OBJECTS)
 penguin_a_LDADD = $(LDADD)
 am_reverse_OBJECTS = reverse.$(OBJEXT)

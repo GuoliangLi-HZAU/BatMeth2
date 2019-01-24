@@ -71,11 +71,13 @@ An easy-to-use, auto-run package for DNA methylation analyses
 
 The usage is here:
 
+Raw reads:
+
 ```bash
 BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff=./gene.gff -f 1
 ```
 
-Or
+Or clean reads:
 
 ```bash
 BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff=./gene.gff -f 1 

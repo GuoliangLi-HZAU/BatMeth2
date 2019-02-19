@@ -32,7 +32,6 @@ d) Type
 
 - ./configure
 - make
-- make script
 - make copy
 
 e) The binary of BatMeth2 will be created in bin/

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <dirent.h>
+#include <unistd.h>
 
 using std::string;
 using std::vector;
@@ -129,7 +130,7 @@ void usage(){
     fprintf(stderr, "\n[visul2sample paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 visul2sample'\n\n");
 
-    fprintf(stderr, "-h|--help   usage\n\nBatMeth2 is a naive tools, if you meet any problems or have good suggestion, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n\n");
+    fprintf(stderr, "-h|--help   usage\n\nBatMeth2 is a naive tool, if you meet any problems or have good suggestion, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n\n");
 }
 
 void executeCMD(const char *cmd)

@@ -351,9 +351,10 @@ methpipe::write_site(std::ostream &out,
                      const string &chrom, const size_t &pos,
                      const string &strand, const string &seq,
                      const double &meth, const size_t &coverage) {
-  return (out << chrom << "\t" << pos << "\t" << strand
+  out << chrom << "\t" << pos << "\t" << strand
           << "\t" << seq << "\t" << (coverage == 0 ? 0.0 : meth) << "\t"
-          << coverage << '\n');
+          << coverage << '\n';
+  return out.good();
 }
 
 std::istream&
@@ -395,7 +396,7 @@ methpipe::write_methdiff_site(std::ostream &out, const std::string &chrom,
   out << chrom << "\t" << pos << "\t" << strand << "\t" << seq << "\t"
       << diffscore << "\t" << meth_a << "\t" << unmeth_a << "\t"
       << meth_b << "\t" << unmeth_b << std::endl;
-  return out;
+  return out.good();
 }
 
 bool
@@ -406,6 +407,6 @@ methpipe::read_methdiff_site(std::istream &in, std::string &chrom,
                              size_t &meth_b, size_t &unmeth_b) {
   in >> chrom >> pos >> strand >> seq >>
     diffscore >> meth_a >> unmeth_a >> meth_b >> unmeth_b;
-  return in;
+  return in.good();
 }
 

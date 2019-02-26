@@ -680,6 +680,7 @@ copy:
 	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp
+	cp ./scripts/BatMeth2 ./bin/batmeth2
 	cp scripts/strip.pl bin 
 	cp scripts/b2c.pl bin 
 	cp scripts/build_complement bin 

@@ -539,7 +539,8 @@ void fdr(vector<PvalLocus> &loci) {
       for (vector<PvalLocus>::iterator it = loci.begin();
             it != loci.end(); ++it) {
         PvalLocus &cur_locus = *(it);
-        if (cur_locus.corrected_pval > 1.0)
+	if(isnan(cur_locus.corrected_pval)) cur_locus.corrected_pval = 1.0;
+        if (cur_locus.corrected_pval > 1.0 || cur_locus.corrected_pval < 0)
           cur_locus.corrected_pval = 1.0;
       }
 
@@ -652,7 +653,7 @@ int main(int argc, const char **argv) {
     const string prog_name = strip_methpath(argv[0]);
     string dmc_outfile;
     string dmr_outfile;      double cutoff = 0.05; double methdiff=0.25;
-    bool Auto = true;
+    bool Auto = false;
     //unsigned length_dmr = 1000;
     unsigned methy1Start=0;
     unsigned methy1End=0;
@@ -664,7 +665,7 @@ int main(int argc, const char **argv) {
     const char* Help_String="Command Format :  DMR [options] -g genome.fa -o_dm <DM_result>  -1 [Sample1-methy ..] -2 [sample2-methy ..] \n"
                 "\nUsage:\n"
 		"\t-o_dm        output file\n"
-                "\t-o_dmr       when use auto detect by dmc\n"
+                "\t-o_dmr       when use auto detect by dmc, only valid if data duplication exists.\n"
                 "\t-g|--genome  Genome\n"
 		"\t-1           sample1 methy files, sperate by space.\n"
 		"\t-2           sample2 methy files, sperate by space.\n"
@@ -672,7 +673,7 @@ int main(int argc, const char **argv) {
                 "\t-methdiff    the cutoff of methylation differention. default: 0.25 [CpG]\n"
         	"\t-element     caculate gene or TE etc function elements.\n"
                 //"\t-f auto\n"
-        	 "\t-L          predefinded regions \n"
+        	 "\t-L          predefinded regions or loci.\n"
                 "\t-h|--help";
 	//-----
     for(int i=1;i<argc;i++)
@@ -684,6 +685,7 @@ int main(int argc, const char **argv) {
             else if(!strcmp(argv[i], "-o_dmr")  )
             {
                     dmr_outfile=argv[++i];
+		    Auto=true;
             }else if(!strcmp(argv[i], "-element")  )
             {
                     geneid=true;
@@ -796,7 +798,12 @@ int main(int argc, const char **argv) {
 */
   cout << "combined file done!\nRuning differential test ..." << endl;
   //---------------------
-    // Run beta-binoimial regression or fisher test 
+    // Run beta-binoimial regression or fisher test
+    if(Sample1Size ==1 && Sample2Size ==1 && Auto){
+	Auto=false;
+	fprintf(stderr, "\nWithout replication, should use predefined region detect mode.\n");
+    }
+
     if(Sample1Size >0 && Sample2Size >0) 
     { 
       string test_factor_name="case";
@@ -894,7 +901,8 @@ int main(int argc, const char **argv) {
 	          size_t position = full_regression.props.position;
 		    std::string name=full_regression.props.name;
 	          // Skip loci that do not correspond to valid p-values.
-	          if (0 <= pval && pval <= 1) {
+	          if(pval>1 || pval<0) pval=1;
+	          if (pval >= 0 && pval <= 1) {
 	            // locus is on new chrom.
 	            if (!prev_chrom.empty() && prev_chrom != chrom)
 	              chrom_offset += pvals.back().pos;

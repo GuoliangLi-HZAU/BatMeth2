@@ -770,9 +770,9 @@ void fastptrim(string input_prefix1, string input_prefix2, string input_prefix, 
     if(fastp != ""){
     	string cmd;
         if(pairedend)
-            cmd = fastp + " -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
+            cmd = fastp + "-Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
         else
-        	cmd = fastp + " -i " + input_prefix + " -o " + input_clean;
+        	cmd = fastp + "-Y 0 -i " + input_prefix + " -o " + input_clean;
         executeCMD(cmd.c_str());
     }
 }

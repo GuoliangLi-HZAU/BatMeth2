@@ -88,7 +88,7 @@ void usage(){
     fprintf(stderr, "[main paramaters]\n");
     fprintf(stderr, "    -o [outprefix]    Name of output file prefix\n");
     fprintf(stderr, "[alignment paramaters]\n");
-    fprintf(stderr, "    -i    Name of input file, support .fq/.fastq and .gz/.gzip format. if paired-end. please use -1, -2\n");
+    fprintf(stderr, "    -i    Name of input file, support .fq/.fastq and .gz/.gzip format. if paired-end. please use -1, -2. input files can be separated by commas.\n");
     fprintf(stderr, "    -1    Name of input file left end, if single-end. please use -i\n");
     fprintf(stderr, "    -2    Name of input file right end\n");
     fprintf(stderr, "    -i/-1/-2 can be comma-separated lists (no whitespace), only supported in BatMeth2 aligner.\n");

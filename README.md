@@ -110,7 +110,7 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     **[main paramaters]** <br>
       -o &emsp; Name of output file prefix<br>
     **[alignment paramaters]** <br>
-      -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2 <br>
+      -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2, input files can be separated by commas <br>
       -1 &emsp;&ensp; Name of input file left end, if single-end. please use -i <br>
       -2 &emsp;&ensp; Name of input file left end <br>
       -g &emsp; Name of the genome mapped against <br>

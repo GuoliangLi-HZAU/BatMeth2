@@ -5,7 +5,7 @@ options(warn = -1)
 args <- commandArgs(trailingOnly = TRUE)
 
 #program_dir <- args[1]
-setwd(args[1])
+#setwd(args[1])
 input_prefix <- args[2]
 convertfile <- args[3]
 output_dir <- paste(args[1], "/batmeth2_report_", input_prefix,"/images/", sep = "")

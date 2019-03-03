@@ -133,6 +133,24 @@ void usage(){
     fprintf(stderr, "-h|--help   usage\n\nBatMeth2 is a naive tool, if you meet any problems or have good suggestion, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n\n");
 }
 
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+{
+  std::string::size_type pos1, pos2;
+  printf("\n=== %s\n", s.c_str());
+  pos2 = s.find(c);
+  pos1 = 0;
+  while(std::string::npos != pos2)
+  {
+    v.push_back(s.substr(pos1, pos2-pos1));
+ 
+    pos1 = pos2 + c.size();
+    pos2 = s.find(c, pos1);
+  }
+  if(pos1 != s.length())
+    v.push_back(s.substr(pos1));
+  printf("\n===2 %s\n", s.c_str());
+}
+
 void executeCMD(const char *cmd)
 {
     char ps[1024]={0};
@@ -236,17 +254,24 @@ void runpipe();
 void detect_mode(string mode, int Nparas, char* paramaters[]);
 void get_fileformat(char* processdir, string& processname);
 int MAX_PATH = 1000;
+
+std::vector <string> infilelist;
+std::vector <string> infilelist1;
+std::vector <string> infilelist2;
 int main(int argc, char* argv[])
 {
 	
 	for(int i=1;i<argc;i++)
     {
-        if(!strcmp(argv[i], "-i"))
+        if(!strcmp(argv[i], "-i")){
         	input_prefix= argv[++i];
-        else if(!strcmp(argv[i], "-1"))
+		    SplitString(input_prefix, infilelist, ",");
+        }else if(!strcmp(argv[i], "-1")){
         	input_prefix1= argv[++i];
-        else if(!strcmp(argv[i], "-2")){
+		    SplitString(input_prefix1, infilelist1, ",");
+        }else if(!strcmp(argv[i], "-2")){
         	input_prefix2= argv[++i];
+		    SplitString(input_prefix2, infilelist2, ",");
             pairedend=true;
         }else if(!strcmp(argv[i], "-o"))
             output_prefix= argv[++i];
@@ -445,47 +470,100 @@ void alignmentSingle(){
         }
         exit(0);
     }
+    string cmd="";
 	if(!cleanreads){
+		std::vector<string> cleanfilelist;
     	string input_clean;
     	string fileformat;
     	char temp[MAX_PATH];
     	int i;
-    	for(i=0;i<input_prefix.length();i++)
-			temp[i] = input_prefix[i];
-		temp[i]='\0';
-    	get_fileformat(temp, fileformat);
-    	if( fileformat == "gz" || fileformat == "gzip" ) 
-    		input_clean = string(temp) + "clean.gz";
-    	else if(fileformat == "fq" || fileformat == "fastq")
-    		input_clean = string(temp) + "clean.fq";
-    	else{
-    		fprintf(stderr, "\n%s is a unvalid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
-    		exit(0);
-    	}
-    	string input_clean1;
-    	string input_clean2;
-    	fprintf(stderr, "[ BatMeth2 ] raw reads: %s; clean reads: %s\n", input_prefix.c_str(), input_clean.c_str());
-	    fastptrim(input_prefix1, input_prefix2, input_prefix, input_clean1, input_clean2, input_clean);
-		input_prefix=input_clean;
+    	string clenfiles="";
+    	for(int j=0;j<infilelist.size();j++){
+	    	for(i=0;i<infilelist[j].length();i++)
+			temp[i] = infilelist[j][i];
+			temp[i]='\0';
+	    	get_fileformat(temp, fileformat);
+	    	if( fileformat == "gz" || fileformat == "gzip" ) 
+	    		input_clean = string(temp) + "clean.gz";
+	    	else if(fileformat == "fq" || fileformat == "fastq")
+	    		input_clean = string(temp) + "clean.fq";
+	    	else{
+	    		fprintf(stderr, "\n%s is a unvalid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+	    		exit(0);
+	    	}
+	    	string input_clean1;
+	    	string input_clean2;
+	    	fprintf(stderr, "[ BatMeth2 ] raw reads: %s; clean reads: %s\n", infilelist[j].c_str(), input_clean.c_str());
+		    fastptrim(input_prefix1, input_prefix2, infilelist[j], input_clean1, input_clean2, input_clean);
+			infilelist[j]=input_clean;
+			cleanfilelist.push_back(input_clean);
+			//alignment
+			fprintf(stderr, "[ BatMeth2 ] Alignment %s ...\n", input_clean.c_str());
+		    if(aligner == "BatMeth2")
+		    	if(clenfiles == "")
+		    		clenfiles = input_clean;
+		    	else clenfiles = clenfiles + "," + input_clean;
+		    else if(aligner == "bwa-meth")
+		        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + input_clean + " -t " + getstring(threads) + " --prefix " + input_clean + ".sam";
+		    else if(aligner == "bsmap")
+		        cmd = "bsmap" + bsmapparamaters + " -a " + input_clean + " -d " + genome_index + " -o " + input_clean + ".sam -p " + getstring(threads);// + " -r 0";
+		    else if(aligner == "bismark2") //need test get_path
+		        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters + " -U " + input_clean + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + input_clean + " --sam";
+		    else if (aligner == "no")
+		        return;
+		    else{
+		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
+			    exit(0);
+		    }
+		    executeCMD(cmd.c_str());
+	    }
+	    if(aligner=="BatMeth2"){
+	    	cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " -o " + output_prefix + ".sam";
+	    	executeCMD(cmd.c_str());
+	    }else{
+	    	cmd = "samtools merge -f -O SAM " + output_prefix + ".sam";
+	    	for(int j=0; j< cleanfilelist.size(); j++){
+	    		cmd = cmd + " " + cleanfilelist[j] + ".sam";
+	    	}
+	    	executeCMD(cmd.c_str());
+	    }
+	}else{ // already clean data
+		for(int j=0;j<infilelist.size();j++){
+			fprintf(stderr, "[ BatMeth2 ] Alignment %s ...\n", infilelist[j].c_str());
+		    if(aligner == "BatMeth2")
+		    	cmd="";
+		    else if(aligner == "bwa-meth")
+		        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + infilelist[j] + " -t " + getstring(threads) + " --prefix " + infilelist[j] + ".sam";
+		    else if(aligner == "bsmap")
+		        cmd = "bsmap" + bsmapparamaters + " -a " + infilelist[j] + " -d " + genome_index + " -o " + infilelist[j] + ".sam -p " + getstring(threads);// + " -r 0";
+		    else if(aligner == "bismark2") //need test get_path
+		        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters + " -U " + infilelist[j] + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + infilelist[j] + " --sam";
+		    else if (aligner == "no")
+		        return;
+		    else{
+		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
+			    exit(0);
+		    }
+		    executeCMD(cmd.c_str());
+		}
+		if(aligner=="BatMeth2"){
+	    	cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " -o " + output_prefix + ".sam";
+	    	executeCMD(cmd.c_str());
+	    }else{
+	    	cmd = "samtools merge -f -O SAM " + output_prefix + ".sam";
+	    	for(int j=0; j< infilelist.size(); j++){
+	    		cmd = cmd + " " + infilelist[j] + ".sam";
+	    	}
+	    	executeCMD(cmd.c_str());
+	    	string rmfile;
+	    	//for(int j=0; j< infilelist.size(); j++){
+	    	//	rmfile= infilelist[j] + ".sam";
+	    	//	remove(rmfile)
+	    	//}
+	    }
 	}
 
-	fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
-    string cmd="";
-    if(aligner == "BatMeth2")
-        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " -o " + output_prefix + ".sam";
-    else if(aligner == "bwa-meth")
-        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + input_prefix + " -t " + getstring(threads) + " --prefix " + output_prefix + ".sam";
-    else if(aligner == "bsmap")
-        cmd = "bsmap" + bsmapparamaters + " -a " + input_prefix + " -d " + genome_index + " -o " + output_prefix + ".sam -p " + getstring(threads);// + " -r 0";
-    else if(aligner == "bismark2") //need test get_path
-        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters + " -U " + input_prefix + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + output_prefix + " --sam";
-    else if (aligner == "no")
-        return;
-    else{
-        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
-	    exit(0);
-    }
-    executeCMD(cmd.c_str());
+
 }
 
 void alignmentPaired(){
@@ -499,60 +577,115 @@ void alignmentPaired(){
         }
         exit(0);
     }
-	
+	string cmd="";
     if(!cleanreads){
     	string input_clean1;
     	string fileformat;
     	char temp[MAX_PATH];
     	int i=0;
-    	for(i=0;i<input_prefix1.length();i++)
-			temp[i] = input_prefix1[i];
-		temp[i]='\0';
-    	get_fileformat(temp, fileformat);
-    	if( fileformat == "gz" || fileformat == "gzip" ) 
-    		input_clean1 = string(temp) + "clean.gz";
-    	else if(fileformat == "fq" || fileformat == "fastq")
-    		input_clean1 = string(temp) + "clean.fq";
-    	else{
-    		fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
-    		exit(0);
-    	}
-    	string input_clean;
-    	string input_clean2;
-    	for(i=0;i<input_prefix2.length();i++)
-			temp[i] = input_prefix2[i];
-		temp[i]='\0';
-    	get_fileformat(temp, fileformat);
-    	if( fileformat == "gz" || fileformat == "gzip" ) 
-    		input_clean2 = string(temp) + "clean.gz";
-    	else if(fileformat == "fq" || fileformat == "fastq")
-    		input_clean2 = string(temp) + "clean.fq";
-    	else{
-    		fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
-    		exit(0);
-    	}
-    	fprintf(stderr, "[ BatMeth2 ] raw reads: %s, %s; clean reads: %s, %s\n", input_prefix1.c_str(), input_prefix2.c_str(), input_clean1.c_str(), input_clean2.c_str());
-	    fastptrim(input_prefix1, input_prefix2, input_prefix, input_clean1, input_clean2, input_clean);
-		input_prefix1=input_clean1;
-		input_prefix2=input_clean2;
+    	string clenfiles1="";
+    	string clenfiles2="";
+    	std::vector<string> cleanfilelist1;
+    	std::vector<string> cleanfilelist2;
+    	for(int j=0;j<infilelist1.size();j++){
+	    	for(i=0;i<infilelist1[j].length();i++)
+				temp[i] = infilelist1[j][i];
+			temp[i]='\0';
+	    	get_fileformat(temp, fileformat);
+	    	if( fileformat == "gz" || fileformat == "gzip" ) 
+	    		input_clean1 = string(temp) + "clean.gz";
+	    	else if(fileformat == "fq" || fileformat == "fastq")
+	    		input_clean1 = string(temp) + "clean.fq";
+	    	else{
+	    		fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+	    		exit(0);
+	    	}
+	    	string input_clean;
+	    	string input_clean2;
+	    	for(i=0;i<infilelist2[j].length();i++)
+				temp[i] = infilelist2[j][i];
+			temp[i]='\0';
+	    	get_fileformat(temp, fileformat);
+	    	if( fileformat == "gz" || fileformat == "gzip" ) 
+	    		input_clean2 = string(temp) + "clean.gz";
+	    	else if(fileformat == "fq" || fileformat == "fastq")
+	    		input_clean2 = string(temp) + "clean.fq";
+	    	else{
+	    		fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+	    		exit(0);
+	    	}
+	    	fprintf(stderr, "[ BatMeth2 ] raw reads: %s, %s; clean reads: %s, %s\n", infilelist1[j].c_str(), infilelist2[j].c_str(), input_clean1.c_str(), input_clean2.c_str());
+		    fastptrim(infilelist1[j], infilelist2[j], input_prefix, input_clean1, input_clean2, input_clean);
+			infilelist1[j]=input_clean1;
+			infilelist2[j]=input_clean2;
+			cleanfilelist1.push_back(input_clean1);
+			cleanfilelist2.push_back(input_clean2);
+			//alignment
+			fprintf(stderr, "[ BatMeth2 ] Alignment %s, %s...\n", input_clean1.c_str(), input_clean2.c_str());
+		    if(aligner == "BatMeth2"){
+		    	if(clenfiles1 == "")
+		    		clenfiles1 = input_clean1;
+		    	else clenfiles1 = clenfiles1 + "," + input_clean1;
+		    	if(clenfiles2 == "")
+		    		clenfiles2 = input_clean2;
+		    	else clenfiles2 = clenfiles2 + "," + input_clean2;
+			}
+		    else if(aligner == "bwa-meth")
+		        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + input_clean1 + " " + input_clean2 + " -t " + getstring(threads) + " --prefix " + input_clean1 + ".sam";
+		    else if(aligner == "bsmap")
+		        cmd = "bsmap" + bsmapparamaters + " -a " + input_clean1 + " -b " + input_clean2 + " -d " + genome_index + " -o " + input_clean1 + ".sam -p " + getstring(threads); //+ " -r  0";
+		    else if (aligner == "bismark2")
+		        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters  + " -1 " + input_clean1 + " -2 " + input_clean2 + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + input_clean1 + " --sam";
+		    else if (aligner == "no")
+		        return;
+		    else{
+		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
+			    exit(0);
+		    }
+		    executeCMD(cmd.c_str());
+		}
+		if(aligner=="BatMeth2"){
+		    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " -o " + output_prefix + ".sam";	    	
+	    	executeCMD(cmd.c_str());
+	    }else{
+	    	cmd = "samtools merge -f -O SAM " + output_prefix + ".sam";
+	    	for(int j=0; j< cleanfilelist1.size(); j++){
+	    		cmd = cmd + " " + cleanfilelist1[j] + ".sam";
+	    	}
+	    	executeCMD(cmd.c_str());
+	    }
+	}else{ // already clean data
+		for(int j=0;j<infilelist1.size();j++){
+			fprintf(stderr, "[ BatMeth2 ] Alignment %s, %s...\n", infilelist1[j].c_str(), infilelist2[j].c_str());
+		    if(aligner == "BatMeth2")
+		    	cmd="";
+		    else if(aligner == "bwa-meth")
+		        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + infilelist1[j] + " " + infilelist2[j] + " -t " + getstring(threads) + " --prefix " + infilelist1[j] + ".sam";
+		    else if(aligner == "bsmap")
+		        cmd = "bsmap" + bsmapparamaters + " -a " + infilelist1[j] + " -b " + infilelist2[j] + " -d " + genome_index + " -o " + infilelist1[j] + ".sam -p " + getstring(threads); //+ " -r  0";
+		    else if (aligner == "bismark2")
+		        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters  + " -1 " + infilelist1[j] + " -2 " + infilelist2[j] + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + infilelist1[j] + " --sam";
+		    else if (aligner == "no")
+		        return;
+		    else{
+		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
+			    exit(0);
+		    }
+		    executeCMD(cmd.c_str());
+		}
+		if(aligner=="BatMeth2"){
+			cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + output_prefix + ".sam";
+	    	executeCMD(cmd.c_str());
+	    }else{
+	    	cmd = "samtools merge -f -O BAM " + output_prefix + ".bam";
+	    	for(int j=0; j< infilelist1.size(); j++){
+	    		cmd = cmd + " " + infilelist1[j] + ".sam";
+	    	}
+	    	executeCMD(cmd.c_str());
+	    }
 	}
-	fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
-    string cmd="";
-    if(aligner == "BatMeth2")
-        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + output_prefix + ".sam";
-    else if(aligner == "bwa-meth")
-        cmd = "bwameth.py " + bwamethparamaters + " --reference " + genome_others + " " + input_prefix1 + " " + input_prefix2 + " -t " + getstring(threads) + " --prefix " + output_prefix + ".sam";
-    else if(aligner == "bsmap")
-        cmd = "bsmap" + bsmapparamaters + " -a " + input_prefix1 + " -b " + input_prefix2 + " -d " + genome_index + " -o " + output_prefix + ".sam -p " + getstring(threads); //+ " -r  0";
-    else if (aligner == "bismark2")
-        cmd = "bismark " + get_path(genome_others) + " " + bismark2paramaters  + " -1 " + input_prefix1 + " -2 " + input_prefix2 + " --bowtie2 " + " -p " + getstring(threads) + " --prefix " + output_prefix + " --sam";
-    else if (aligner == "no")
-        return;
-    else{
-        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
-	    exit(0);
-    }
-    executeCMD(cmd.c_str());
+
+	
 }
 
 void annoation(){
@@ -770,9 +903,9 @@ void fastptrim(string input_prefix1, string input_prefix2, string input_prefix, 
     if(fastp != ""){
     	string cmd;
         if(pairedend)
-            cmd = fastp + "-Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
+            cmd = fastp + " -Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
         else
-        	cmd = fastp + "-Y 0 -i " + input_prefix + " -o " + input_clean;
+        	cmd = fastp + " -Y 0 -i " + input_prefix + " -o " + input_clean;
         executeCMD(cmd.c_str());
     }
 }

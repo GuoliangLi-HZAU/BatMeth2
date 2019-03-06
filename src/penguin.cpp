@@ -5514,8 +5514,8 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 			else Pai.paired=2;//false;
 			Pai.Score=H.Score+T.Score;Pai.Indel=H.Indel+T.Indel;
 			Pai.Clip=H.Clip+T.Clip;
-			if(Pai.Loc1=0) Pai.Loc1=1;
-			if(Pai.Loc2=0) Pai.Loc2=1;
+			if(Pai.Loc1==0) Pai.Loc1=1;
+			if(Pai.Loc2==0) Pai.Loc2=1;
 			Alignments_Reslut.push(Pai);
 		}
 
@@ -5557,7 +5557,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 				Pai.Score=T.Score;Pai.Indel=T.Indel;Pai.Clip=T.Clip;
 				Pai.Mismatch=T.Mismatch;
 				Pai.swscore1 = T.swscore;
-				if(Pai.Loc1=0) Pai.Loc1=1;
+				if(Pai.Loc1==0) Pai.Loc1=1;
 				Alignments_Reslut.push(Pai);
 
 			}
@@ -5597,7 +5597,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 				Pai.Score=H.Score;Pai.Indel=H.Indel;Pai.Mismatch=H.Mismatch;
 				Pai.swscore1=H.swscore;
 				Pai.Clip=H.Clip;
-				if(Pai.Loc1=0) Pai.Loc1=1;
+				if(Pai.Loc1==0) Pai.Loc1=1;
 				Alignments_Reslut.push(Pai);
 
 			}
@@ -5868,7 +5868,7 @@ void Print_Aux_Hit(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pa
 		Pai.Indel=Aux.Indel;Pai.Clip=Aux.Clip;
 		Pai.Mismatch=Aux.Mismatch;
 		Pai.swscore=Aux.swscore;
-		if(Pai.Loc1=0) Pai.Loc1=1;
+		if(Pai.Loc1==0) Pai.Loc1=1;
 		Alignments_Reslut.push(Pai);
 	}
 	

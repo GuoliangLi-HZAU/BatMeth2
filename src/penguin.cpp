@@ -716,7 +716,7 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-		if(DO_INDEL_LARGE && Total_Reads>10000 && Bindel>Total_Reads*0.1) {
+		if(DO_INDEL_LARGE && Total_Reads>1000 && Bindel>Progress*0.1) {
 			DO_INDEL_LARGE=false;
 			fprintf(stderr, "\nSkip DO_INDEL_LARGE mode\n");
 		}
@@ -792,7 +792,7 @@ void *Map_And_Pair_Solexa(void *T)
 			{
 				Alignment_Pair pai=Alignments_Reslut.top();
 				if(align_mis==0 && pai.paired==1 && (pai.Mismatch==0 && pai.Indel==0)) printHits = true;
-                        	else if( align_mis!=0 && pai.paired==1 && (pai.Mismatch+pai.Clip<=2*align_mis-1 && pai.Indel==0) ) printHits = true;
+				else if( align_mis!=0 && pai.paired==1 && (pai.Mismatch+pai.Clip<=2*align_mis-1 && pai.Indel==0) ) printHits = true;
 				if(pai.paired==1 && printHits )
 				{
 		                        Remove_Dup_Final(Alignments_Reslut);
@@ -806,9 +806,9 @@ void *Map_And_Pair_Solexa(void *T)
 					std::string seq1 = "", seq2 ="";
 					std::string qual1 = "", qual2 = "";  
 					if(pai.Flag1 & 16 ) {seq1 = revR.Tag_Copy; qual1 = revR.Quality;}else {seq1 = R.Tag_Copy; qual1 = R.Quality;}
-		                            if(pai.Flag2 & 16 ) {seq2 = revM.Tag_Copy; qual2 = revM.Quality;}else{seq2 = M.Tag_Copy; qual2 = M.Quality;}
+					if(pai.Flag2 & 16 ) {seq2 = revM.Tag_Copy; qual2 = revM.Quality;}else{seq2 = M.Tag_Copy; qual2 = M.Quality;}
 					fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description1+1, pai.Flag1, pai.chrom1, pai.Loc1, pai.Q1 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar1.c_str(), (pai.Same_Chrom? "=":pai.chrom2), pai.Loc2, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq1.c_str(), qual1.c_str(), pai.Mismatch1, pai.Score, pai2.Score, pai.swscore1, pai2.swscore1);
-					fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
+					fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?-pai.Insert_Size:pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
 					nextread=1;
 					break;
 				}    
@@ -841,7 +841,7 @@ void *Map_And_Pair_Solexa(void *T)
 				if(pai.Flag1 & 16 ) {seq1 = revR.Tag_Copy; qual1 = revR.Quality;}else {seq1 = R.Tag_Copy; qual1 = R.Quality;}
                                 if(pai.Flag2 & 16 ) {seq2 = revM.Tag_Copy; qual2 = revM.Quality;}else{seq2 = M.Tag_Copy; qual2 = M.Quality;}
                                 fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description1+1, pai.Flag1, pai.chrom1, pai.Loc1, pai.Q1 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar1.c_str(), (pai.Same_Chrom? "=":pai.chrom2), pai.Loc2, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq1.c_str(), qual1.c_str(), pai.Mismatch1, pai.Score, pai2.Score, pai.swscore1, pai2.swscore1);
-                                fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
+                                fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?-pai.Insert_Size:pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
 				continue;
 			}
 		}
@@ -869,7 +869,7 @@ void *Map_And_Pair_Solexa(void *T)
 				if(pai.Flag1 & 16 ) {seq1 = revR.Tag_Copy; qual1 = revR.Quality;}else {seq1 = R.Tag_Copy; qual1 = R.Quality;}
                                 if(pai.Flag2 & 16 ) {seq2 = revM.Tag_Copy; qual2 = revM.Quality;}else{seq2 = M.Tag_Copy; qual2 = M.Quality;}
                                 fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description1+1, pai.Flag1, pai.chrom1, pai.Loc1, pai.Q1 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar1.c_str(), (pai.Same_Chrom? "=":pai.chrom2), pai.Loc2, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq1.c_str(), qual1.c_str(), pai.Mismatch1, pai.Score, pai2.Score, pai.swscore1, pai2.swscore1);
-                                fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
+                                fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, pai.Q2 /*(pai.Q1+pai.Q2)/2*/, pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?-pai.Insert_Size:pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
 				continue;
 			}
 		}
@@ -910,7 +910,7 @@ void *Map_And_Pair_Solexa(void *T)
 				if(pai.paired==1)
 				{
                                 	fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description1+1, pai.Flag1, pai.chrom1, pai.Loc1, /*pai.Same_Chrom? (pai.Q1+pai.Q2)/2 : pai.Q1*/ pai.Q1, pai.Cigar1.c_str(), (pai.Same_Chrom? "=":pai.chrom2), pai.Loc2, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq1.c_str(), qual1.c_str(), pai.Mismatch1, pai.Score, pai2.Score, pai.swscore1, pai2.swscore1);
-                                	fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, /*pai.Same_Chrom? (pai.Q1+pai.Q2)/2 : pai.Q2*/ pai.Q2 , pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?pai.Insert_Size:-pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
+                                	fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, /*pai.Same_Chrom? (pai.Q1+pai.Q2)/2 : pai.Q2*/ pai.Q2 , pai.Cigar2.c_str(), (pai.Same_Chrom? "=":pai.chrom1), pai.Loc1, pai.Loc1>pai.Loc2?-pai.Insert_Size:pai.Insert_Size, seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
 				}else {
 					fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t*\t0\t0\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description1+1, pai.Flag1, pai.chrom1, pai.Loc1, /*pai.Same_Chrom? (pai.Q1+pai.Q2)/2 : pai.Q1*/ pai.Q1, pai.Cigar1.c_str(), seq1.c_str(), qual1.c_str(), pai.Mismatch1, pai.Score, pai2.Score, pai.swscore1, pai2.swscore1);
 					fprintf(Single_File,"%s\t%d\t%s\t%d\t%d\t%s\t*\t0\t0\t%s\t%s\tNM:i:%d\tAS:i:%d\tSA:i:%d\tSW:i:%d\tSS:i:%d\n", pai.Description2+1, pai.Flag2, pai.chrom2, pai.Loc2, /*pai.Same_Chrom? (pai.Q1+pai.Q2)/2 : pai.Q2*/ pai.Q2, pai.Cigar2.c_str(), seq2.c_str(), qual2.c_str(), pai.Mismatch2, pai.Score, pai2.Score, pai.swscore2, pai2.swscore2);
@@ -4686,6 +4686,20 @@ bool Correct_Orientation(Alignment A,Alignment A_P,int Extra_Bit)
 	return false;
 }
 
+int getinserts(int loc1, int loc2, int readlen1, int readlen2, int INSERTSIZE){
+	int size=0;
+	if(loc1<=loc2) size = loc2-loc1 +readlen2;
+	else size = loc1-loc2+readlen1;
+	return abs(size-INSERTSIZE);
+}
+
+int getdistance(int loc1, int loc2, int readlen1, int readlen2){
+	int size=0;
+	if(loc1<=loc2) size = loc2-loc1 +readlen2;
+	else size = loc1-loc2+readlen1;
+	return size;
+}
+
 const int MAX_PROPER_PAIRS=5000;//moxian //30000
 bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & A,std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & B,std::map<unsigned,Alignment> & D,std::map<unsigned,Alignment> & D_P,int & mapqpe, int Extra_Bit,int SW_Compare)
 {
@@ -4802,17 +4816,17 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
                                         else{
                                                 Unique=true;
                                         }
-					int topD = abs(abs(Head.Loc-Tail.Loc)-INSERTSIZE);
-					int secondD = abs(abs(Sub_Opt_Head.Loc-Sub_Opt_Tail.Loc)-INSERTSIZE);
-					int thirdD =  abs(abs(I->first - Nearest_Pair->first)-INSERTSIZE);
+					int topD = getinserts(Head.Loc, Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
+					int secondD = getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
+					int thirdD =  getinserts(I->first, Nearest_Pair->first, ReadLen1, ReadLen2, INSERTSIZE);
 					if(topD > thirdD){
 						Third_Score=Sub_Opt_Score;
-                                                Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
+						Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
 
 						Sub_Opt_Score=Head.Score+Tail.Score;
-	                                        Sub_Opt_Head=Head;Sub_Opt_Tail=Tail;
-        	                                Head=I->second;Tail=Nearest_Pair->second;
-                	                        paired_score=Head.Indel+Head.Mismatch+Tail.Indel+Tail.Mismatch;
+						Sub_Opt_Head=Head;Sub_Opt_Tail=Tail;
+						Head=I->second;Tail=Nearest_Pair->second;
+						paired_score=Head.Indel+Head.Mismatch+Tail.Indel+Tail.Mismatch;
 					}else if(topD==thirdD){
 						Third_Score=Sub_Opt_Score;
                                                 Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
@@ -4839,13 +4853,13 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
                                         }
 */
                                         if(Paired_Score == Sub_Opt_Score){
-                                                if(abs(abs(Sub_Opt_Head.Loc-Sub_Opt_Tail.Loc)-INSERTSIZE) < abs(abs((I->second).Loc - (Nearest_Pair->second).Loc)-INSERTSIZE)){
-                                                        goto END;
-                                                }
+                                        	if(getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE) < getinserts(I->first, Nearest_Pair->first, ReadLen1, ReadLen2, INSERTSIZE)) {
+                                        		goto END;
+                                        	}
                                         }
 
 					Third_Score=Sub_Opt_Score;
-                                        Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
+					Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
 					Sub_Opt_Score=(I->second).Score+(Nearest_Pair->second).Score;
 					Sub_Opt_Head=I->second;Sub_Opt_Tail=Nearest_Pair->second;
 				}
@@ -4915,15 +4929,16 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 		}
 	}
 
-	if(!Unique && (Head.Score+Tail.Score > -200 && abs(Head.Loc-Tail.Loc) - abs(Sub_Opt_Head.Loc-Sub_Opt_Tail.Loc)!=0)){
-		int topD=abs(Head.Loc-Tail.Loc);
-		int secondD=abs(Sub_Opt_Head.Loc-Sub_Opt_Tail.Loc);
+	int topD = getinserts(Head.Loc, Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
+	int secondD = getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
+	if(!Unique && (Head.Score+Tail.Score > -200 && topD - secondD!=0)){
 		//int scoreTop = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(topD - INSERTSIZE) / STD)) + .499);
 		//int scoreSecond = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(secondD - INSERTSIZE) / STD)) + .499);
-		if(abs(topD-INSERTSIZE)<abs(secondD-INSERTSIZE)-STD){
-			mapqpe = (abs(secondD-INSERTSIZE) - abs(topD-INSERTSIZE))/STD * 5 + 8;
+		if(topD < secondD-STD){
+			mapqpe = (secondD - topD)/STD * 5 + 8;
 		}
 		if(mapqpe>40) mapqpe=40;
+		if(mapqpe<0) mapqpe=0;
 	}
 
 //printf("\nSub_Opt_Head %d %d %d %d %u %u %c %d\n",Sub_Opt_Head.Score,Sub_Opt_Head.Mismatch,Sub_Opt_Tail.Score,Sub_Opt_Tail.Mismatch, Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, Sub_Opt_Head.hitType, mapqpe);
@@ -5473,32 +5488,34 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 			Alignment_Pair Pai; 
 			
 		    if(H.hitType == '1' || H.hitType == '4') {
-			Pai.chrom1=Ann1.Name;Pai.Loc1=H.Loc;Pai.Flag1=H.Flag;Pai.source1=H.hitType;Pai.Mismatch1=H.Mismatch;Pai.ReadLen1=R1.Real_Len;Pai.Cigar1=H.CIG;
-			strcpy(Pai.Description1,R1.Description);strcpy(Pai.Tag_Copy1,RawR.Tag_Copy);strcpy(Pai.Quality1,RawR.Quality);
-			Pai.swscore1 = H.swscore;
-			
-			Pai.chrom2=Ann2.Name;Pai.Loc2=T.Loc;Pai.Flag2=T.Flag;Pai.source2=T.hitType;Pai.Mismatch2=T.Mismatch;Pai.ReadLen2=R2.Real_Len;Pai.Cigar2=T.CIG;
-			strcpy(Pai.Description2,R2.Description);strcpy(Pai.Tag_Copy2,RawM.Tag_Copy);strcpy(Pai.Quality2,RawM.Quality);
-			Pai.Q1=H.Quality_Score;Pai.Q2=T.Quality_Score;
-			Pai.swscore2 = T.swscore;
-			Pai.Insert_Size=Insert_Size;
+				Pai.chrom1=Ann1.Name;Pai.Loc1=H.Loc;Pai.Flag1=H.Flag;Pai.source1=H.hitType;Pai.Mismatch1=H.Mismatch;Pai.ReadLen1=R1.Real_Len;Pai.Cigar1=H.CIG;
+				strcpy(Pai.Description1,R1.Description);strcpy(Pai.Tag_Copy1,RawR.Tag_Copy);strcpy(Pai.Quality1,RawR.Quality);
+				Pai.swscore1 = H.swscore;
+				
+				Pai.chrom2=Ann2.Name;Pai.Loc2=T.Loc;Pai.Flag2=T.Flag;Pai.source2=T.hitType;Pai.Mismatch2=T.Mismatch;Pai.ReadLen2=R2.Real_Len;Pai.Cigar2=T.CIG;
+				strcpy(Pai.Description2,R2.Description);strcpy(Pai.Tag_Copy2,RawM.Tag_Copy);strcpy(Pai.Quality2,RawM.Quality);
+				Pai.Q1=H.Quality_Score;Pai.Q2=T.Quality_Score;
+				Pai.swscore2 = T.swscore;
+				Pai.Insert_Size=Insert_Size;
 		    }else {
-			Pai.chrom2=Ann1.Name;Pai.Loc2=H.Loc;Pai.Flag2=H.Flag;Pai.source2=H.hitType;Pai.Mismatch2=H.Mismatch;Pai.ReadLen2=R1.Real_Len;Pai.Cigar2=H.CIG;
-                        strcpy(Pai.Description2,R1.Description);strcpy(Pai.Tag_Copy2,RawR.Tag_Copy);strcpy(Pai.Quality2,RawR.Quality);
-			Pai.swscore1 = H.swscore;
+				Pai.chrom2=Ann1.Name;Pai.Loc2=H.Loc;Pai.Flag2=H.Flag;Pai.source2=H.hitType;Pai.Mismatch2=H.Mismatch;Pai.ReadLen2=R1.Real_Len;Pai.Cigar2=H.CIG;
+	                        strcpy(Pai.Description2,R1.Description);strcpy(Pai.Tag_Copy2,RawR.Tag_Copy);strcpy(Pai.Quality2,RawR.Quality);
+				Pai.swscore1 = H.swscore;
 
-                        Pai.chrom1=Ann2.Name;Pai.Loc1=T.Loc;Pai.Flag1=T.Flag;Pai.source1=T.hitType;Pai.Mismatch1=T.Mismatch;Pai.ReadLen1=R2.Real_Len;Pai.Cigar1=T.CIG;
-                        strcpy(Pai.Description1,R2.Description);strcpy(Pai.Tag_Copy1,RawM.Tag_Copy);strcpy(Pai.Quality1,RawM.Quality);
-                        Pai.Q2=H.Quality_Score;Pai.Q1=T.Quality_Score;
-			Pai.swscore2 = T.swscore;
-			Pai.Insert_Size=-Insert_Size;
+	                        Pai.chrom1=Ann2.Name;Pai.Loc1=T.Loc;Pai.Flag1=T.Flag;Pai.source1=T.hitType;Pai.Mismatch1=T.Mismatch;Pai.ReadLen1=R2.Real_Len;Pai.Cigar1=T.CIG;
+	                        strcpy(Pai.Description1,R2.Description);strcpy(Pai.Tag_Copy1,RawM.Tag_Copy);strcpy(Pai.Quality1,RawM.Quality);
+	                        Pai.Q2=H.Quality_Score;Pai.Q1=T.Quality_Score;
+				Pai.swscore2 = T.swscore;
+				Pai.Insert_Size=-Insert_Size;
 		    }
 			Pai.QualityScore=H.Quality_Score+T.Quality_Score;Pai.Same_Chrom=Same_Chrome;
 			Pai.Mismatch=Pai.Mismatch1+Pai.Mismatch2;
-			if(Same_Chrome && abs(Insert_Size)<= INSERTSIZE+3*STD ) Pai.paired=1;//true;
+			if(Same_Chrome && Proper_Pair ) Pai.paired=1;//true;
 			else Pai.paired=2;//false;
 			Pai.Score=H.Score+T.Score;Pai.Indel=H.Indel+T.Indel;
 			Pai.Clip=H.Clip+T.Clip;
+			if(Pai.Loc1=0) Pai.Loc1=1;
+			if(Pai.Loc2=0) Pai.Loc2=1;
 			Alignments_Reslut.push(Pai);
 		}
 
@@ -5540,7 +5557,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 				Pai.Score=T.Score;Pai.Indel=T.Indel;Pai.Clip=T.Clip;
 				Pai.Mismatch=T.Mismatch;
 				Pai.swscore1 = T.swscore;
-				
+				if(Pai.Loc1=0) Pai.Loc1=1;
 				Alignments_Reslut.push(Pai);
 
 			}
@@ -5580,6 +5597,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 				Pai.Score=H.Score;Pai.Indel=H.Indel;Pai.Mismatch=H.Mismatch;
 				Pai.swscore1=H.swscore;
 				Pai.Clip=H.Clip;
+				if(Pai.Loc1=0) Pai.Loc1=1;
 				Alignments_Reslut.push(Pai);
 
 			}
@@ -5628,7 +5646,7 @@ bool Check_Proper_Pair(int S1,int S2,unsigned Loc1, unsigned Loc2,int Extra_Bit)
 		if(Loc1<=Loc2)
 		{
 			//if(Loc2-Loc1<=INSERTSIZE+2*STD+Extra_Bit)
-			if(Loc2-Loc1<=INSERTSIZE+3*REAL_STD+Extra_Bit || Loc2-Loc1<=550)
+			if(Loc2-Loc1<=INSERTSIZE+3*REAL_STD+Extra_Bit || Loc2-Loc1<=650)
 				return true;
 		}
 	}
@@ -5638,7 +5656,7 @@ bool Check_Proper_Pair(int S1,int S2,unsigned Loc1, unsigned Loc2,int Extra_Bit)
 		if(Loc1>=Loc2)
 		{
 			//if(Loc1-Loc2<=INSERTSIZE+2*STD+Extra_Bit)
-			if(Loc1-Loc2<=INSERTSIZE+3*REAL_STD+Extra_Bit || Loc1-Loc2<= 550 )
+			if(Loc1-Loc2<=INSERTSIZE+3*REAL_STD+Extra_Bit || Loc1-Loc2<= 650 )
 				return true;
 		}
 	}
@@ -5850,6 +5868,7 @@ void Print_Aux_Hit(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pa
 		Pai.Indel=Aux.Indel;Pai.Clip=Aux.Clip;
 		Pai.Mismatch=Aux.Mismatch;
 		Pai.swscore=Aux.swscore;
+		if(Pai.Loc1=0) Pai.Loc1=1;
 		Alignments_Reslut.push(Pai);
 	}
 	

@@ -714,7 +714,7 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-		if(DO_INDEL_LARGE && Total_Reads>10000 && Bindel>Total_Reads*0.2) DO_INDEL_LARGE=false;
+		if(DO_INDEL_LARGE && Total_Reads>10000 && Bindel>Progress*0.15) DO_INDEL_LARGE=false;
 
 		//Read Head start ..
 		R.Real_Len=0;

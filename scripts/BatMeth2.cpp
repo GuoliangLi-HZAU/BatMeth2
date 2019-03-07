@@ -854,7 +854,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 	    	}
 	    }
 	}else{ // already clean data
-		string rawname;
+		string rawname=output_prefix;
 		for(int j=0;j<infilelist1.size();j++){
 			if(infilelist1.size() > 1)
 				rawname = getfilename(infilelist1[j]);

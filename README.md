@@ -104,14 +104,14 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
       --fastp    fastp program location. <br>
       If --fastp is not defined, the input file should be clean data. <br>
     **[select aligner]** <br>
-      --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no <br>
+      --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no (exit output_prefix.sam file, no need align again) <br>
     **[other aligners paramaters]** <br>
       --go &emsp;&emsp;&emsp; Name of the genome, contaion index build by aligner. (bwa-meth/bismark2) <br>
     **[main paramaters]** <br>
        --config &emsp; [config file]. &emsp;&emsp;  When we run pipel function in batches datasets, <br>
        &emsp;&emsp;&emsp;&emsp; please fill in the specified configuration file. <br>
-       &emsp;&emsp;&emsp;&emsp; And there is a sample file (multirun.onf) in the BatMeth2 directory.\n <br>
-       --mp &emsp; [4] &emsp; When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default. <br>
+       &emsp;&emsp;&emsp;&emsp; And there is a sample file (multirun.onf) in the BatMeth2 directory. <br>
+       --mp&emsp;[4] &emsp; When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default. <br>
       -o &emsp; Name of output file prefix<br>
       -O &emsp; Output of result file to specified folder, default output to current folder (./) <br>
     **[alignment paramaters]** <br>

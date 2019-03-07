@@ -692,7 +692,6 @@ unsigned int BWTOccValue(const BWT *bwt, unsigned int index, const unsigned int 
 	// $ is supposed to be positioned at inverseSa0 but it is not encoded
 	// therefore index is subtracted by 1 for adjustment
 	index -= (index > bwt->inverseSa0);
-
 #ifdef DEBUG
 	if (index > bwt->textLength) {
 		fprintf(stderr, "BWTOccValue() : index > textLength!\n");
@@ -702,7 +701,6 @@ unsigned int BWTOccValue(const BWT *bwt, unsigned int index, const unsigned int 
 
 	occExplicitIndex = (index + OCC_INTERVAL / 2 - 1) / OCC_INTERVAL;	// Bidirectional encoding
 	occIndex = occExplicitIndex * OCC_INTERVAL;
-
 
 	occValue = BWTOccValueExplicit(bwt, occExplicitIndex, character);
 #ifdef DEBUG

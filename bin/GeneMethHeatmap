@@ -1,0 +1,46 @@
+#!/bin/bash
+
+##GeneMethyHeatmap Wt mutant CG-ceil CHG-ceil CHH-ceil
+echo "Usage: GeneMethHeatmap sample1 sample2[None] CG-ceil CHG-ceil CHH-ceil"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [[ $# < 2 ]] 
+then
+	echo "Usage: GeneMethHeatmap sample1 sample2[None] CG-ceil CHG-ceil CHH-ceil"
+else
+prefix=$1 # Output Prefix of methyGff
+echo $prefix
+if [ $2 != "None" ] ;then
+	prefix2=$2
+	echo $prefix2
+fi
+for i in cg chg chh
+do
+	sort -n -k81 ${prefix}.TSS.${i}.1.txt > ${prefix}.TSS.1.txt.sorted.${i}
+	if [ $2 != "None" ] ;then
+		awk 'ARGIND==1{a[$1]=$0}ARGIND==2{print a[$1]}' ${prefix2}.TSS.${i}.1.txt ${prefix}.TSS.1.txt.sorted.${i} > ${prefix2}.TSS.1.txt.sorted.${i}
+	fi
+
+	sort -n -r -k81 ${prefix}.TTS.${i}.1.txt > ${prefix}.TTS.1.txt.sorted.${i}
+	if [ $2 != "None" ] ;then
+		awk 'ARGIND==1{a[$1]=$0}ARGIND==2{print a[$1]}' ${prefix2}.TTS.${i}.1.txt ${prefix}.TTS.1.txt.sorted.${i} > ${prefix2}.TTS.1.txt.sorted.${i}
+	fi
+
+	awk 'ARGIND==1{for(i=1;i<NF;i++){a[FNR]=a[FNR]""$i"\t"}}ARGIND==2{ for(i=1;i<=2;i++){a[FNR]=a[FNR]"0\t"}; for(i=2;i<NF;i++){a[FNR]=a[FNR]""$i"\t"} }END{for(i=1;i<=FNR;i++){print a[i]}}' ${prefix}.TSS.1.txt.sorted.${i} ${prefix}.TTS.1.txt.sorted.${i} > ${prefix}.1.txt.sorted.${i}
+
+	if [ $2 != "None" ] ;then
+		awk 'ARGIND==1{for(i=1;i<NF;i++){a[FNR]=a[FNR]""$i"\t"}}ARGIND==2{ for(i=1;i<=2;i++){a[FNR]=a[FNR]"0\t"}; for(i=2;i<NF;i++){a[FNR]=a[FNR]""$i"\t"} }END{for(i=1;i<=FNR;i++){print a[i]}}' ${prefix2}.TSS.1.txt.sorted.${i} ${prefix2}.TTS.1.txt.sorted.${i} > ${prefix2}.1.txt.sorted.${i}
+	fi
+done
+echo "heatmap"
+
+Rscript $DIR/TSS.TTS.r ${prefix}.1.txt.sorted ${prefix}.heatmap red yellow green $3 $4 $5
+if [ $2 != "None" ] ;then
+	Rscript $DIR/TSS.TTS.r ${prefix2}.1.txt.sorted ${prefix2}.heatmap red yellow green $3 $4 $5
+fi
+
+fi
+#for po in TSS TTS
+#do
+#	Rscript TSS.TTS.r ${prefix}.${po}.1.txt.sorted ${prefix}.${po} red yellow green
+#done

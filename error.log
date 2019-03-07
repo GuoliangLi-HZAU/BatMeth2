@@ -1,0 +1,1 @@
+sed -i 's/abs(/fabs(/g' src/penguin.cpp src/penguin-a.cpp ./src/common.h ./src/batlib.cpp

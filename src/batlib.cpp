@@ -135,7 +135,7 @@ void Analyze_File(INFILE & I,LEN & L)
  */
 int Get_Lookup_Size(char MAX_MISMATCHES,char STRINGLENGTH)
 {
-	int LOOKUPSIZE = 3;//6
+	int LOOKUPSIZE = 6;//3
 	if (STRINGLENGTH < 28) LOOKUPSIZE =3;
 	if (STRINGLENGTH <=51 && MAX_MISMATCHES >5) LOOKUPSIZE = 3;
 	return LOOKUPSIZE;
@@ -334,7 +334,11 @@ BWT* initFMI(const char* BWTCodeFileName,const char* BWTOccValueFileName,const c
 
 SARange Get_SARange( char New_Char,struct SARange Range,BWT *fmi)
 {
-
+	if(Range.End >= fmi->textLength){
+                Range.End=0;
+                Range.Start=0;
+                return Range;
+        }
 	Range.Start = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Range.Start, New_Char) + 1;
 	Range.End = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Range.End+1, New_Char);
 	if (Range.End<Range.Start) 
@@ -347,6 +351,11 @@ SARange Get_SARange( char New_Char,struct SARange Range,BWT *fmi)
 
 void Get_SARange_Fast( char New_Char,struct SARange & Range,BWT *fmi)
 {
+	if(Range.End >= fmi->textLength){
+		Range.End=0;
+		Range.Start=0;
+		return;
+	}
 	Range.Start = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Range.Start, New_Char) + 1;
 	Range.End = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Range.End+1, New_Char);
 	if (Range.End<Range.Start) 
@@ -358,7 +367,13 @@ void Get_SARange_Fast( char New_Char,struct SARange & Range,BWT *fmi)
 
 void Get_SARange_Fast_2( long New_Char,struct SARange & Start_Range, struct SARange & Dest_Range,BWT *fmi)
 {
-
+	if(Start_Range.End >= fmi->textLength){
+                Start_Range.End=0;
+                Start_Range.Start=0;
+		Dest_Range.Start=0;
+		Dest_Range.End=0;
+                return;
+        }
 	Dest_Range.Start = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Start_Range.Start, New_Char) + 1;
 	Dest_Range.End = fmi->cumulativeFreq[New_Char] + BWTOccValue(fmi, Start_Range.End+1, New_Char);
 	if (Dest_Range.End<Dest_Range.Start) 

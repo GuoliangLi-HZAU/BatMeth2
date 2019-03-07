@@ -716,9 +716,9 @@ void *Map_And_Pair_Solexa(void *T)
 			Progress=0;
 			Show_Progress(Current_Pos*100/Ffilelist1[fi].File_Size);
 		}
-		if(DO_INDEL_LARGE && Total_Reads>1000 && Bindel>Progress*0.1) {
+		if(DO_INDEL_LARGE && Total_Reads>100000 && Bindel>(Progress*0.15)) {
 			DO_INDEL_LARGE=false;
-			fprintf(stderr, "\nSkip DO_INDEL_LARGE mode\n");
+			fprintf(stderr, "Skip DO_INDEL_LARGE mode\n");
 		}
 		R.Real_Len=0;
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
@@ -1095,7 +1095,6 @@ void Align_Map(READ & R,READ & M,BATREAD & Bl, BATREAD & Br, char & source1,char
 		Next_Mis1=Last_Mis;
 		Print_Hits(Whole_Len,Paired_Score,RawR,Last_Mis,batmeth1,Align_Hits,Alignments,source1,Genome_Offsets,readString,MF,L_batmethl,FALSE,revfmi,fwfmi,O1,0,0);
 	}
-
 	Last_Mis=-1;
      //   ReplaceGtoA(M);
         Process_Read_bat(M,Br,MF,MC);
@@ -4785,16 +4784,19 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 					Head=I->second;Tail=Nearest_Pair->second;
 					Max_H_Score=Head.Score;Max_T_Score=Tail.Score;
 				}
-				else if(Paired_Score > (Head.Score+Tail.Score))
+				else if(Paired_Score >= (Head.Score+Tail.Score))
 				{
 					//if(!Unique && (abs(Head.Loc-(I->second).Loc)<=20 || abs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) {Nearest_Pair++;continue;}
+					
 					if(Unique && (abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
 					else if(Paired_Score < (Head.Score+Tail.Score)+30){
-                                                Unique=false;
-                                        }
-                                        else{
-                                                Unique=true;
-                                        }
+						Unique=false;
+					}
+					else{
+						Unique=true;
+					}
+					
+					Unique=true;
 					if(!(abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20)){
 						Third_Score=Sub_Opt_Score;
 						Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
@@ -4810,12 +4812,12 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 						goto END;
 					}
 					if(Unique && (abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
-                                        else if(Paired_Score < (Head.Score+Tail.Score)+30){
-                                                Unique=false;
-                                        }
-                                        else{
-                                                Unique=true;
-                                        }
+					else if(Paired_Score < (Head.Score+Tail.Score)+30){
+						Unique=false;
+					}
+					else{
+						Unique=true;
+					}
 					int topD = getinserts(Head.Loc, Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
 					int secondD = getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
 					int thirdD =  getinserts(I->first, Nearest_Pair->first, ReadLen1, ReadLen2, INSERTSIZE);
@@ -4829,16 +4831,16 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 						paired_score=Head.Indel+Head.Mismatch+Tail.Indel+Tail.Mismatch;
 					}else if(topD==thirdD){
 						Third_Score=Sub_Opt_Score;
-                                                Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
+                        Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
 
 						Sub_Opt_Score=(I->second).Score+(Nearest_Pair->second).Score;
-	                                        Sub_Opt_Head=I->second;Sub_Opt_Tail=Nearest_Pair->second;
+	               		Sub_Opt_Head=I->second;Sub_Opt_Tail=Nearest_Pair->second;
 					}else{
 						if(secondD > thirdD || Sub_Opt_Score == INT_MAX){
 							Third_Score=Sub_Opt_Score;
-	                                                Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
+							Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
 							Sub_Opt_Score=(I->second).Score+(Nearest_Pair->second).Score;
-        	                                        Sub_Opt_Head=I->second;Sub_Opt_Tail=Nearest_Pair->second;
+							Sub_Opt_Head=I->second;Sub_Opt_Tail=Nearest_Pair->second;
 						}
 					}		
 				}else if( Sub_Opt_Score == INT_MAX || Paired_Score >= Sub_Opt_Score ) {
@@ -4852,11 +4854,11 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
                                                 Unique=true;
                                         }
 */
-                                        if(Paired_Score == Sub_Opt_Score){
-                                        	if(getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE) < getinserts(I->first, Nearest_Pair->first, ReadLen1, ReadLen2, INSERTSIZE)) {
-                                        		goto END;
-                                        	}
-                                        }
+                    if(Paired_Score == Sub_Opt_Score){
+                    	if(getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE) < getinserts(I->first, Nearest_Pair->first, ReadLen1, ReadLen2, INSERTSIZE)) {
+                    		goto END;
+                    	}
+                    }
 
 					Third_Score=Sub_Opt_Score;
 					Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
@@ -4934,8 +4936,8 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 	if(!Unique && (Head.Score+Tail.Score > -200 && topD - secondD!=0)){
 		//int scoreTop = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(topD - INSERTSIZE) / STD)) + .499);
 		//int scoreSecond = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(secondD - INSERTSIZE) / STD)) + .499);
-		if(topD < secondD-STD){
-			mapqpe = (secondD - topD)/STD * 5 + 8;
+		if( abs(topD-secondD) > STD){
+			mapqpe = abs(secondD - topD)/STD * 5 + 8;
 		}
 		if(mapqpe>40) mapqpe=40;
 		if(mapqpe<0) mapqpe=0;

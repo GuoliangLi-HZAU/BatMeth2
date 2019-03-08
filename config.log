@@ -516,7 +516,7 @@ configure:5771: $? = 0
 configure:5793: result: yes
 configure:5802: checking for _doprnt
 configure:5858: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-/tmp/ccgYcidG.o: In function `main':
+/tmp/ccWmoQpc.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_doprnt'
 collect2: ld returned 1 exit status
 configure:5865: $? = 1
@@ -598,7 +598,7 @@ configure:5885: result: no
 configure:5912: checking for floor
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:59: warning: conflicting types for built-in function 'floor'
-/tmp/ccU46ELS.o: In function `main':
+/tmp/ccuJsT6o.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `floor'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1
@@ -694,7 +694,7 @@ configure:5997: result: yes
 configure:5912: checking for pow
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:62: warning: conflicting types for built-in function 'pow'
-/tmp/ccL6RKty.o: In function `main':
+/tmp/ccV508n2.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1
@@ -783,7 +783,7 @@ configure:5997: result: yes
 configure:5912: checking for sqrt
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:63: warning: conflicting types for built-in function 'sqrt'
-/tmp/ccDicPs1.o: In function `main':
+/tmp/ccPL0F4p.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sqrt'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1

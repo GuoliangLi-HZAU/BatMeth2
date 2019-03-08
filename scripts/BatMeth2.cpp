@@ -85,6 +85,7 @@ void usage(){
     fprintf(stderr, "                              please fill in the specified configuration file. \n");
     fprintf(stderr, "                              And there is a sample file (multirun.onf) in the BatMeth2 directory.\n");
     fprintf(stderr, "    --mp [4]                  When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default.\n");
+    fprintf(stderr, "    --ap [24]                 When batch processing data, the number of samples to run at a time (default 4) * threads of each sample (default 6)\n");
     fprintf(stderr, "    -o [outprefix]            Name of output file prefix\n");
     fprintf(stderr, "    -O [out folder]           Output of result file to specified folder, default output to current folder (./)\n");
     fprintf(stderr, "\n[alignment paramaters]\n");
@@ -252,7 +253,7 @@ void doc2html(string outputdir, string mkpath, string output_prefix);
 void alignmentstate(string outputdir, string output_prefix, string mkpath);
 void mkreport(string outputdir, string mkpath, bool pairedend, string output_prefix, string input_prefix, string input_prefix1, string input_prefix2);
 void methyPlot(string outputdir, string output_prefix);
-void fastptrim(string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend);
+void fastptrim(string outputdir, string output_prefix, string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend);
 void runpipe(string outputdir, string output_prefix, string mkpath, string input_prefix, string input_prefix1, string input_prefix2, bool pairedend);
 void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix, string mkpath, bool pairedend);
 void get_fileformat(char* processdir, string& processname);
@@ -293,6 +294,7 @@ int main(int argc, char* argv[])
 	string input_prefix2 = "";
 	string mkpath;
 	int NTHREAD=4;
+	int allthreads =24;
 
 	for(int i=1;i<argc;i++)
     {
@@ -565,6 +567,7 @@ void *nprunpipel2(void *arg){
     string cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
     cmd += newlogfile;
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     fprintf(stderr, "[ BatMeth2 ] Visulization ...\n");
     methyPlot(outputdir, output_prefix );
@@ -602,6 +605,7 @@ void calmeth(string inputf, string outputdir, string output_prefix){
         cmd = cmd + " -Q " + getstring(Qual);
     if(region != 1000)
         cmd = cmd + " -R " + getstring(region);
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     return;
 }
@@ -676,7 +680,7 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 	    	string input_clean1;
 	    	string input_clean2;
 	    	fprintf(stderr, "[ BatMeth2 ] raw reads: %s; clean reads: %s\n", infilelist[j].c_str(), cleanname.c_str());
-		    fastptrim(input_prefix1, input_prefix2, infilelist[j], input_clean1, input_clean2, outputdir + cleanname, false);
+		    fastptrim(outputdir, output_prefix, input_prefix1, input_prefix2, infilelist[j], input_clean1, input_clean2, outputdir + cleanname, false);
 			infilelist[j]=cleanname;
 			cleanfilelist.push_back(cleanname);
 			//alignment
@@ -697,10 +701,12 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
 			    exit(0);
 		    }
+		    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    executeCMD(cmd.c_str());
 	    }
 	    if(aligner=="BatMeth2"){
 	    	cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " -o " + outputdir + output_prefix + ".sam";
+	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str());
 	    }else{
 	    	if(infilelist.size() > 1) {
@@ -708,6 +714,7 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 		    	for(int j=0; j< cleanfilelist.size(); j++){
 		    		cmd = cmd + " " + outputdir + cleanfilelist[j] + ".sam";
 		    	}
+		    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    	executeCMD(cmd.c_str());
 	    	}
 	    }
@@ -731,10 +738,12 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
 			    exit(0);
 		    }
+		    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    executeCMD(cmd.c_str());
 		}
 		if(aligner=="BatMeth2"){
 	    	cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " -o " + outputdir + output_prefix + ".sam";
+	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str());
 	    }else{
 	    	if(infilelist.size() > 1) {
@@ -742,6 +751,7 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 		    	for(int j=0; j< infilelist.size(); j++){
 		    		cmd = cmd + " " + outputdir + getfilename(infilelist[j]) + ".sam";
 		    	}
+		    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    	executeCMD(cmd.c_str());
 		    	string rmfile;
 		    	//for(int j=0; j< infilelist.size(); j++){
@@ -812,7 +822,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		    if(infilelist1.size() >1)
 				cleanname = input_clean1;
 
-		    fastptrim(infilelist1[j], infilelist2[j], input_prefix, outputdir + input_clean1, outputdir + input_clean2, input_clean, true);
+		    fastptrim(outputdir, output_prefix, infilelist1[j], infilelist2[j], input_prefix, outputdir + input_clean1, outputdir + input_clean2, input_clean, true);
 			infilelist1[j]=input_clean1;
 			infilelist2[j]=input_clean2;
 			cleanfilelist1.push_back(input_clean1);
@@ -839,10 +849,12 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
 			    exit(0);
 		    }
+		    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    executeCMD(cmd.c_str());
 		}
 		if(aligner=="BatMeth2"){
 		    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " -o " + outputdir + output_prefix + ".sam";	    	
+	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str());
 	    }else{
 	    	if(infilelist1.size() > 1){
@@ -850,6 +862,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		    	for(int j=0; j< cleanfilelist1.size(); j++){
 		    		cmd = cmd + " " + outputdir + cleanfilelist1[j] + ".sam";
 		    	}
+		    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    	executeCMD(cmd.c_str());
 	    	}
 	    }
@@ -873,10 +886,12 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		        fprintf(stderr, "Please select correct aligner. (BatMeth2/bwa-meth/bsmap/bismark2)");
 			    exit(0);
 		    }
+		    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    executeCMD(cmd.c_str());
 		}
 		if(aligner=="BatMeth2"){
 			cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + outputdir + output_prefix + ".sam";
+	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str());
 	    }else{
 	    	if(infilelist1.size() > 1){
@@ -884,6 +899,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		    	for(int j=0; j< infilelist1.size(); j++){
 		    		cmd = cmd + " " + outputdir + getfilename(infilelist1[j]) + ".sam";
 		    	}
+		    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 		    	executeCMD(cmd.c_str());
 	    	}
 	    }
@@ -920,6 +936,7 @@ void annoation(string outputdir, string output_prefix){
         cmd = cmd + " -nC " + getstring(binCover);
     if (distance != 2000)
         cmd = cmd + " -d " + getstring(distance);
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
 }
 
@@ -1033,6 +1050,7 @@ void mvpng(string outputdir, string mkpath, string output_prefix){
         string newpost = mkpath + "/images/" + filelist[i];
         fprintf(stderr, "move file %s to %s;\n", oldpost.c_str(), newpost.c_str());
         string cmd = "mv " + oldpost + " " + newpost;
+        cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(cmd.c_str());
     }
 }
@@ -1045,6 +1063,7 @@ void doc2html(string outputdir, string mkpath, string output_prefix){
     for(int i = 0; i < filelist.size(); ++i){
         fprintf(stderr, "convert %s to html.\n", filelist[i].c_str());
         string cmd = "Rscript " + abspath + "doc2html.r " + outputdir + " " + output_prefix + " " + filelist[i];
+        cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(cmd.c_str());
     }
 }
@@ -1055,6 +1074,7 @@ void alignmentstate(string outputdir, string output_prefix, string mkpath){
     fprintf(Falignresults, "Value\tState\n");
     fclose(Falignresults);
     string alignsortbam = "samtools sort -@ " + getstring(threads) +" -o " + outputdir + output_prefix + ".sort.bam " + outputdir + output_prefix + ".sam";
+    alignsortbam = alignsortbam + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(alignsortbam.c_str());
     string alignsummarycmd = "samtools flagstat " + outputdir + output_prefix + ".sort.bam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt";
     executeCMD(alignsummarycmd.c_str());
@@ -1067,7 +1087,7 @@ void mkreport(string outputdir, string mkpath, bool pairedend, string output_pre
     }
     string copycmd="cp -r ";
     copycmd += abspath;
-    copycmd += "../BatMeth2-Report " + outputdir + "/batmeth2_report_";
+    copycmd += "../BatMeth2-Report " + output_prefix + "/batmeth2_report_";
     copycmd += output_prefix;
     executeCMD(copycmd.c_str());
 
@@ -1090,13 +1110,17 @@ void methyPlot(string outputdir, string output_prefix ){
     string cmd = abspath + "methyPlot " + outputdir + output_prefix + ".methBins.txt " + outputdir + output_prefix + ".Methygenome.pdf " + getstring(step) + " " + outputdir +output_prefix + ".Methylevel.1.txt " + outputdir + output_prefix + ".function.pdf TSS TTS " + outputdir +  output_prefix + ".AverMethylevel.1.txt " + outputdir +  output_prefix + ".Methenrich.pdf";
     //cmd = "{output_prefix}.bins..."
     //cmd = cmd.format(**locals())
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     cmd = "Rscript "+ abspath + "density_plot_with_methyl_oneSample_oneGff.r "+ outputdir + output_prefix + ".methBins.txt " + outputdir +  output_prefix + ".annoDensity.1.txt " + outputdir +  output_prefix + ".density.pdf " + output_prefix;
     //cmd = cmd.format(**locals())
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     cmd = "Rscript " + abspath + "mCdensity.r " + outputdir + output_prefix + ".mCdensity.txt " + outputdir + output_prefix + ".mCdensity.pdf " + outputdir + output_prefix + ".mCcatero.txt " + outputdir + output_prefix + ".mCcatero.pdf";
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     cmd = abspath + "GeneMethHeatmap " + outputdir + output_prefix + " None " + getstring(CG) + " " + getstring(CHG) + " " + getstring(CHH);
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
 }
 
@@ -1104,13 +1128,14 @@ void visul2sample(){
     //string cmd = abspath + "GeneMethHeatmap {sample1_prefix} {sample2_prefix} {CG} {CHG} {CHG}";
 }
 
-void fastptrim(string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend){
+void fastptrim(string outputdir, string output_prefix, string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend){
     if(fastp != ""){
     	string cmd;
         if(pairedend)
             cmd = fastp + " -Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
         else
         	cmd = fastp + " -Y 0 -i " + input_prefix + " -o " + input_clean;
+        cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(cmd.c_str());
     }
 }
@@ -1154,6 +1179,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     string cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
     cmd += newlogfile;
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str());
     fprintf(stderr, "[ BatMeth2 ] Visulization ...\n");
     methyPlot(outputdir, output_prefix );

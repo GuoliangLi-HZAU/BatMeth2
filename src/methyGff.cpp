@@ -494,7 +494,7 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 				char Symbol[BATBUF];
 				unsigned start=0,end=0;
 				Strand = '.';
-				while(!feof(GFFINFILE))
+				while(fgets(Gff,BATBUF,GFFINFILE)!=0) //(!feof(GFFINFILE))
 				{
 					Total_Reads++;
 					Progress++;
@@ -506,7 +506,7 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 						Progress=0;
 						Show_Progress(Current_Pos*100/File_Size);
 					}
-					fgets(Gff,BATBUF,GFFINFILE);
+					//fgets(Gff,BATBUF,GFFINFILE);
 					//string id="";
 					if(InputGff)
 					{

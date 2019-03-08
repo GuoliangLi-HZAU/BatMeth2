@@ -12,11 +12,11 @@ REQUIREMENTS
 -------
 1) gcc, gsl library, zlib
 
-2) R
+2) R (ggplot2, pheatmap, xtable)
 
 3) python
 
-4) samtools
+4) samtools (suggest: v1.3.1)
 
 5) fastp, raw reads as input need
 
@@ -76,13 +76,13 @@ The usage is here:
 Raw reads:
 
 ```bash
-BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff=./gene.gff -f 1
+BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff -f 1
 ```
 
 Or clean reads:
 
 ```bash
-BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff=./gene.gff -f 1 
+BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff -f 1 
 ```
 
 
@@ -131,7 +131,7 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
       --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
       --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
-      --gtf/--bed &emsp; Gtf or gff file / bed file <br>
+      --gtf/--gff/--bed &emsp; Gtf or gff file / bed file <br>
       --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
       --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
       -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>

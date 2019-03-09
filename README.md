@@ -10,7 +10,7 @@ Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
 
 REQUIREMENTS
 -------
-1) gcc, gsl library, zlib
+1) gcc (v4.8) , gsl library, zlib
 
 2) R (ggplot2, pheatmap, xtable)
 

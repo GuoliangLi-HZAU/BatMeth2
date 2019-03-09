@@ -19,6 +19,16 @@ check_pkg <- function(pkg) {
         stop(paste("Couldn't install package", pkg, sep = " "));
       }
     }
+    if(require(pkg, character.only = TRUE)){
+      print(paste("Package", pkg, "is installed and loaded correctly", sep = ""))
+    } else{
+      install.packages(pkg, repos="https://mirrors.shu.edu.cn", dep = TRUE)
+      if(require(pkg, character.only = TRUE)){
+        print(paste("Package", pkg, "is installed and loaded correctly", sep = ""))
+      } else{
+        stop(paste("Couldn't install package", pkg, sep = " "));
+      }
+    }
   }
 }
 check_pkg("pheatmap")

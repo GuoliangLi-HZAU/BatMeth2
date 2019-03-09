@@ -13,18 +13,16 @@
 
 struct Methy_Hash
 {
-	int *plusMethyratio,*plusCount_C,*plusCount_CT;
-	int *NegMethyratio,*NegCount_C,*NegCount_CT;
-	int *plusMethContext;
-	int *NegMethContext;
+	int *plusCount_C,*plusCount_CT;
+	int *NegCount_C,*NegCount_CT;
+	char *plusMethContext;
+	char *NegMethContext;
 	int Index;
 //	int *binsPlusCount_C,*binsPlusCount_CT;
 //	int *binsNegCount_C,*binsNegCount_CT;
 };
 struct GeneDensity
 {
-	long *plusGeneDensity;
-	long *NegGeneDensity;
 	unsigned *PN_Cover;
 	unsigned *plusCover;
 	unsigned *NegCover;
@@ -269,12 +267,10 @@ int main(int argc, char* argv[])
 				printf("%s, ",Genome_Offsets[i].Genome);
 				String_Hash[Genome_Offsets[i].Genome]=i;
 				//meth ini
-				Methy_List[i].plusMethContext =new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].NegMethContext =new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].plusMethyratio = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].plusMethContext =new char[Genome_Offsets[i+1].Offset];
+				Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset];
 				Methy_List[i].plusCount_C = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].plusCount_CT = new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].NegMethyratio = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].NegCount_C = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].Index=i;
@@ -284,8 +280,6 @@ int main(int argc, char* argv[])
 				//Methy_List[i].binsNegCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				
 				unsigned len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
-				GeneD_List[i].plusGeneDensity=new long[len];
-				GeneD_List[i].NegGeneDensity=new long[len];
 				GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset];
 				GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset];
 				GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset];
@@ -704,15 +698,11 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 			{
 				delete[] Methy_List[i].plusMethContext;
 				delete[] Methy_List[i].NegMethContext;
-				delete[] Methy_List[i].plusMethyratio;
 				delete[] Methy_List[i].plusCount_C ;
 				delete[] Methy_List[i].plusCount_CT ;
-				delete[] Methy_List[i].NegMethyratio ;
 				delete[] Methy_List[i].NegCount_C;
 				delete[] Methy_List[i].NegCount_CT;
 				
-				delete[] GeneD_List[i].plusGeneDensity;
-				delete[] GeneD_List[i].NegGeneDensity;
 				delete[] GeneD_List[i].PN_Cover;
 				delete[] GeneD_List[i].plusCover;
 				delete[] GeneD_List[i].NegCover;

@@ -34,6 +34,7 @@ d) Type
 - ./configure
 - make
 - make copy
+- Rscript scripts/install.rpackages.r (Optional, used in visulization)
 
 e) The binary of BatMeth2 will be created in bin/
 

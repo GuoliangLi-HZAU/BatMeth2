@@ -14,11 +14,9 @@ REQUIREMENTS
 
 2) R (ggplot2, pheatmap, xtable)
 
-3) python
+3) samtools (suggest: v1.3.1)
 
-4) samtools (suggest: v1.3.1)
-
-5) fastp, raw reads as input need
+4) fastp, raw reads as input need
 
 INSTALL
 -------

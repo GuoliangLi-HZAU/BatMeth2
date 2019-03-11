@@ -5527,6 +5527,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 		assert(!ESTIMATE);
 		if (H.Loc == INT_MAX)
 		{
+			if(T.Loc==INT_MAX) return;
 			assert(T.Loc!=INT_MAX);
 
 			Ann_Info Ann2;
@@ -5566,6 +5567,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 		}
 		if(T.Loc == INT_MAX)
 		{
+			if(H.Loc==INT_MAX) return;
 			assert(H.Loc!=INT_MAX);
 
 			Ann_Info Ann1;

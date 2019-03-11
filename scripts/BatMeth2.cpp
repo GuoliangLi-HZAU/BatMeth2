@@ -436,14 +436,20 @@ int main(int argc, char* argv[])
         }
     }
     //for ann and bin file
-    if(mode == "pipel" && genome_index == "" && genome_others != ""){
-    	if(aligner == "BatMeth2"){
-    		fprintf(stderr, "\nPlease defined genome_index location, when use batmeth2 aligner\n");
-    		exit(0);
-    	}
-    	string cmd = abspath + "preGenome " + genome_others;
-    	executeCMD(cmd.c_str(), outputdir, output_prefix);
-    	genome_index = genome_others;
+    if(mode == "pipel" ){
+        if(genome_index == "" && genome_others != ""){
+        	if(aligner == "BatMeth2"){
+        		fprintf(stderr, "\nPlease defined genome_index location, when use batmeth2 aligner\n");
+        		exit(0);
+        	}
+        	string cmd = abspath + "preGenome " + genome_others;
+        	executeCMD(cmd.c_str(), outputdir, output_prefix);
+        	genome_index = genome_others;
+        }
+        if(gfffile == "None" && bedfile == "None"){
+            fprintf(stderr, "\nPlease defined gff/gtf/bed file for annoation analysis!\n");
+            exit(0);
+        }
 	}
     mkpath= outputdir + "/batmeth2_report_" + output_prefix;
 

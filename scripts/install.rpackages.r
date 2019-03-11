@@ -29,3 +29,6 @@ check_pkg <- function(pkg) {
 check_pkg("pheatmap")
 check_pkg("xtable")
 check_pkg("ggplot2")
+check_pkg("gridExtra")
+check_pkg("grid")
+

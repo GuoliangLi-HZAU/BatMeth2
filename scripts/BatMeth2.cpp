@@ -492,10 +492,9 @@ int main(int argc, char* argv[])
 	    {
 	        pthread_join(Thread_Info[i].Thread,NULL);
 	    }
-	    free(Thread_Info);
-
-		
+	    free(Thread_Info);		
 		fclose(configFp);
+
 	}else
 		detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend);
 
@@ -521,7 +520,7 @@ void *nprunpipel(void *arg){
 	unsigned int diffsample;
 	while ( readline(s2t, BATBUF, configFp)!=0 ){
 			if(s2t[0] == '#') continue;
-			sscanf(s2t, "%u%s%s%s%s%s%u", &sampleid, layout, infile1, infile2, outp, outd, &diffsample);
+			sscanf(s2t, "%u%s%s%s%s%s%u", &sampleid, layout, infile1, infile2, outp, outd);
 			if(outd[strlen(outd)-1] != '/'){
 				outd[strlen(outd)]='/'; 
 				outd[strlen(outd)+1]='\0';
@@ -535,7 +534,7 @@ void *nprunpipel(void *arg){
 			sample.infile2 = infile2;
 			sample.outprefix = outp;
 			sample.outdir = outd;
-			sample.diffid = diffsample;
+			//sample.diffid = diffsample;
 			v_samples.push_back(sample);
 			if(sample.layout == "PE") pairedend = true;
 			else pairedend=false;

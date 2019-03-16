@@ -1030,10 +1030,13 @@ static INLINE unsigned int BWTOccValueExplicit(const BWT *bwt, const unsigned in
 
 	if (occIndexMajor * ALPHABET_SIZE + character > bwt->occMajorSizeInWord * sizeof(unsigned int))
 		return 0;
-	else
-		return bwt->occValueMajor[occIndexMajor * ALPHABET_SIZE + character] +
+	else{
+		unsigned int aa = bwt->occValueMajor[occIndexMajor * ALPHABET_SIZE + character] +
 			((bwt->occValue[occIndexExplicit / OCC_VALUE_PER_WORD * ALPHABET_SIZE + character] >> shift) & mask);
-
+		return aa;
+			//bwt->occValueMajor[occIndexMajor * ALPHABET_SIZE + character] +
+			//((bwt->occValue[occIndexExplicit / OCC_VALUE_PER_WORD * ALPHABET_SIZE + character] >> shift) & mask);
+	}
 }
 
 static INLINE void BWTAllOccValueExplicit(const BWT *bwt, const unsigned int occIndexExplicit, unsigned int* __restrict occValueExplicit) {

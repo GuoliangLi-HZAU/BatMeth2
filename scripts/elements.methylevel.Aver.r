@@ -9,9 +9,9 @@ Infile<-Args[6] #:gene.meth.AverMethylevel.1.txt
 outFile<-Args[7]
 a<-read.table(Infile,header=T,sep="\t")
 pdf(outFile)
-ggplot(a)+geom_boxplot(aes(x=Context, y=DNA.methylation.level,color=Regions))+ scale_fill_discrete(breaks=c("UP","BODY","DOWN"))
+ggplot(a)+geom_boxplot(aes(x=Context, y=DNA.methylation.level,color=Regions))+ scale_fill_discrete(breaks=c("UP","BODY","DOWN")) +theme_bw()+theme(panel.grid=element_blank())
 dev.off()
 outpng<-paste(gsub("pdf","",outFile),"png", sep="")
 png(outpng,res=96)
-ggplot(a)+geom_boxplot(aes(x=Context, y=DNA.methylation.level,color=Regions))+ scale_fill_discrete(breaks=c("UP","BODY","DOWN"))
+ggplot(a)+geom_boxplot(aes(x=Context, y=DNA.methylation.level,color=Regions))+ scale_fill_discrete(breaks=c("UP","BODY","DOWN")) +theme_bw()+theme(panel.grid=element_blank())
 dev.off()

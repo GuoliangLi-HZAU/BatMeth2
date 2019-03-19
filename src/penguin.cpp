@@ -131,7 +131,7 @@ inline unsigned char Hash(char* S);
 void Build_Names(const char* Genome_Name,FMFILES & F,BATPARAMETERS & BP);
 inline void ReplaceCtoT(READ & R);
 inline void ReplaceGtoA(READ & R);
-unsigned uabs(unsigned A,unsigned B);
+unsigned ulabs(unsigned A,unsigned B);
 void Attached_mq(Alignment_Pair & pai, Alignment_Pair & pai2, int Real_Len1, int Real_Len2);
 void Remove_Dup_Final(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>,Comp_Align_Pair> & Alignments_Reslut);
 int Get_ED(std::string & S);
@@ -3387,8 +3387,8 @@ void Get_top1M_Alignments(std::priority_queue <Alignment,std::vector <Alignment>
 	Alignment A=t.top();
 	while(!t.empty() )
 	{
-	//if(abs(A.Loc-2853918318)<500) printf("\nllll %ld %d\n",A.Loc,A.Mismatch);
-		if(abs(A.Score)>cutoff) break;
+	//if(labs(A.Loc-2853918318)<500) printf("\nllll %ld %d\n",A.Loc,A.Mismatch);
+		if(labs(A.Score)>cutoff) break;
 		if(A.Mismatch>MAX_MISMATCHES+1) 
 		{
 			t.pop();A=t.top();
@@ -3743,7 +3743,7 @@ for(int i=0;i<StringLength;i++)
 */
 	Aln=mengyao_ssw_core(Org_String,StringLength,Current_Tag,StringLength+INDELGAP,Filter,0/*DP*/, p);
 
-//if( (abs(A.Loc-991289706)<=10 || abs(A.Loc-12218526)<=10) && !strcmp(Ann.Name,"chr19")) printf("\nAAAAAA %d\n",A.Loc);
+//if( (labs(A.Loc-991289706)<=10 || labs(A.Loc-12218526)<=10) && !strcmp(Ann.Name,"chr19")) printf("\nAAAAAA %d\n",A.Loc);
 	//if(Aln->score1 >= ACC_SCORE)
 //printf("\nAAAAAA %d %d %s %d\n",Aln->mismatch_count, Aln->gap_count,A.Cigar, H.Org_Loc);
 	if(Aln->score1 >= Filter)
@@ -4542,11 +4542,11 @@ void Get_Basic_MapQ(std::priority_queue <Alignment,std::vector <Alignment>,Comp_
 		if(!Good_Alignments.empty())
 		{
 			Alignment C2=Good_Alignments.top();C2.Score= -C2.Score;
-			if(abs(C1.Score-C2.Score)<=10)
+			if(labs(C1.Score-C2.Score)<=10)
 				MapQ=0;
 		}
 		//else
-		//	MapQ=abs(C1.Score-C2.Score)+1;
+		//	MapQ=labs(C1.Score-C2.Score)+1;
 		Good_Alignments.push(C1);
 	}
 	else
@@ -4619,7 +4619,7 @@ bool SW_List(READ & RawR,unsigned char* Original_Text,std::priority_queue <Align
 			Enum_Hits++;
 			if(i==0)
 				Top_Score=Good_Alignments.top().Score;
-			else if(abs(Good_Alignments.top().Score-Top_Score)>10)
+			else if(labs(Good_Alignments.top().Score-Top_Score)>10)
 			{
 				Top_Scanned=true;
 				Enum_Hits=Top_Hits;
@@ -4666,7 +4666,7 @@ bool Correct_Orientation(Alignment A,Alignment A_P,int Extra_Bit)
 		{
 			if(ESTIMATE)
 				return true;
-			if(abs(A_P.Loc-A.Loc)<=INSERTSIZE+3*STD+Extra_Bit || abs(A_P.Loc-A.Loc)<=550)
+			if(labs(A_P.Loc-A.Loc)<=INSERTSIZE+3*STD+Extra_Bit || labs(A_P.Loc-A.Loc)<=550)
 				return true;
 		}
 	}
@@ -4678,7 +4678,7 @@ bool Correct_Orientation(Alignment A,Alignment A_P,int Extra_Bit)
 		{
 			if(ESTIMATE)
 				return true;
-			if(abs(A.Loc-A_P.Loc)<=INSERTSIZE+3*STD+Extra_Bit || abs(A.Loc-A_P.Loc)<=550 ) //2 to 3 moxian
+			if(labs(A.Loc-A_P.Loc)<=INSERTSIZE+3*STD+Extra_Bit || labs(A.Loc-A_P.Loc)<=550 ) //2 to 3 moxian
 				return true;
 		}
 	}
@@ -4689,7 +4689,7 @@ int getinserts(int loc1, int loc2, int readlen1, int readlen2, int INSERTSIZE){
 	int size=0;
 	if(loc1<=loc2) size = loc2-loc1 +readlen2;
 	else size = loc1-loc2+readlen1;
-	return abs(size-INSERTSIZE);
+	return labs(size-INSERTSIZE);
 }
 
 int getdistance(int loc1, int loc2, int readlen1, int readlen2){
@@ -4754,13 +4754,13 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 	for(std::map<unsigned,Alignment>::iterator I=D.begin();I!=D.end() && Pairings_Index<MAX_PROPER_PAIRS;I++)
 	{
 		std::map<unsigned,Alignment>::iterator Nearest_Pair=D_P.lower_bound(I->first-(INSERTSIZE+3*STD+Extra_Bit));
-//if(abs(3014246440- I->first) < 600) 
+//if(labs(3014246440- I->first) < 600) 
 //if( ((I->second).Score>-100 || (Nearest_Pair->second).Score>-100) && (I->second).Score+(Nearest_Pair->second).Score > -150) 
-//if (abs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit) {
-//printf("\nGGGH %d %d %d %d %s %c\n", abs(Nearest_Pair->first-I->first), Nearest_Pair->first, I->first,  (I->second).Score, (I->second).Cigar, (I->second).hitType);
-//printf("\nGGGH %d %d %d %s %d %d %d %u %u\n", abs(Nearest_Pair->first-I->first), (I->second).Score, (Nearest_Pair->second).Score, (Nearest_Pair->second).Cigar, (Nearest_Pair->second).Mismatch, Correct_Orientation(I->second,Nearest_Pair->second,Extra_Bit), Correct_Ref(I->second,Nearest_Pair->second), Nearest_Pair->first, I->first);
+//if (labs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit) {
+//printf("\nGGGH %d %d %d %d %s %c\n", labs(Nearest_Pair->first-I->first), Nearest_Pair->first, I->first,  (I->second).Score, (I->second).Cigar, (I->second).hitType);
+//printf("\nGGGH %d %d %d %s %d %d %d %u %u\n", labs(Nearest_Pair->first-I->first), (I->second).Score, (Nearest_Pair->second).Score, (Nearest_Pair->second).Cigar, (Nearest_Pair->second).Mismatch, Correct_Orientation(I->second,Nearest_Pair->second,Extra_Bit), Correct_Ref(I->second,Nearest_Pair->second), Nearest_Pair->first, I->first);
 //}
-		while(Nearest_Pair!=D_P.end() && (abs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit))
+		while(Nearest_Pair!=D_P.end() && (labs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit))
 		{
 			if(!Correct_Ref(I->second,Nearest_Pair->second)) {
 				Nearest_Pair++; continue;
@@ -4786,9 +4786,9 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 				}
 				else if(Paired_Score >= (Head.Score+Tail.Score))
 				{
-					//if(!Unique && (abs(Head.Loc-(I->second).Loc)<=20 || abs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) {Nearest_Pair++;continue;}
+					//if(!Unique && (labs(Head.Loc-(I->second).Loc)<=20 || labs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) {Nearest_Pair++;continue;}
 					
-					if(Unique && (abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
+					if(Unique && (labs(Head.Loc-I->first)<=20 || labs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
 					else if(Paired_Score < (Head.Score+Tail.Score)+30){
 						Unique=false;
 					}
@@ -4797,7 +4797,7 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 					}
 					
 					Unique=true;
-					if(!(abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20)){
+					if(!(labs(Head.Loc-I->first)<=20 || labs(Tail.Loc-Nearest_Pair->first)<=20)){
 						Third_Score=Sub_Opt_Score;
 						Third_Head=Sub_Opt_Head;Third_Tail=Sub_Opt_Tail;
 
@@ -4808,10 +4808,10 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 					Head=I->second;Tail=Nearest_Pair->second;
 					paired_score=Head.Indel+Head.Mismatch+Tail.Indel+Tail.Mismatch;
 				}else if(Paired_Score == (Head.Score+Tail.Score)){
-					if((abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20)){
+					if((labs(Head.Loc-I->first)<=20 || labs(Tail.Loc-Nearest_Pair->first)<=20)){
 						goto END;
 					}
-					if(Unique && (abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
+					if(Unique && (labs(Head.Loc-I->first)<=20 || labs(Tail.Loc-Nearest_Pair->first)<=20) ) Unique=true;
 					else if(Paired_Score < (Head.Score+Tail.Score)+30){
 						Unique=false;
 					}
@@ -4845,8 +4845,8 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 					}		
 				}else if( Sub_Opt_Score == INT_MAX || Paired_Score >= Sub_Opt_Score ) {
 /*
-					if(!Unique && (abs(Head.Loc-(I->second).Loc)<=20 || abs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) {Nearest_Pair++;continue;}
-					if(Unique && (abs(Head.Loc-(I->second).Loc)<=20 || abs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) Unique=true;
+					if(!Unique && (labs(Head.Loc-(I->second).Loc)<=20 || labs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) {Nearest_Pair++;continue;}
+					if(Unique && (labs(Head.Loc-(I->second).Loc)<=20 || labs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) Unique=true;
 					else if(Paired_Score < (Head.Score+Tail.Score)+30){
                                                 Unique=false;
                                         }
@@ -4881,7 +4881,7 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 				}
 			}
 			END:
-				if(abs(Head.Loc-I->first)<=20 || abs(Tail.Loc-Nearest_Pair->first)<=20){
+				if(labs(Head.Loc-I->first)<=20 || labs(Tail.Loc-Nearest_Pair->first)<=20){
 					Sub_Opt_Score=Third_Score;
 					Sub_Opt_Head=Third_Head;Sub_Opt_Tail=Third_Tail;
 				}
@@ -4934,10 +4934,10 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 	int topD = getinserts(Head.Loc, Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
 	int secondD = getinserts(Sub_Opt_Head.Loc, Sub_Opt_Tail.Loc, ReadLen1, ReadLen2, INSERTSIZE);
 	if(!Unique && (Head.Score+Tail.Score > -200 && topD - secondD!=0)){
-		//int scoreTop = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(topD - INSERTSIZE) / STD)) + .499);
-		//int scoreSecond = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * fabs(secondD - INSERTSIZE) / STD)) + .499);
-		if( abs(topD-secondD) > STD){
-			mapqpe = abs(secondD - topD)/STD * 5 + 8;
+		//int scoreTop = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * flabs(topD - INSERTSIZE) / STD)) + .499);
+		//int scoreSecond = (int)(-4.343 * log(.5 * erfc(M_SQRT1_2 * flabs(secondD - INSERTSIZE) / STD)) + .499);
+		if( labs(topD-secondD) > STD){
+			mapqpe = labs(secondD - topD)/STD * 5 + 8;
 		}
 		if(mapqpe>40) mapqpe=40;
 		if(mapqpe<0) mapqpe=0;
@@ -4958,9 +4958,9 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 			A.push(Head);B.push(Tail);
 			if(Sub_Opt_Score!=INT_MAX)
 			{
-				if(abs(Head.Loc-Sub_Opt_Head.Loc)>20)
+				if(labs(Head.Loc-Sub_Opt_Head.Loc)>20)
 					A.push(Sub_Opt_Head);
-				if(abs(Tail.Loc-Sub_Opt_Tail.Loc)>20)
+				if(labs(Tail.Loc-Sub_Opt_Tail.Loc)>20)
 					B.push(Sub_Opt_Tail);
 			}//qw
 		}
@@ -4985,14 +4985,14 @@ bool Find_Paired(int ReadLen1, int ReadLen2, int & paired_score,bool & Unique,st
 bool Align_Difference(std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & Alignments,unsigned U)
 {
 	Alignment Aln=Alignments.top();//check if actual best alignment differes from the initial..
-	if(uabs(Aln.Loc,U)>75)
+	if(ulabs(Aln.Loc,U)>75)
 		return true;
 	else
 		return false;
 
 }
 
-unsigned uabs(unsigned A,unsigned B)
+unsigned ulabs(unsigned A,unsigned B)
 {
 	if(A>B)
 	{
@@ -5042,7 +5042,7 @@ bool Rescue_Mate(char hitType, char* Current_Tag_raw,READ & RawR,unsigned char* 
         }
 	Get_Bases(Original_Text_Ori,Loc+Shift,Flank,Org_String_Ori);
 /*
-if(abs(Loc - 3014246440) < 200){
+if(labs(Loc - 3014246440) < 200){
 for(int i=0;i<Flank;i++)
         printf("%d",Org_String[i]);
 printf("\n==== %d %d\n", Shift, Flank);
@@ -5207,7 +5207,7 @@ void Mate_Rescue_New(int mismatch,int Indel,bool & Do_Rescue,bool & realign,std:
 				Adjust_Alignments(RawM,Original_Text,Alignments_P,0,RTemp_P,BTemp_P);
 		
 			/*B1_P=Alignments_P.top();
-			if(B1_P.SW_Score<SW_THRESHOLD && abs(B1_P.Loc-B1.Loc)<Read_Length2)
+			if(B1_P.SW_Score<SW_THRESHOLD && labs(B1_P.Loc-B1.Loc)<Read_Length2)
 			{
 				Alignments_P.pop();
 				B1_P.SW_Score=SW_THRESHOLD+1;
@@ -5312,7 +5312,7 @@ bool Output_Pair(Alignment A1,Alignment A1_P,Alignment B1,Alignment B1_P,int Rea
 	{
 		CUTOFF=LENGTH_CUTOFF*match;
 	}
-	if(abs(A1.Loc-B1.Loc)<Read_Length)// && abs(A1_P.Loc-B1_P.Loc)>Read_Length)
+	if(labs(A1.Loc-B1.Loc)<Read_Length)// && labs(A1_P.Loc-B1_P.Loc)>Read_Length)
 	{
 		if(B1_P.SW_Score> CUTOFF)
 		{
@@ -5323,7 +5323,7 @@ bool Output_Pair(Alignment A1,Alignment A1_P,Alignment B1,Alignment B1_P,int Rea
 			return true;
 		}
 	}
-	if(abs(A1_P.Loc-B1_P.Loc)<Read_Length2)// && abs(A1_P.Loc-B1_P.Loc)>Read_Length)
+	if(labs(A1_P.Loc-B1_P.Loc)<Read_Length2)// && labs(A1_P.Loc-B1_P.Loc)>Read_Length)
 	{
 		if(B1.SW_Score> CUTOFF)
 		{

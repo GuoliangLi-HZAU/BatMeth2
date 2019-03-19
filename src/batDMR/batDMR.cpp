@@ -539,7 +539,7 @@ void fdr(vector<PvalLocus> &loci) {
       for (vector<PvalLocus>::iterator it = loci.begin();
             it != loci.end(); ++it) {
         PvalLocus &cur_locus = *(it);
-	if(isnan(cur_locus.corrected_pval)) cur_locus.corrected_pval = 1.0;
+	if(std::isnan(cur_locus.corrected_pval)) cur_locus.corrected_pval = 1.0;
         if (cur_locus.corrected_pval > 1.0 || cur_locus.corrected_pval < 0)
           cur_locus.corrected_pval = 1.0;
       }

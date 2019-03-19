@@ -4730,7 +4730,7 @@ printf("\n");
 						
 						rawRead++;Quality++;
 					}
-	//			if((abs(Locate-243206170)<1000 || abs(Location-243206170)<1000 ) ) printf("\n=||=%d %ld %d %c %c\n",Location,Locate,Mismatch_Count,New_Record[1],hitType);
+	//			if((labs(Locate-243206170)<1000 || labs(Location-243206170)<1000 ) ) printf("\n=||=%d %ld %d %c %c\n",Location,Locate,Mismatch_Count,New_Record[1],hitType);
 	//				if(Mismatch_Count<minTrueMis) {Hits=0;minTrueMis=Mismatch_Count;Multipe=false;SecondMisN=0;}
 	//				else if(Mismatch_Count==minTrueMis) Multipe=true;
 					
@@ -4741,7 +4741,7 @@ printf("\n");
 //if(StringLength>=100 && Location == 11574) 
 //if(hitType=='3')
 //printf("\n==-= %s %d %d %d %d %dM %u %c\n", A.Name, Mismatch_Count, Score, Location, MAX_MISMATCHES, StringLength, Locate, hitType);	
-		if(Whole_Len && Mismatch_Count <= MAX_MISMATCHES && abs(Score)<abs(Paired_Score)) 
+		if(Whole_Len && Mismatch_Count <= MAX_MISMATCHES && labs(Score)<labs(Paired_Score)) 
 		{
 			if(Align_Hits.AM.find(Locate) == Align_Hits.AM.end() && Mismatch_Count<=2 )
 			{

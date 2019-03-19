@@ -266,7 +266,7 @@ void combine_pvals(vector<PvalLocus> &loci, const BinForDistance &bin_for_distan
     distance_corr_matrix(bin_for_distance, correlation_for_bin,
                          neighbors, correlation_matrix);
     double combined_pval = stouffer_liptak(p_vals, correlation_matrix);
-    if(isnan(combined_pval)) combined_pval=1.0;
+    if(std::isnan(combined_pval)) combined_pval=1.0;
     loci[i].combined_pval = combined_pval;
 
     i++;

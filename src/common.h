@@ -576,10 +576,10 @@ class Comp_Align_Pair
 				    A2.Q1 = 0; A2.Q2 = 0;
 				}
 */
-//printf("\nA22 %d %d %d %d %d %d %d %d\n", A1.Loc1, A2.Loc1, A1.QualityScore, A2.QualityScore, A1.Score, A2.Score, abs(abs(A1.Loc1-A1.Loc2)-INSERTSIZE), abs(abs(A2.Loc1-A2.Loc2)-INSERTSIZE));
+//printf("\nA22 %d %d %d %d %d %d %d %d\n", A1.Loc1, A2.Loc1, A1.QualityScore, A2.QualityScore, A1.Score, A2.Score, labs(labs(A1.Loc1-A1.Loc2)-INSERTSIZE), labs(labs(A2.Loc1-A2.Loc2)-INSERTSIZE));
 				if(A1.Score > A2.Score /*A1.QualityScore < A2.QualityScore*/)return true; 
-				else if(abs(A1.Score) == abs(A2.Score)){
-					if(abs(abs(A1.Loc1-A1.Loc2)-INSERTSIZE) > abs(abs(A2.Loc1-A2.Loc2)-INSERTSIZE)) return true;
+				else if(labs(A1.Score) == labs(A2.Score)){
+					if(labs(labs(A1.Loc1-A1.Loc2)-INSERTSIZE) > labs(labs(A2.Loc1-A2.Loc2)-INSERTSIZE)) return true;
 					else if( A1.QualityScore > A2.QualityScore) return true;
 					else return false;
 				}else return false;

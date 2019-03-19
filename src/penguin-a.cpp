@@ -134,7 +134,7 @@ inline unsigned char Hash(char* S);
 void Build_Names(const char* Genome_Name,FMFILES & F,BATPARAMETERS & BP);
 inline void ReplaceCtoT(READ & R);
 inline void ReplaceGtoA(READ & R);
-unsigned uabs(unsigned A,unsigned B);
+unsigned ulabs(unsigned A,unsigned B);
 void Remove_Dup_Final(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>,Comp_Align_Pair> & Alignments_Reslut, int & secondN);
 int Get_ED(std::string & S);
 void Map_One_SEG_Head(Align_Hit & Align_Hits,int mismatch,READ & RawR,char source,RQINDEX & RQHALF,RQINDEX & RQ,unsigned char* Original_Text,unsigned Entries,BWT* fwfmi,BWT* revfmi,READ & R,BATREAD & B,unsigned & Conversion_Factor,MEMX & MF,MEMX & MC,LEN & L,unsigned & Actual_Tag,Final_Hit &  Single_File,FILE* Mishit_File,std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & Alignments,std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & Good_Alignments,bool PRINT,Hit_Info & H,int & Quality_Score,int Segment_Length,int SEG_SIZE,int SHIFT_SEG_SIZE);
@@ -2478,8 +2478,8 @@ void Get_top1M_Alignments(std::priority_queue <Alignment,std::vector <Alignment>
 	Alignment A=t.top();
 	while(!t.empty() )
 	{
-	//if(abs(A.Loc-2853918318)<500) printf("\nllll %ld %d\n",A.Loc,A.Mismatch);
-		if(abs(A.Score)>cutoff) break;
+	//if(labs(A.Loc-2853918318)<500) printf("\nllll %ld %d\n",A.Loc,A.Mismatch);
+		if(labs(A.Score)>cutoff) break;
 		if(A.Mismatch>MAX_MISMATCHES+1) 
 		{
 			t.pop();A=t.top();
@@ -2782,7 +2782,7 @@ for(int i=0;i<StringLength;i++)
 //Location_To_Genome(H.Org_Loc,Ann);
 //printf("==== %s\n",Ann.Name);
 
-//if( (abs(A.Loc-991289706)<=10 || abs(A.Loc-12218526)<=10) && !strcmp(Ann.Name,"chr19")) printf("\nAAAAAA %d\n",A.Loc);
+//if( (labs(A.Loc-991289706)<=10 || labs(A.Loc-12218526)<=10) && !strcmp(Ann.Name,"chr19")) printf("\nAAAAAA %d\n",A.Loc);
 	//if(Aln->score1 >= ACC_SCORE)
 //printf("\nAAAAAA %d %d %s %d\n",Aln->mismatch_count, Aln->gap_count,A.Cigar, H.Org_Loc);
 	if(Aln->score1 >= Filter)
@@ -3595,11 +3595,11 @@ void Get_Basic_MapQ(std::priority_queue <Alignment,std::vector <Alignment>,Comp_
 		if(!Good_Alignments.empty())
 		{
 			Alignment C2=Good_Alignments.top();C2.Score= -C2.Score;
-			if(abs(C1.Score-C2.Score)<=10)
+			if(labs(C1.Score-C2.Score)<=10)
 				MapQ=0;
 		}
 		//else
-		//	MapQ=abs(C1.Score-C2.Score)+1;
+		//	MapQ=labs(C1.Score-C2.Score)+1;
 		Good_Alignments.push(C1);
 	}
 	else
@@ -3672,7 +3672,7 @@ bool SW_List(READ & RawR,unsigned char* Original_Text,std::priority_queue <Align
 			Enum_Hits++;
 			if(i==0)
 				Top_Score=Good_Alignments.top().Score;
-			else if(abs(Good_Alignments.top().Score-Top_Score)>10)
+			else if(labs(Good_Alignments.top().Score-Top_Score)>10)
 			{
 				Top_Scanned=true;
 				Enum_Hits=Top_Hits;
@@ -3708,7 +3708,7 @@ bool Correct_Orientation(Alignment A,Alignment A_P,int Extra_Bit)
 		{
 			if(ESTIMATE)
 				return true;
-			if(abs(A_P.Loc-A.Loc)<=INSERTSIZE+3*STD+Extra_Bit || abs(A_P.Loc-A.Loc)<=550)
+			if(labs(A_P.Loc-A.Loc)<=INSERTSIZE+3*STD+Extra_Bit || labs(A_P.Loc-A.Loc)<=550)
 				return true;
 		}
 	}
@@ -3720,7 +3720,7 @@ bool Correct_Orientation(Alignment A,Alignment A_P,int Extra_Bit)
 		{
 			if(ESTIMATE)
 				return true;
-			if(abs(A.Loc-A_P.Loc)<=INSERTSIZE+3*STD+Extra_Bit || abs(A.Loc-A_P.Loc)<=550 ) //2 to 3 moxian
+			if(labs(A.Loc-A_P.Loc)<=INSERTSIZE+3*STD+Extra_Bit || labs(A.Loc-A_P.Loc)<=550 ) //2 to 3 moxian
 				return true;
 		}
 	}
@@ -3778,7 +3778,7 @@ bool Find_Paired(int & paired_score,bool & Unique,std::priority_queue <Alignment
 	{
 		std::map<unsigned,Alignment>::iterator Nearest_Pair=D_P.lower_bound(I->first-(INSERTSIZE+3*STD+Extra_Bit));
 
-		while(Nearest_Pair!=D_P.end() && (abs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit))
+		while(Nearest_Pair!=D_P.end() && (labs(Nearest_Pair->first-I->first) < INSERTSIZE+3*STD+Extra_Bit))
 		{//printf("\n%ld %ld %d %d %d\n",Nearest_Pair->first,I->first,Nearest_Pair->first-I->first,(Nearest_Pair->second).Score,(I->second).Score);
 			int Paired_Score=(I->second).Score+(Nearest_Pair->second).Score;
 			if(Max_H_Score<(I->second).Score)
@@ -3808,7 +3808,7 @@ bool Find_Paired(int & paired_score,bool & Unique,std::priority_queue <Alignment
 					{
 						Unique=true;
 					}
-					if(!Unique && (abs(Head.Loc-(I->second).Loc)<=20 || abs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) Unique=true;
+					if(!Unique && (labs(Head.Loc-(I->second).Loc)<=20 || labs(Tail.Loc-(Nearest_Pair->second).Loc)<=20) ) Unique=true;
 					Sub_Opt_Score=Head.Score+Tail.Score;
 					Sub_Opt_Head=Head;Sub_Opt_Tail=Tail;
 					Head=I->second;Tail=Nearest_Pair->second;
@@ -3900,14 +3900,14 @@ bool Find_Paired(int & paired_score,bool & Unique,std::priority_queue <Alignment
 bool Align_Difference(std::priority_queue <Alignment,std::vector <Alignment>,Comp_Alignment> & Alignments,unsigned U)
 {
 	Alignment Aln=Alignments.top();//check if actual best alignment differes from the initial..
-	if(uabs(Aln.Loc,U)>75)
+	if(ulabs(Aln.Loc,U)>75)
 		return true;
 	else
 		return false;
 
 }
 
-unsigned uabs(unsigned A,unsigned B)
+unsigned ulabs(unsigned A,unsigned B)
 {
 	if(A>B)
 	{
@@ -4062,7 +4062,7 @@ bool Output_Pair(Alignment A1,Alignment A1_P,Alignment B1,Alignment B1_P,int Rea
 	{
 		CUTOFF=LENGTH_CUTOFF*match;
 	}
-	if(abs(A1.Loc-B1.Loc)<Read_Length)// && abs(A1_P.Loc-B1_P.Loc)>Read_Length)
+	if(labs(A1.Loc-B1.Loc)<Read_Length)// && labs(A1_P.Loc-B1_P.Loc)>Read_Length)
 	{
 		if(B1_P.SW_Score> CUTOFF)
 		{
@@ -4073,7 +4073,7 @@ bool Output_Pair(Alignment A1,Alignment A1_P,Alignment B1,Alignment B1_P,int Rea
 			return true;
 		}
 	}
-	if(abs(A1_P.Loc-B1_P.Loc)<Read_Length2)// && abs(A1_P.Loc-B1_P.Loc)>Read_Length)
+	if(labs(A1_P.Loc-B1_P.Loc)<Read_Length2)// && labs(A1_P.Loc-B1_P.Loc)>Read_Length)
 	{
 		if(B1.SW_Score> CUTOFF)
 		{

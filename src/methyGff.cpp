@@ -719,8 +719,8 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 		}
 		catch(char* Err)
 		{
-			printf(Err);
-			exit(-1);
+			fprintf(stderr, "\n%s\n", Err);
+			exit(0);
 		}
 		time(&End_Time);printf("\nTime Taken  - %.0lf Seconds ..\n ",difftime(End_Time,Start_Time));
 	}

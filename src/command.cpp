@@ -112,8 +112,8 @@ void usage()
         fprintf(stderr,"Usage:     batmeth2 -g INDEX -i INPUT -o OUTPUT\n");
         fprintf(stderr,"Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read.fq -o outPrefix -p 6 -n 2\n\n");
         fprintf(stderr,"[ Paired-end-reads ]\n");
-        fprintf(stderr,"Usage:     batmeth2 -g INDEX -i INPUT_left -i INPUT_right -o OUTPUT\n");
-        fprintf(stderr,"Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read_R1_left.fq -i Read_R2_right.fq -o outPrefix -p 6 -n 2\n\n");
+        fprintf(stderr,"Usage:     batmeth2 -g INDEX -1 INPUT_left -2 INPUT_right -o OUTPUT\n");
+        fprintf(stderr,"Example:   batmeth2 -g /data/index/hg19/hg19.fa -1 Read_R1_left.fq -2 Read_R2_right.fq -o outPrefix -p 6 -n 2\n\n");
 //      fprintf(stderr,"----------------------------------------------------------------------\n\n");
         fprintf(stderr,"Parameters : \n");
         fprintf(stderr,"      --inputfile | -i <filename>   Name of input file, can be fastq or gz format\n");

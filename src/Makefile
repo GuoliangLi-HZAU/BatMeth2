@@ -36,6 +36,9 @@ POST_UNINSTALL = :
 bin_PROGRAMS = batmethindex$(EXEEXT) penguin$(EXEEXT) \
 	penguin-a$(EXEEXT) bwtformatdb$(EXEEXT) reverse$(EXEEXT) \
 	filter$(EXEEXT) methyGff$(EXEEXT) build_index_rrbs$(EXEEXT)
+bin_nogzPROGRAMS = batmethindex$(EXEEXT) penguin-nogz$(EXEEXT)\
+	penguin-a-nogz$(EXEEXT) bwtformatdb$(EXEEXT) reverse$(EXEEXT) \
+	filter$(EXEEXT) methyGff$(EXEEXT) build_index_rrbs$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,12 +62,13 @@ am_libz_a_OBJECTS = adler32.$(OBJEXT) compress.$(OBJEXT) \
 libz_a_OBJECTS = $(am_libz_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+PROGRAMS_nogz = $(bin_nogzPROGRAMS)
 am_batmethindex_OBJECTS = bfix.$(OBJEXT) index.$(OBJEXT) BWT.$(OBJEXT) \
 	MiscUtilities.$(OBJEXT) MemManager.$(OBJEXT) \
 	TextConverter.$(OBJEXT) r250.$(OBJEXT) QSufSort.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
-	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) -lz -lm
+	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT)
 batmethindex_OBJECTS = $(am_batmethindex_OBJECTS)
 batmethindex_LDADD = $(LDADD)
 am_build_index_rrbs_OBJECTS = build_index_rrbs.$(OBJEXT)
@@ -76,7 +80,7 @@ am_bwtformatdb_OBJECTS = bwtformatdb.$(OBJEXT) BWT.$(OBJEXT) \
 	QSufSort.$(OBJEXT) iniparser.$(OBJEXT) inistrlib.$(OBJEXT) \
 	dictionary.$(OBJEXT) DNACount.$(OBJEXT) Timing.$(OBJEXT) \
 	Socket.$(OBJEXT) HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) \
-	karlin.$(OBJEXT) -lz -lm
+	karlin.$(OBJEXT)
 bwtformatdb_OBJECTS = $(am_bwtformatdb_OBJECTS)
 bwtformatdb_LDADD = $(LDADD)
 am_filter_OBJECTS = filter.$(OBJEXT)
@@ -85,6 +89,18 @@ filter_LDADD = $(LDADD)
 am_methyGff_OBJECTS = methyGff.$(OBJEXT)
 methyGff_OBJECTS = $(am_methyGff_OBJECTS)
 methyGff_LDADD = $(LDADD)
+am_penguin_nogzOBJECTS = print.$(OBJEXT) filters.$(OBJEXT) utils.$(OBJEXT) \
+        batlib.$(OBJEXT) rqindex.$(OBJEXT) penguin-nogz.$(OBJEXT) \
+        map.$(OBJEXT) bfix.$(OBJEXT) BWT.$(OBJEXT) \
+        MiscUtilities.$(OBJEXT) MemManager.$(OBJEXT) \
+        TextConverter.$(OBJEXT) r250.$(OBJEXT) QSufSort.$(OBJEXT) \
+        ssw.$(OBJEXT) command.$(OBJEXT) swroutines.$(OBJEXT) \
+        iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
+        DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
+        HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
+        fastsw.$(OBJEXT)
+penguin_nogzOBJECTS = $(am_penguin_nogzOBJECTS)
+penguin_nogzLDADD = $(LDADD)
 am_penguin_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) utils.$(OBJEXT) \
 	batlib.$(OBJEXT) rqindex.$(OBJEXT) penguin.$(OBJEXT) \
 	map.$(OBJEXT) bfix.$(OBJEXT) BWT.$(OBJEXT) \
@@ -94,9 +110,21 @@ am_penguin_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) utils.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
 	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
-	fastsw.$(OBJEXT) -lz -lm
+	fastsw.$(OBJEXT)
 penguin_OBJECTS = $(am_penguin_OBJECTS)
 penguin_LDADD = $(LDADD)
+am_penguin_a_nogzOBJECTS = print.$(OBJEXT) filters.$(OBJEXT) utils.$(OBJEXT) \
+	batlib.$(OBJEXT) rqindex.$(OBJEXT) penguin-a-nogz.$(OBJEXT) \
+	map.$(OBJEXT) bfix.$(OBJEXT) BWT.$(OBJEXT) \
+	MiscUtilities.$(OBJEXT) MemManager.$(OBJEXT) \
+	TextConverter.$(OBJEXT) r250.$(OBJEXT) QSufSort.$(OBJEXT) \
+	ssw.$(OBJEXT) command.$(OBJEXT) swroutines.$(OBJEXT) \
+	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
+	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
+	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
+	fastsw.$(OBJEXT)
+penguin_a_nogzOBJECTS = $(am_penguin_a_nogzOBJECTS)
+penguin_a_nogzLDADD = $(LDADD)
 am_penguin_a_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) \
 	utils.$(OBJEXT) batlib.$(OBJEXT) rqindex.$(OBJEXT) \
 	penguin-a.$(OBJEXT) map.$(OBJEXT) bfix.$(OBJEXT) BWT.$(OBJEXT) \
@@ -106,7 +134,7 @@ am_penguin_a_OBJECTS = print.$(OBJEXT) filters.$(OBJEXT) \
 	iniparser.$(OBJEXT) inistrlib.$(OBJEXT) dictionary.$(OBJEXT) \
 	DNACount.$(OBJEXT) Timing.$(OBJEXT) Socket.$(OBJEXT) \
 	HSP.$(OBJEXT) HSPstatistic.$(OBJEXT) karlin.$(OBJEXT) \
-	fastsw.$(OBJEXT) -lz -lm
+	fastsw.$(OBJEXT)
 penguin_a_OBJECTS = $(am_penguin_a_OBJECTS)
 penguin_a_LDADD = $(LDADD)
 am_reverse_OBJECTS = reverse.$(OBJEXT)
@@ -128,11 +156,11 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 SOURCES = $(libz_a_SOURCES) $(batmethindex_SOURCES) \
 	$(build_index_rrbs_SOURCES) $(bwtformatdb_SOURCES) \
 	$(filter_SOURCES) $(methyGff_SOURCES) $(penguin_SOURCES) \
-	$(penguin_a_SOURCES) $(reverse_SOURCES)
+	$(penguin_a_SOURCES) $(penguin_a_nogzSOURCES) $(reverse_SOURCES)
 DIST_SOURCES = $(libz_a_SOURCES) $(batmethindex_SOURCES) \
 	$(build_index_rrbs_SOURCES) $(bwtformatdb_SOURCES) \
 	$(filter_SOURCES) $(methyGff_SOURCES) $(penguin_SOURCES) \
-	$(penguin_a_SOURCES) $(reverse_SOURCES)
+	$(penguin_a_SOURCES) $(penguin_a_nogzSOURCES) $(reverse_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -248,6 +276,20 @@ penguin_SOURCES = print.cpp filters.cpp utils.cpp batlib.cpp rqindex.cpp penguin
  BWTConstruct.h QSufSort.h r250.h dictionary.h inistrlib.h iniparser.h Timing.h Socket.h karlin.h\
  bfix.h rqindex.h utils.h batlib.h common.h map.h fastsw.h
 
+penguin_nogzSOURCES = print.cpp filters.cpp utils.cpp batlib.cpp rqindex.cpp penguin-nogz.cpp map.cpp ssw.h command.h global.h swroutines.h kseq.h\
+ bfix.cpp BWT.c MiscUtilities.c MemManager.c TextConverter.c r250.c QSufSort.c ssw.c command.cpp swroutines.cpp\
+ iniparser.c inistrlib.c dictionary.c DNACount.c Timing.c Socket.c HSP.c HSPstatistic.c karlin.c fastsw.cpp\
+ print.h filters.h BWT.h TypeNLimit.h MemManager.h TextConverter.h HSP.h MiscUtilities.h DNACount.h r250.h HSPstatistic.h\
+ BWTConstruct.h QSufSort.h r250.h dictionary.h inistrlib.h iniparser.h Timing.h Socket.h karlin.h\
+ bfix.h rqindex.h utils.h batlib.h common.h map.h fastsw.h
+
+penguin_a_nogzSOURCES = print.cpp filters.cpp utils.cpp batlib.cpp rqindex.cpp penguin-a-nogz.cpp map.cpp ssw.h command.h global.h swroutines.h kseq.h\
+ bfix.cpp BWT.c MiscUtilities.c MemManager.c TextConverter.c r250.c QSufSort.c ssw.c command.cpp swroutines.cpp\
+ iniparser.c inistrlib.c dictionary.c DNACount.c Timing.c Socket.c HSP.c HSPstatistic.c karlin.c fastsw.cpp\
+ print.h filters.h BWT.h TypeNLimit.h MemManager.h TextConverter.h HSP.h MiscUtilities.h DNACount.h r250.h HSPstatistic.h\
+ BWTConstruct.h QSufSort.h r250.h dictionary.h inistrlib.h iniparser.h Timing.h Socket.h karlin.h\
+ bfix.h rqindex.h utils.h batlib.h common.h map.h fastsw.h
+
 penguin_a_SOURCES = print.cpp filters.cpp utils.cpp batlib.cpp rqindex.cpp penguin-a.cpp map.cpp ssw.h command.h global.h swroutines.h kseq.h\
  bfix.cpp BWT.c MiscUtilities.c MemManager.c TextConverter.c r250.c QSufSort.c ssw.c command.cpp swroutines.cpp\
  iniparser.c inistrlib.c dictionary.c DNACount.c Timing.c Socket.c HSP.c HSPstatistic.c karlin.c fastsw.cpp\
@@ -265,6 +307,7 @@ filter_SOURCES = filter.cpp
 methyGff_SOURCES = methyGff.cpp
 build_index_rrbs_SOURCES = build_index_rrbs.cpp
 all: all-am
+nogzip: nogzip-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .o .obj
@@ -344,28 +387,34 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 batmethindex$(EXEEXT): $(batmethindex_OBJECTS) $(batmethindex_DEPENDENCIES) 
 	@rm -f batmethindex$(EXEEXT)
-	$(CXXLINK) $(batmethindex_OBJECTS) $(batmethindex_LDADD) $(LIBS)
+	$(CXXLINK) $(batmethindex_OBJECTS) $(batmethindex_LDADD) $(LIBS) -lz -lm
 build_index_rrbs$(EXEEXT): $(build_index_rrbs_OBJECTS) $(build_index_rrbs_DEPENDENCIES) 
 	@rm -f build_index_rrbs$(EXEEXT)
-	$(CXXLINK) $(build_index_rrbs_OBJECTS) $(build_index_rrbs_LDADD) $(LIBS)
+	$(CXXLINK) $(build_index_rrbs_OBJECTS) $(build_index_rrbs_LDADD) $(LIBS) -lz -lm
 bwtformatdb$(EXEEXT): $(bwtformatdb_OBJECTS) $(bwtformatdb_DEPENDENCIES) 
 	@rm -f bwtformatdb$(EXEEXT)
-	$(LINK) $(bwtformatdb_OBJECTS) $(bwtformatdb_LDADD) $(LIBS)
+	$(LINK) $(bwtformatdb_OBJECTS) $(bwtformatdb_LDADD) $(LIBS) -lz -lm
 filter$(EXEEXT): $(filter_OBJECTS) $(filter_DEPENDENCIES) 
 	@rm -f filter$(EXEEXT)
-	$(CXXLINK) $(filter_OBJECTS) $(filter_LDADD) $(LIBS)
+	$(CXXLINK) $(filter_OBJECTS) $(filter_LDADD) $(LIBS) -lz -lm
 methyGff$(EXEEXT): $(methyGff_OBJECTS) $(methyGff_DEPENDENCIES) 
 	@rm -f methyGff$(EXEEXT)
-	$(CXXLINK) $(methyGff_OBJECTS) $(methyGff_LDADD) $(LIBS)
+	$(CXXLINK) $(methyGff_OBJECTS) $(methyGff_LDADD) $(LIBS) -lz -lm
 penguin$(EXEEXT): $(penguin_OBJECTS) $(penguin_DEPENDENCIES) 
 	@rm -f penguin$(EXEEXT)
-	$(CXXLINK) $(penguin_OBJECTS) $(penguin_LDADD) $(LIBS)
+	$(CXXLINK) $(penguin_OBJECTS) $(penguin_LDADD) $(LIBS) -lz -lm
 penguin-a$(EXEEXT): $(penguin_a_OBJECTS) $(penguin_a_DEPENDENCIES) 
 	@rm -f penguin-a$(EXEEXT)
-	$(CXXLINK) $(penguin_a_OBJECTS) $(penguin_a_LDADD) $(LIBS)
+	$(CXXLINK) $(penguin_a_OBJECTS) $(penguin_a_LDADD) $(LIBS) -lz -lm
+penguin-a-nogz$(EXEEXT): $(penguin_a_nogzOBJECTS) $(penguin_a_nogzDEPENDENCIES)
+	@rm -f penguin-a-nogz$(EXEEXT)
+	$(CXXLINK) $(penguin_a_nogzOBJECTS) $(penguin_a_nogzLDADD) $(LIBS) -lz -lm
+penguin-nogz$(EXEEXT): $(penguin_nogzOBJECTS) $(penguin_nogzDEPENDENCIES)
+	@rm -f penguin-nogz$(EXEEXT)
+	$(CXXLINK) $(penguin_nogzOBJECTS) $(penguin_nogzLDADD) $(LIBS) -lz -lm
 reverse$(EXEEXT): $(reverse_OBJECTS) $(reverse_DEPENDENCIES) 
 	@rm -f reverse$(EXEEXT)
-	$(CXXLINK) $(reverse_OBJECTS) $(reverse_LDADD) $(LIBS)
+	$(CXXLINK) $(reverse_OBJECTS) $(reverse_LDADD) $(LIBS) -lz -lm
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -534,6 +583,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: check-am
 all-am: Makefile $(LIBRARIES) $(PROGRAMS)
+nogzip-am: Makefile $(LIBRARIES) $(PROGRAMS_nogz)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \

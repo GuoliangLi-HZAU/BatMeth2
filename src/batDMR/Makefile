@@ -54,6 +54,8 @@ CXXFLAGS += -stdlib=libstdc++
 endif
 endif
 
+nogzip: $(PROGS)
+
 all: $(PROGS) 
 
 install: $(PROGS)

@@ -163,6 +163,7 @@ dist_bin_SCRIPTS = build_indexX ann2loc.pl build_location.pl build_revcmp comple
 
 EXTRA_DIST = batman.ini
 all: all-am
+nogzip: all-am
 
 .SUFFIXES:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)

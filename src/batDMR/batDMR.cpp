@@ -446,13 +446,16 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
     	strand=cpg1.strand();
     }
     
+    bool validc = false;    
     if(  ( (strand=="+" && Methy_List[H].positiveMap[methTmp] == (int)methylomes.size())  || 
-    		(strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] == (int)methylomes.size() ) ) && cpg1.total()>0)
+    		(strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] == (int)methylomes.size() ) ) && cpg1.total()>0) {
     	count_table << cpg1.chrom() << ":" << cpg1.locus() << ":" << cpg1.strand() << ":" << cpg1.context() 
                 << "\t" << cpg1.meth() << "\t" << cpg1.total();
-    
+        validc=true;
+    }
+
     meth_it++;
-    while(meth_it != methylomes_fstream.end()) {
+    while(validc && meth_it != methylomes_fstream.end()) {
 
 	while( getline(*(*meth_it), encoding) )
 	{
@@ -921,10 +924,13 @@ int main(int argc, const char **argv) {
 	            
 	            plocus.pos = chrom_offset +
 	            bin_for_dist.max_dist() + 1 + position;
-
-	            pvals.push_back(plocus);
+                    double meth_diff=double(meth_factor)/coverage_factor - double(meth_rest)/coverage_rest ;
+                    meth_diff = fabs(meth_diff);
+                    if(!(meth_diff<=0.05 && pval>0.05)){
+	                pvals.push_back(plocus);
+			fprintf(stderr, "%f\n", meth_diff);
+		    }
 	            prev_chrom = chrom;
-	          
           }
       }
        // Combine p-values using the Z test.

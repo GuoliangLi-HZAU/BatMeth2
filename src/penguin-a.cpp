@@ -721,8 +721,8 @@ void *Map_And_Pair_Solexa(void *T)
 		for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
 		M.Real_Len=0;
 		
-		if(R.Real_Len >= DetectIndelLen) DO_INDEL_LARGE = true;
-		else DO_INDEL_LARGE = false;
+		//if(R.Real_Len >= DetectIndelLen) DO_INDEL_LARGE = true;
+		//else DO_INDEL_LARGE = false;
 
                 //-------------batmeth1------------------------------------------
 

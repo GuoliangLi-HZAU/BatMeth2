@@ -13,7 +13,8 @@ outpng<-paste(gsub("pdf","",outPDF),".png", sep="")
 outpngf<-paste(gsub("pdf","",outPDF),"final.png", sep="")
 label1<-Args[11]
 label2<-Args[12]
-#install.packages("ggplot2")
+install.packages("ggplot2")
+install.packages("grid")
 library(ggplot2)
 library(grid)
 Methylp <- read.table(Infile1,sep="\t") #"Cr_DJ.bins.strand.aver.txt"

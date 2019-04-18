@@ -3,7 +3,7 @@
 #include <vector>
 #include <assert.h>
 #include <string>
-
+#include <string.h>
 using namespace std;
 
 struct N_Int
@@ -42,8 +42,11 @@ int main(int argc, char* argv[])
 			else if (Buffer[0] == '>') 
 			{
 				char tmpstring[chromname_len];
-				sscanf(Buffer,"%[^ |^\t|^\n]",tmpstring);
-				printf("%s\n",tmpstring);
+				for(int i=0;i<strlen(Buffer);i++){
+					if(Buffer[i] == ' ' || Buffer[i] == '\t') Buffer[i]='\0';
+				}
+				//sscanf(Buffer,"%[^ |^\t|^\n]",tmpstring);
+				printf("%s\n",Buffer);
 			}
 			
 		}

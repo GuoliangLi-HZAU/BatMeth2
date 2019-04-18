@@ -833,7 +833,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step)) ){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -918,7 +918,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step)) ){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -989,7 +989,7 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 	                            countCHH+=MethyList.NegCount_CT[i];
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step))){
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
                     	{

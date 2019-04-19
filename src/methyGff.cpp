@@ -507,6 +507,12 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 						//sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^;]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
 						if(GTF) sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%s\t%s",Chrom,temp,temp,&start,&end,temp,&Strand,temp,temp,Symbol);
 			                        else sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^\n\t]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
+						for(int i=0;i<strlen(Symbol); i++){
+							if(Symbol[i] == ';') {
+								Symbol[i]='\0';
+								break;
+							}
+						}
 						id = Symbol;
 					}else if(InputBed)
 					{
@@ -719,8 +725,8 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 		}
 		catch(char* Err)
 		{
-			fprintf(stderr, "\n%s\n", Err);
-			exit(0);
+			printf(Err);
+			exit(-1);
 		}
 		time(&End_Time);printf("\nTime Taken  - %.0lf Seconds ..\n ",difftime(End_Time,Start_Time));
 	}
@@ -833,7 +839,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step)) ){
+                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -918,7 +924,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step)) ){
+                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -989,7 +995,7 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 	                            countCHH+=MethyList.NegCount_CT[i];
 	                        }
 			}
-                if( (nbins<=nLevel && (i-start) == ((nbins+1)*step))){
+                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
                     	{

@@ -28,10 +28,11 @@ for(i in 1:length(l))
   }
 }
 dev.off()
-
-png(paste(gsub("pdf","",outFile),"png", sep=""), width=860, height= (800 * length(l)),res=128)
-par(mfrow=c(length(l) * length(c),1), mar=c(4,4,3,2))
-for(i in 1:length(l)) ##chr
+len <- pmin(24000, 800*length(l))
+png(paste(gsub("pdf","",outFile),"png", sep=""), width=860, height= len ,res=128)
+numchr <- pmin(30, length(l))
+par(mfrow=c(numchr * length(c),1), mar=c(4,4,3,2))
+for(i in 1:numchr) ##chr
 {
 #  png(paste(gsub("pdf","",outFile),l[i], ".png", sep=""), width=860, height=480)
 #  par(mfrow=c(3,1), mar=c(4,4,3,2))

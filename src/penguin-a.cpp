@@ -706,7 +706,7 @@ void *Map_And_Pair_Solexa(void *T)
         	        Progress = 0;
         	    }
         	}
-		if (Thread_ID==1 && Progress>Number_of_Tags && PROGRESSBAR) 
+		else if (Thread_ID==1 && Progress>Number_of_Tags && PROGRESSBAR) 
 		{
 			off64_t Current_Pos=ftello64(Ffilelist1[fi].Input_File);
 			off64_t Average_Length=Current_Pos/Actual_Tag+1;

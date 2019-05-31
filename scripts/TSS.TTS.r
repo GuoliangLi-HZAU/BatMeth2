@@ -37,7 +37,7 @@ check_pkg("pheatmap")
 library(pheatmap)
 ########################## CG
 l<-read.table(paste(args[1],".cg",sep=""),sep="\t")
-l<-l[,2:162]
+l<-l[,2:ncol(l)]
 y<-data.matrix(l)
 	ceil <- as.double(args[6])
 pdf(paste(args[2],"-CG.pdf",sep=""))
@@ -49,7 +49,7 @@ dev.off()
 cat("CG down!")
 ########################## CHG
 l<-read.table(paste(args[1],".chg",sep=""),sep="\t")
-l<-l[,2:162]
+l<-l[,2:ncol(l)]
 y<-data.matrix(l)
 #####CHG max for heatmap
        ceil<- as.double(args[7])
@@ -63,7 +63,7 @@ dev.off()
 cat("CHG down!")
 ######################### CHH
 l<-read.table(paste(args[1],".chh",sep=""),sep="\t")
-l<-l[,2:162]
+l<-l[,2:ncol(l)]
 y<-data.matrix(l)
 ######CHH max for heatmap
        ceil<- as.double(args[8])

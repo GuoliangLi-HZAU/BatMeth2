@@ -15,6 +15,9 @@ for(i in 1:length(l))
   for(j in 1:length(c))
   {
     chr <-n[n$V1==l[i] & n$V4==c[j],]
+    if(nrow(chr) < 100){
+        next
+    }
     col=rep("black",nrow(chr))
     col[chr[,3]>=0]<-"indianred2"
     col[chr[,3] < 0]<-"deepskyblue3"
@@ -30,15 +33,28 @@ for(i in 1:length(l))
 dev.off()
 len <- pmin(24000, 800*length(l))
 png(paste(gsub("pdf","",outFile),"png", sep=""), width=860, height= len ,res=128)
-numchr <- pmin(30, length(l))
+numchr<-0
+for(i in 1:length(l))
+{
+   for(j in 1:length(c)){
+      chr <-n[n$V1==l[i] & n$V4==c[j],]
+      if(nrow(chr) >= 100){
+          numchr = numchr +1
+	  break
+      }
+   }
+}
 par(mfrow=c(numchr * length(c),1), mar=c(4,4,3,2))
-for(i in 1:numchr) ##chr
+for(i in 1:length(l)) ##chr
 {
 #  png(paste(gsub("pdf","",outFile),l[i], ".png", sep=""), width=860, height=480)
 #  par(mfrow=c(3,1), mar=c(4,4,3,2))
   for(j in 1:length(c)) ##context
   {
     chr <-n[n$V1==l[i] & n$V4==c[j],]
+    if(nrow(chr) < 100){
+	next
+    }
     col=rep("black",nrow(chr))
     col[chr[,3]>=0]<-"indianred2"
     col[chr[,3] < 0]<-"deepskyblue3"

@@ -35,8 +35,9 @@ PATH: /public/home/qwzhou/software/batmeth-1.04_mmx/bin
 PATH: /public/home/qwzhou/software/biscuit
 PATH: /public/home/qwzhou/software/jdk1.8.0_172/bin
 PATH: /public/home/qwzhou/software/hisat2-2.1.0
+PATH: /public/home/qwzhou/software/CrossMap-0.2.9/public/home/qwzhou/anaconda/bin/
 PATH: /public/home/qwzhou/software/SNPsplit_v0.3.2
-PATH: /public/home/qwzhou/software/bedtools2-2.25.0/bin
+PATH: /public/home/qwzhou/software/bedtools2/bin
 PATH: /public/home/qwzhou/software/aseq-v1.1.11/
 PATH: /public/home/qwzhou/software/bwa-meth-master
 PATH: /public/home/qwzhou/software/R-3.4.3/bin
@@ -516,7 +517,7 @@ configure:5771: $? = 0
 configure:5793: result: yes
 configure:5802: checking for _doprnt
 configure:5858: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-/tmp/ccDtV4jW.o: In function `main':
+/tmp/ccVIdhx8.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_doprnt'
 collect2: ld returned 1 exit status
 configure:5865: $? = 1
@@ -598,7 +599,7 @@ configure:5885: result: no
 configure:5912: checking for floor
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:59: warning: conflicting types for built-in function 'floor'
-/tmp/ccxIvJUb.o: In function `main':
+/tmp/ccoRZA82.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `floor'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1
@@ -694,7 +695,7 @@ configure:5997: result: yes
 configure:5912: checking for pow
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:62: warning: conflicting types for built-in function 'pow'
-/tmp/cc4XlSuR.o: In function `main':
+/tmp/cc6zTn5Y.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1
@@ -783,7 +784,7 @@ configure:5997: result: yes
 configure:5912: checking for sqrt
 configure:5968: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:63: warning: conflicting types for built-in function 'sqrt'
-/tmp/cchC3xGb.o: In function `main':
+/tmp/ccKv7bDV.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sqrt'
 collect2: ld returned 1 exit status
 configure:5975: $? = 1

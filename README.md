@@ -100,10 +100,8 @@ BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/g
 mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, mkreport<br>
 
 **[build_index]** <br>
-    Usage:  (must run this step first)
-
+    Usage:  (must run this step first) <br>
 1. BatMeth2 build_index genomefile.<br>
-
 2. BatMeth2 build_index rrbs genomefile. <br>
 
 **[pipel (Contains: align, calmeth, annoation, methyPlot, mkreport)]** <br>
@@ -111,53 +109,53 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
       &emsp;&emsp; --fastp    fastp program location. <br>
       &emsp;&emsp; If --fastp is not defined, the input file should be clean data. <br>
     **[select aligner]** <br>
-      --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no (exit output_prefix.sam file, no need align again) <br>
+      &emsp;&emsp; --aligner &emsp;&emsp; BatMeth2(default), bwa-meth, bsmap, bismark2, no (exit output_prefix.sam file, no need align again) <br>
     **[other aligners paramaters]** <br>
-      --go &emsp;&emsp;&emsp; Name of the genome, contaion index build by aligner. (bwa-meth/bismark2) <br>
+      &emsp;&emsp; --go &emsp;&emsp;&emsp; Name of the genome, contaion index build by aligner. (bwa-meth/bismark2) <br>
     **[main paramaters]** <br>
-       --config &emsp; [config file]. &emsp;&emsp;  When we run pipel function in batches datasets, <br>
+      &emsp;&emsp; --config &emsp; [config file]. &emsp;&emsp;  When we run pipel function in batches datasets, <br>
        &emsp;&emsp;&emsp;&emsp; please fill in the specified configuration file. <br>
        &emsp;&emsp;&emsp;&emsp; And there is a sample file (multirun.onf) in the BatMeth2 directory. <br>
-       --mp&emsp;[4] &emsp; When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default. <br>
-      -o &emsp; Name of output file prefix<br>
-      -O &emsp; Output of result file to specified folder, default output to current folder (./) <br>
+       &emsp;&emsp; --mp&emsp;[4] &emsp; When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default. <br>
+      &emsp;&emsp; -o &emsp; Name of output file prefix<br>
+      &emsp;&emsp; -O &emsp; Output of result file to specified folder, default output to current folder (./) <br>
     **[alignment paramaters]** <br>
-      -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2, input files can be separated by commas <br>
-      -1 &emsp;&ensp; Name of input file left end, if single-end. please use -i <br>
-      -2 &emsp;&ensp; Name of input file left end <br>
-      -g &emsp; Name of the genome mapped against <br>
-      -n &emsp; maximum mismatches allowed due to seq. errors <br>
-      -p <interger> &emsp; Launch <integer> threads <br>
+      &emsp;&emsp; -i &emsp;&ensp; Name of input file, if paired-end. please use -1, -2, input files can be separated by commas <br>
+      &emsp;&emsp; -1 &emsp;&ensp; Name of input file left end, if single-end. please use -i <br>
+      &emsp;&emsp; -2 &emsp;&ensp; Name of input file left end <br>
+      &emsp;&emsp; -g &emsp; Name of the genome mapped against <br>
+      &emsp;&emsp; -n &emsp; maximum mismatches allowed due to seq. errors <br>
+      &emsp;&emsp; -p <interger> &emsp; Launch <integer> threads <br>
     **[calmeth paramaters]** <br>
-      --Qual &emsp;&ensp;&ensp; calculate the methratio while read QulityScore >= Q. default:10 <br>
-      --redup &emsp;&ensp; REMOVE_DUP, 0 or 1, default 0 <br>
-      --region &emsp; Bins for DMR calculate , default 1000bp . <br>
-      -f  &emsp;&ensp; for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file). <br>
+      &emsp;&emsp; --Qual &emsp;&ensp;&ensp; calculate the methratio while read QulityScore >= Q. default:10 <br>
+      &emsp;&emsp; --redup &emsp;&ensp; REMOVE_DUP, 0 or 1, default 0 <br>
+      &emsp;&emsp; --region &emsp; Bins for DMR calculate , default 1000bp . <br>
+      &emsp;&emsp; -f  &emsp;&ensp; for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file). <br>
     **[calmeth and annoation paramaters]** <br>
-      --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
-      --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
-      --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
+      &emsp;&emsp; --coverage &emsp;&ensp; >= <INT> coverage. default:5 <br>
+      &emsp;&emsp; --binCover &emsp;&ensp; >= <INT> nCs per region. default:3 <br>
+      &emsp;&emsp; --chromstep &emsp; Chromosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp) <br>
     **[annoation paramaters]** <br>
-      --gtf/--gff/--bed &emsp; Gtf or gff file / bed file <br>
-      --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
-      --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
-      -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>
+      &emsp;&emsp; --gtf/--gff/--bed &emsp; Gtf or gff file / bed file <br>
+      &emsp;&emsp; --distance &emsp;&ensp; DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000 <br>
+      &emsp;&emsp; --step &emsp;&emsp; Gene body and their flanking sequences using an overlapping sliding window of 5% of the sequence length at a step of 2.5% of the sequence length. So default step: 0.025 (2.5%) <br>
+      &emsp;&emsp; -C   &emsp;&emsp;   <= <INT> coverage. default:1000 <br>
     **[mkreport paramaters]** <br>
       Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
-      **-o [outprefix]** <br>
+      &emsp;&emsp; **-o [outprefix]** <br>
     **[align paramaters:]** <br>
-      see the details in 'BatMeth2 align' <br>
+      &emsp;&emsp; see the details in 'BatMeth2 align' <br>
     **[calmeth paramaters:]** <br>
-      see the details in 'BatMeth2 calmeth' <br>
+      &emsp;&emsp; see the details in 'BatMeth2 calmeth' <br>
     **[annotion paramaters:]** <br>
-      see the details in 'BatMeth2 annoation' <br>
+      &emsp;&emsp; see the details in 'BatMeth2 annoation' <br>
     **[methyPlot paramaters:]** <br>
-      see the details in 'BatMeth2 methyPlot' <br>
+      &emsp;&emsp; see the details in 'BatMeth2 methyPlot' <br>
     **[batDMR paramaters:]** <br>
-      see the details in 'BatMeth2 batDMR' <br>
+      &emsp;&emsp; see the details in 'BatMeth2 batDMR' <br>
     **[visul2sample paramaters:]** <br>
-      see the details in 'BatMeth2 visul2sample' <br>
-    -h|--help   usage <br>
+      &emsp;&emsp; see the details in 'BatMeth2 visul2sample' <br>
+    &emsp;&emsp; -h|--help   usage <br>
 
 
 ## OUTPUT FILE

@@ -60,7 +60,7 @@ string programname;
 
 void usage(){
     fprintf(stderr, "\nBatMeth2 [mode] [paramaters]\n");
-    fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, mkreport, DMCplot\n\n");
+    fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, DMCplot\n\n");
     fprintf(stderr, "Example:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -1 in1.fq.gz -2 in2.fq.gz --gff gene.gff -f 1 -o outprefix\n");
     fprintf(stderr, "Or single-end:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -i in.fq.gz --gff gene.gff -f 1 -o outprefix\n\n");
 //    ~/software_devp/batmeth2/bin/test pipel --aligner bwa-meth --go ~/practice/Genome/arabidopsis/arabidopsis_bwa-meth/TAIR10_chr_all.fa --fastp ~/software/fastp/fastp -g ~/practice/Genome/arabidopsis/arabidopsis_batmeth2_index/TAIR10_chr_all.fa -1 test1.fq -2 test2.fq --gff ~/practice/Genome/arabidopsis/TAIR10.gene.modify.gff -f 1 -o pipel.clean
@@ -68,7 +68,7 @@ void usage(){
     fprintf(stderr, "    Usage: BatMeth2 build_index genomefile. (wgbs data, must run this step first), or\n");
     fprintf(stderr, "    Usage: BatMeth2 build_index rrbs genomefile. (rrbs data)\n");
 
-    fprintf(stderr, "\n[pipel (Contains: align, calmeth, annoation, methyPlot, mkreport)]\n");
+    fprintf(stderr, "\n[pipel (Contains: align, calmeth, annoation, methyPlot)]\n");
     fprintf(stderr, "[fastp location]\n");
     fprintf(stderr, "    --fastp    fastp program location.\n");
     fprintf(stderr, "               ** If --fastp is not defined, the input file should be clean data.\n");
@@ -114,9 +114,6 @@ void usage(){
     fprintf(stderr, "    --CG       CG ratio for heatmap, [0-1], default 0.6\n");
     fprintf(stderr, "    --CHG      CHG ratio for heatmap, [0-1], default 0.2\n");
     fprintf(stderr, "    --CHH      CHH ratio for heatmap, [0-1], default 0.1\n");
-    fprintf(stderr, "\n[mkreport paramaters]\n");
-    fprintf(stderr, "    -o [outprefix]\n");
-    fprintf(stderr, "    make a html report.\n");
 
     fprintf(stderr, "\n[align paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 align'\n");
@@ -206,7 +203,7 @@ string getfilename(string filelocation){
 void printparamter1(string mkpath, string input_prefix, string input_prefix1, string input_prefix2, string outputdir, bool pairedend, string output_prefix){
 	fprintf(stderr, "[ BatMeth2 ] Process Paramater file.\n");
     //paramater file
-    string fparamater = mkpath + "/images/Paramater.txt";
+    string fparamater = mkpath + "/Paramater.txt";
     FILE* Fparamater = File_Open(fparamater.c_str(), "w");
 
     string alignmode = "Single-end";
@@ -224,9 +221,9 @@ void printparamter1(string mkpath, string input_prefix, string input_prefix1, st
 void printparamter2(string mkpath){
 	fprintf(stderr, "[ BatMeth2 ] Process Paramater file2.\n");
     //paramater2
-    string fparamater2 = mkpath + "/images/Paramater2.txt";
+    string fparamater2 = mkpath + "/Paramater2.txt";
     FILE* Fparamater = File_Open(fparamater2.c_str(), "w");
-    fprintf(Fparamater, "Paramater\tValue\nThreads\t%d\nCalmeth\tparamaters\nQuality_Score\t%d\nredup\t%d\nmeth region length\t%d\nPrint methstate samfile\t%d\ncalmeth and methyGff\tparamaters\nCoverage\t%d\nmaxCoverage\t%d\nbinCoverage\t%d\nchromStep\t%d\nmethyGff\tParamaters\nGene bins step\t%.3f\nDistance of upstream and downstream\t%d  ", threads, Qual, redup, region, sammeth, coverage, maxcoverage, binCover, chromstep, step, distance);
+    fprintf(Fparamater, "Threads\t%d\nCalmeth\t----\nQuality_Score\t%d\nredup\t%d\nmeth region length\t%d\nPrint methstate samfile\t%d\ncalmeth and methyGff\t----\nCoverage\t%d\nmaxCoverage\t%d\nbinCoverage\t%d\nchromStep\t%d\nmethyGff\t----\nGene bins step\t%.3f\nDistance of upstream and downstream\t%d  ", threads, Qual, redup, region, sammeth, coverage, maxcoverage, binCover, chromstep, step, distance);
     fclose(Fparamater);
 }
 string getstring(int n)
@@ -257,7 +254,6 @@ void string_replace( std::string &strBig, const std::string &strsrc, const std::
 void mvpng(string outputdir, string mkpath, string output_prefix);
 void doc2html(string outputdir, string mkpath, string output_prefix);
 void alignmentstate(string outputdir, string output_prefix, string mkpath);
-void mkreport(string outputdir, string mkpath, bool pairedend, string output_prefix, string input_prefix, string input_prefix1, string input_prefix2);
 void methyPlot(string outputdir, string output_prefix);
 void fastptrim(string outputdir, string output_prefix, string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend);
 void runpipe(string outputdir, string output_prefix, string mkpath, string input_prefix, string input_prefix1, string input_prefix2, bool pairedend);
@@ -403,7 +399,7 @@ int main(int argc, char* argv[])
 
     mode = argv[1];
     if(mode != "build_index" && mode != "pipel" && mode != "align" && mode != "calmeth" && mode != "annoation" && mode != "methyPlot" && mode != "batDMR" && 
-    mode != "visul2sample" && mode != "mkreport" && mode != "DMCplot"){
+    mode != "visul2sample" && mode != "DMCplot"){
     	fprintf(stderr, "\nNot a valid mode\n");
     	usage();
     	exit(0);
@@ -451,7 +447,7 @@ int main(int argc, char* argv[])
             exit(0);
         }
 	}
-    mkpath= outputdir + "/batmeth2_report_" + output_prefix;
+    mkpath = outputdir;
 
     fprintf(stderr, "[ Workdir ] %s\n", workdirtmp);
     fprintf(stderr, "[ outputdir ] %s\n", outputdir.c_str());
@@ -540,7 +536,7 @@ void *nprunpipel(void *arg){
 			else pairedend=false;
 			fprintf(stderr, "[ BatMeth2 ] Input file:  %s %s\n", infile1, infile2);
 			fprintf(stderr, "[ BatMeth2 ] Outfile prefix: %s\n", outp);
-			string mkpath = (string)outd + "/batmeth2_report_" + (string)outp;
+                        string mkpath = (string)outd;
 			runpipe(outd, outp, mkpath, infile1, infile1, infile2, pairedend);
 	}
 }
@@ -556,15 +552,10 @@ void *nprunpipel2(void *arg){
     if(args->layout == "PE") pairedend = true;
     else pairedend = false;
 
-	fprintf(stderr, "[ BatMeth2 ] Input file:  %s, %s %s\n", input_prefix.c_str(), input_prefix1.c_str(), input_prefix2.c_str());
-	fprintf(stderr, "[ BatMeth2 ] Outfile prefix: %s\n", output_prefix.c_str());
-	string mkpath = outputdir + "/batmeth2_report_" + output_prefix;
-
-    string copycmd="cp -r ";
-    copycmd += abspath;
-    copycmd += "../BatMeth2-Report "+ outputdir + "/batmeth2_report_";
-    copycmd += output_prefix;
-    executeCMD(copycmd.c_str(), outputdir, output_prefix);
+    fprintf(stderr, "[ BatMeth2 ] Input file:  %s, %s %s\n", input_prefix.c_str(), input_prefix1.c_str(), input_prefix2.c_str());
+    fprintf(stderr, "[ BatMeth2 ] Outfile prefix: %s\n", output_prefix.c_str());
+    //string mkpath = outputdir + "/batmeth2_report_" + output_prefix;
+    string mkpath = outputdir;
 
     printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
     printparamter2(mkpath);
@@ -586,7 +577,7 @@ void *nprunpipel2(void *arg){
     fprintf(stderr, "[ BatMeth2 ] Annotation ...\n");
     annoation(outputdir, output_prefix);
     string methratioLogfile = outputdir + output_prefix + ".log.txt";
-    string newlogfile = mkpath + "/images/methratio.txt";
+    string newlogfile = mkpath + output_prefix + ".methbasci.txt";
     string cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
     cmd += newlogfile;
@@ -594,9 +585,9 @@ void *nprunpipel2(void *arg){
     executeCMD(cmd.c_str(), outputdir, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Visulization ...\n");
     methyPlot(outputdir, output_prefix );
-    mvpng(outputdir, mkpath, output_prefix);
-    printoutputfiles(outputdir, mkpath, output_prefix);
-    doc2html(outputdir, mkpath, output_prefix);
+    //mvpng(outputdir, mkpath, output_prefix);
+    //printoutputfiles(outputdir, mkpath, output_prefix);
+    //doc2html(outputdir, mkpath, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Done!\nBatMeth2 is a naive tools, if you meet any problems, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n");
 }
 
@@ -1100,38 +1091,21 @@ void alignmentstate(string outputdir, string output_prefix, string mkpath){
     string alignsortbam = "samtools sort -@ " + getstring(threads) +" -o " + outputdir + output_prefix + ".sort.bam " + outputdir + output_prefix + ".sam";
     alignsortbam = alignsortbam + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(alignsortbam.c_str(), outputdir, output_prefix);
-    string alignsummarycmd = "samtools flagstat " + outputdir + output_prefix + ".sort.bam >> " + alignresults + " && tail -14 " + alignresults + " | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + "/images/alignresults.txt";
+    string alignsummarycmd = "samtools flagstat " + outputdir + output_prefix + ".sort.bam | tail -14 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + output_prefix + ".alignresults.txt";
     executeCMD(alignsummarycmd.c_str(), outputdir, output_prefix);
 }
 
-void mkreport(string outputdir, string mkpath, bool pairedend, string output_prefix, string input_prefix, string input_prefix1, string input_prefix2){
-    if(output_prefix == "None"){
-        fprintf(stderr, "\nplease define -o outfileprefix.\n");
-        exit(0);
-    }
-    string copycmd="cp -r ";
-    copycmd += abspath;
-    copycmd += "../BatMeth2-Report " + output_prefix + "/batmeth2_report_";
-    copycmd += output_prefix;
-    executeCMD(copycmd.c_str(), outputdir, output_prefix);
-
-    printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
-    printparamter2(mkpath);
-    alignmentstate(outputdir, output_prefix, mkpath);
-    string methratioLogfile = output_prefix + output_prefix + ".log.txt";
-    string newlogfile = mkpath + "/images/methratio.txt";
-    string cmd = "cp ";
-    cmd += methratioLogfile; cmd+=" ";
-    cmd += newlogfile;
-    executeCMD(cmd.c_str(), outputdir, output_prefix);
-    mvpng(outputdir, mkpath, output_prefix);
-    printoutputfiles(outputdir, mkpath, output_prefix);
-    doc2html(outputdir, mkpath, output_prefix);
-}
-
 void methyPlot(string outputdir, string output_prefix ){
+    string cmd="";
+    cmd = abspath + "GeneMethHeatmap " + outputdir + output_prefix + " None " + getstring(CG) + " " + getstring(CHG) + " " + getstring(CHH);
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    cmd = abspath + "report2html " + "-p " + outputdir + output_prefix;
+    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    return;
     //
-    string cmd = abspath + "methyPlot " + outputdir + output_prefix + ".methBins.txt " + outputdir + output_prefix + ".Methygenome.pdf " + getstring(step) + " " + outputdir +output_prefix + ".Methylevel.1.txt " + outputdir + output_prefix + ".function.pdf TSS TTS " + outputdir +  output_prefix + ".AverMethylevel.1.txt " + outputdir +  output_prefix + ".Methenrich.pdf";
+    cmd = abspath + "methyPlot " + outputdir + output_prefix + ".methBins.txt " + outputdir + output_prefix + ".Methygenome.pdf " + getstring(step) + " " + outputdir +output_prefix + ".Methylevel.1.txt " + outputdir + output_prefix + ".function.pdf TSS TTS " + outputdir +  output_prefix + ".AverMethylevel.1.txt " + outputdir +  output_prefix + ".Methenrich.pdf";
     //cmd = "{output_prefix}.bins..."
     //cmd = cmd.format(**locals())
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
@@ -1173,12 +1147,6 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
 	fprintf(stderr, "[ BatMeth2 ] Input file:  %s, %s %s\n", input_prefix.c_str(), input_prefix1.c_str(), input_prefix2.c_str());
 	fprintf(stderr, "[ BatMeth2 ] Outfile prefix: %s\n", output_prefix.c_str());
 
-    string copycmd="cp -r ";
-    copycmd += abspath;
-    copycmd += "../BatMeth2-Report "+ outputdir + "/batmeth2_report_";
-    copycmd += output_prefix;
-    executeCMD(copycmd.c_str(), outputdir, output_prefix);
-
     printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
     printparamter2(mkpath);
     fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
@@ -1199,7 +1167,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     fprintf(stderr, "[ BatMeth2 ] Annotation ...\n");
     annoation(outputdir, output_prefix);
     string methratioLogfile = outputdir + output_prefix + ".log.txt";
-    string newlogfile = mkpath + "/images/methratio.txt";
+    string newlogfile = mkpath + output_prefix + ".methbasic.txt";
     string cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
     cmd += newlogfile;
@@ -1207,9 +1175,9 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     executeCMD(cmd.c_str(), outputdir, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Visulization ...\n");
     methyPlot(outputdir, output_prefix );
-    mvpng(outputdir, mkpath, output_prefix);
-    printoutputfiles(outputdir, mkpath, output_prefix);
-    doc2html(outputdir, mkpath, output_prefix);
+    //mvpng(outputdir, mkpath, output_prefix);
+    //printoutputfiles(outputdir, mkpath, output_prefix);
+    //doc2html(outputdir, mkpath, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Done!\nBatMeth2 is a naive tools, if you meet any problems, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n");
 }
 
@@ -1258,8 +1226,6 @@ void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, 
     }
     else if (command == "visul2sample")
         visul2sample();
-    else if (command == "mkreport")
-        mkreport(outputdir, mkpath, pairedend, output_prefix, input_prefix, input_prefix1, input_prefix2);
     else{
         fprintf(stderr, "\ncan not detect any command mode!\n");
         usage();

@@ -132,13 +132,19 @@ void chromLengthExact(string & refSeqFile)
         return;
 };
 
-void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encoding, double cutoff,double methdiff) {
+void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encoding, double cutoff, double Pcutoff, double methdiff, string dmr_outfile, 
+    bool singleAuto, int mindmc, int mindmcdis, int maxdmrlen) {
   string record, chrom, context, sign;string name;
   size_t position, coverage_factor, meth_factor, coverage_rest, meth_rest;
   double pval;double adjust_pvalue;
+  ofstream OutFiledmr;
+  if(singleAuto) OutFiledmr.open(dmr_outfile.c_str());
 
   vector<PvalLocus>::const_iterator cur_locus_iter = pval_loci.begin();
-
+  int Ndmc = 0; int prevdmc = 0; int dmrtotalLen = 0; string prevchrom = "null";
+  int dmrC1 = 0; int dmrCover1 = 0; int dmrC2 = 0; int dmrCover2 = 0;
+  int dmrstart = 0; int dmrend = 0;
+  int hyperNdmc=0,hypoNdmc=0;
   for(unsigned i=0;i<pval_loci.size();) 
   {
     pval= cur_locus_iter->raw_pval;
@@ -151,8 +157,13 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
     chrom = cur_locus_iter->chrom;
     sign = cur_locus_iter-> sign ; context = cur_locus_iter->context ; //std::string state="Faild";
     std::string name=cur_locus_iter->name.c_str();
-    double meth_diff=double(meth_factor)/coverage_factor - double(meth_rest)/coverage_rest ;
-    //if(cur_locus_iter->adjust_pval< cutoff && (meth_diff > methdiff || meth_diff < -methdiff) ) state="Pass";
+    double meth_diff=fabs(double(meth_factor)/coverage_factor - double(meth_rest)/coverage_rest) ;
+    double signed_methdiff=double(meth_factor)/coverage_factor - double(meth_rest)/coverage_rest;
+    //if(!(adjust_pvalue < cutoff && (pval < Pcutoff || (pval < Pcutoff+0.05 && coverage_factor+coverage_rest<=50) ) && meth_diff >= methdiff ) ) {
+    if(!(adjust_pvalue < cutoff && pval < Pcutoff && meth_diff >= methdiff ) ) {
+        cur_locus_iter++;i++;
+        continue;
+    };
     
     output_encoding << chrom << "\t" << position << "\t" << sign << "\t"
                     << context << "\t" << pval << "\t";
@@ -165,10 +176,94 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
     }
     
     //if(geneid) name=cur_locus_iter->name.c_str();
-    if(!geneid) output_encoding << meth_factor  << "\t" << coverage_factor << "\t"
-                    << meth_rest  << "\t" << coverage_rest << "\t" << meth_diff << "\n" ;
-    else output_encoding << meth_factor  << "\t" << coverage_factor << "\t"<< meth_rest  << "\t" << coverage_rest << "\t" << meth_diff 
-    			<< "\t" <<  name.c_str() << "\n" ;
+    if(geneid) output_encoding << meth_factor  << "\t" << coverage_factor << "\t"
+                    << meth_rest  << "\t" << coverage_rest << "\t" << signed_methdiff << "\t" <<  name.c_str() << "\n" ;
+    else {
+        output_encoding << meth_factor  << "\t" << coverage_factor << "\t"<< meth_rest  << "\t" << coverage_rest << "\t" << signed_methdiff
+    			<< "\n" ;
+        if(singleAuto){
+//fprintf(stderr, "\nHHHH %d %d %d %d %d %d %d", Ndmc, mindmc, dmrstart, dmrend, prevdmc, position, position - prevdmc );
+            if(dmrstart == 0){ 
+                dmrstart = position;
+                prevdmc = position;
+                Ndmc=1 ;
+                if(signed_methdiff > 0) {
+                     hyperNdmc=1;
+                     hypoNdmc=0;
+                }
+                else{
+                     hypoNdmc=1;
+                     hyperNdmc=0;
+                }
+            }
+            else if(prevchrom != chrom) {
+                if(Ndmc >= mindmc){
+                    OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
+                    << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
+                    << "\t" << hyperNdmc << "," << hypoNdmc << "\n";
+                }
+                Ndmc = 0; dmrend = 0; prevdmc = position; dmrtotalLen = 0;
+                dmrC1 = 0; dmrCover1 = 0; dmrC2 = 0; dmrCover2 = 0;
+                dmrstart = position;
+                prevchrom = chrom;
+                hyperNdmc = 0; hypoNdmc = 0;
+            }
+            else if(position - prevdmc <= mindmcdis) {
+//fprintf(stderr, "\nTTT %d %d %d", dmrtotalLen, dmrtotalLen + position - prevdmc, maxdmrlen);
+               if(dmrtotalLen + position - prevdmc <= maxdmrlen){
+                   Ndmc ++ ;
+                   if(signed_methdiff > 0) hyperNdmc++;
+                   else hypoNdmc++;
+                   dmrend = position;
+                   dmrtotalLen = dmrtotalLen + position - prevdmc;
+                   prevdmc = position;
+                   dmrC1 += meth_factor; dmrCover1 += coverage_factor;
+                   dmrC2 += meth_rest; dmrCover2 += coverage_rest;
+               }else{
+                   if(Ndmc >= mindmc){
+                       OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
+                        << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
+                        << "\t" << hyperNdmc << "," << hypoNdmc << "\n";
+                   }
+                   Ndmc = 1; dmrend = 0; prevdmc = position; dmrtotalLen = 0;
+                   if(signed_methdiff > 0) {
+                        hyperNdmc=1;
+                        hypoNdmc=0;
+                   }
+                   else{
+                        hypoNdmc=1;
+                        hyperNdmc=0;
+                   }
+                   dmrstart = position;
+                   dmrC1 += meth_factor; dmrCover1 += coverage_factor;
+                   dmrC2 += meth_rest; dmrCover2 += coverage_rest;
+               }
+            }else{ // jian ge tai da, should be here
+                if(Ndmc >= mindmc){
+                     OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
+                     << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
+                     << "\t" << hyperNdmc << "," << hypoNdmc << "\n";
+                }
+                Ndmc = 1; dmrend = 0; prevdmc = position; dmrtotalLen = 0;
+                if(signed_methdiff > 0) {
+                     hyperNdmc=1;
+                     hypoNdmc=0;
+                }
+                else{
+                     hypoNdmc=1;
+                     hyperNdmc=0;
+                }
+                dmrstart = position;
+                dmrC1 += meth_factor; dmrCover1 += coverage_factor;
+                dmrC2 += meth_rest; dmrCover2 += coverage_rest;
+            }
+        }// end single auto
+    } //end print
+  } //end for
+  if(Ndmc >= mindmc){
+     OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
+     << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
+     << "\t" << hyperNdmc << "," << hypoNdmc << "\n";
   }
   return;
 };
@@ -655,28 +750,37 @@ int main(int argc, const char **argv) {
   	  
     const string prog_name = strip_methpath(argv[0]);
     string dmc_outfile;
-    string dmr_outfile;      double cutoff = 0.05; double methdiff=0.25;
+    string dmr_outfile;      
+    double Pcutoff=0.01; double cutoff = 1; double methdiff=0.25;
     bool Auto = false;
+    bool singleAuto = false;
     //unsigned length_dmr = 1000;
     unsigned methy1Start=0;
     unsigned methy1End=0;
     unsigned methy2Start=0;
     unsigned methy2End=0;
     string Genome;
+    int mindmc = 4;
+    int mindmcdis = 100;
+    int maxdmrlen = 1000000000;
 	//----help  arguments
     printf("\nBatMeth2: DMR  v1.0\n");
     const char* Help_String="Command Format :  DMR [options] -g genome.fa -o_dm <DM_result>  -1 [Sample1-methy ..] -2 [sample2-methy ..] \n"
                 "\nUsage:\n"
-		"\t-o_dm        output file\n"
-                "\t-o_dmr       when use auto detect by dmc, only valid if data duplication exists.\n"
+        		"\t-o_dm        output file\n"
                 "\t-g|--genome  Genome\n"
-		"\t-1           sample1 methy files, sperate by space.\n"
-		"\t-2           sample2 methy files, sperate by space.\n"
-                "\t-FDR         adjust pvalue cutoff default : 0.05\n"
+                "\t-1           sample1 methy files, sperate by space.\n"
+                "\t-2           sample2 methy files, sperate by space.\n"
+                "\t-o_dmr       when use auto detect by dmc.\n"
+                "\t-mindmc      min dmc sites in dmr region. [default : 4]\n"
+                "\t-minstep     min step in bp [default : 100]\n"
+                "\t-maxdis      max length of dmr [default : 0]\n"
+                "\t-pvalue      pvalue cutoff, default: 0.01\n"
+                "\t-FDR         adjust pvalue cutoff default : 1.0\n"
                 "\t-methdiff    the cutoff of methylation differention. default: 0.25 [CpG]\n"
-        	"\t-element     caculate gene or TE etc function elements.\n"
+                "\t-element     caculate gene or TE etc function elements.\n"
                 //"\t-f auto\n"
-        	 "\t-L          predefinded regions or loci.\n"
+                "\t-L          predefinded regions or loci.\n"
                 "\t-h|--help";
 	//-----
     for(int i=1;i<argc;i++)
@@ -689,18 +793,35 @@ int main(int argc, const char **argv) {
             {
                     dmr_outfile=argv[++i];
 		    Auto=true;
+                    singleAuto = true;
             }else if(!strcmp(argv[i], "-element")  )
             {
                     geneid=true;
             }
             else if(!strcmp(argv[i], "-g") || !strcmp(argv[i], "--genome"))
-		{
+		    {
 			Genome=argv[++i];
-		}
+		    }
+            else if(!strcmp(argv[i], "-mindmc")  )
+            {
+                    mindmc=atoi(argv[++i]);
+            }
+            else if(!strcmp(argv[i], "-minstep")  )
+            {
+                    mindmcdis=atoi(argv[++i]);
+            }
+            else if(!strcmp(argv[i], "-maxdis")  )
+            {
+                    maxdmrlen=atoi(argv[++i]);
+            }
             else if(!strcmp(argv[i], "-FDR")  )
             {
                     cutoff=atof(argv[++i]);
-            }else if(!strcmp(argv[i], "-methdiff")  )
+            }else if(!strcmp(argv[i], "-pvalue")  )
+            {
+                    Pcutoff=atof(argv[++i]);
+            }
+            else if(!strcmp(argv[i], "-methdiff")  )
             {
                     methdiff=atof(argv[++i]);
             }
@@ -719,6 +840,7 @@ int main(int argc, const char **argv) {
             else if( !strcmp(argv[i], "-L") )
             {
                     Auto=false;
+		    singleAuto=false;
             }
             else
             {
@@ -804,7 +926,7 @@ int main(int argc, const char **argv) {
     // Run beta-binoimial regression or fisher test
     if(Sample1Size ==1 && Sample2Size ==1 && Auto){
 	Auto=false;
-	fprintf(stderr, "\nWithout replication, should use predefined region detect mode.\n");
+	fprintf(stderr, "Without replication, Suggest use predefined region detect mode.\n");
     }
 
     if(Sample1Size >0 && Sample2Size >0) 
@@ -928,7 +1050,7 @@ int main(int argc, const char **argv) {
                     meth_diff = fabs(meth_diff);
                     if(!(meth_diff<=0.05 && pval>0.05)){
 	                pvals.push_back(plocus);
-			fprintf(stderr, "%f\n", meth_diff);
+			//fprintf(stderr, "%f %f\n", meth_diff, pval);
 		    }
 	            prev_chrom = chrom;
           }
@@ -955,11 +1077,12 @@ int main(int argc, const char **argv) {
      if(Auto) update_pval_loci(pvals, OutFileAdjust,cutoff,methdiff);
      else 
      {
-     	 cout << "Printing result." <<endl;
-     	Print_dm_result(pvals, OutFileAdjust,cutoff,methdiff);
+     	cout << "Printing result." <<endl;
+     	Print_dm_result(pvals, OutFileAdjust,cutoff, Pcutoff, methdiff, dmr_outfile, singleAuto, mindmc, mindmcdis, maxdmrlen);
      }
-//     remove( (outTmp+"_combined.infrom.temp.txt").c_str() );
-//     remove( (outTmp+"_combined.file.temp.txt").c_str() );
+//delete temp files
+    remove( (outTmp+"_combined.infrom.temp.txt").c_str() );
+    remove( (outTmp+"_combined.file.temp.txt").c_str() );
     }else
     {
     	printf("sample size error.");
@@ -976,7 +1099,7 @@ int main(int argc, const char **argv) {
       if (!bed_file)
         throw "could not open file: " + dmc_outfile;
 	cerr << "Definding DMR." << endl;
-      merge(bed_file, OutFiledmr, cutoff);
+      merge(bed_file, OutFiledmr, Pcutoff);
       cerr << "[done]" << endl;
     } 
     /****************** END COMMAND LINE OPTIONS *****************/

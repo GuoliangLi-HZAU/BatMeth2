@@ -3,6 +3,7 @@ SUBDIRS = src scripts src/batDMR
 script:
 	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz
 	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread
+	g++ ./scripts/report2html.cpp -o ./scripts/report2html -std=c++11
 copy:
 	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz
 	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread
@@ -10,6 +11,7 @@ copy:
 	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp -lpthread
 	cp ./scripts/BatMeth2 ./bin/batmeth2
 	cp scripts/strip.pl bin 
+	cp scripts/report2html bin
 	cp scripts/b2c.pl bin 
 	cp scripts/build_complement bin 
 	cp scripts/filter.pl bin
@@ -34,7 +36,7 @@ copy:
 	cp src/*.r bin
 	cp scripts/*.r bin
 	cp src/DMCannotation* bin
-	cp src/GeneMethHeatmap ./bin/
+	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
 	cp scripts/batmeth2-align bin

@@ -542,6 +542,11 @@ int main(int argc, char* argv[])
 				FILE* mC_catero=File_Open(mCcatero.c_str(),"w");
 				fprintf(mC_catero,"\nM\t%lu\nMh\t%lu\nH\t%lu\nhU\t%lu\nU\t%lu",M,Mh,H_AllC,hU,U);
 				fprintf(mC_catero,"\nCpG_M\t%lu\nCpG_Mh\t%lu\nCpG_H\t%lu\nCpG_hU\t%lu\nCpG_U\t%lu",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
+                                fprintf(mC_catero,"mC\t%f\n", double (1*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount) );
+                                fprintf(mC_catero,"mCG\t%f\n", double (1*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
+                                fprintf(mC_catero,"mCHG\t%f\n", double (1*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
+                                fprintf(mC_catero,"mCHH\t%f\n", double (1*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
+
 				fclose(mC_catero);
 				//+
 				printf("\nStrand+ :\nmC/(C+T) {%ld / %ld} = %f% \n",(plus_mCGcount+plus_mCHGcount+plus_mCHHcount),(plusCGcount+plusCHGcount+plusCHHcount),double (100*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount))/(plusCGcount+plusCHGcount+plusCHHcount) );

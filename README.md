@@ -163,8 +163,8 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
 ## OUTPUT FILE
 
 Output file format and details see "https://github.com/GuoliangLi-HZAU/BatMeth2/blob/master/output_details.pdf".<br>
-Output report details see "https://www.dna-asmdb.com/download/batmeth2.html" or "http://htmlpreview.github.io/?https://github.com/GuoliangLi-HZAU/BatMeth2/blob/master/BatMeth2-Report/batmeth2.html" or "http://htmlpreview.github.com/?https://github.com/GuoliangLi-HZAU/BatMeth2/blob/master/BatMeth2-Report/batmeth2.html" .<br>
 
+Output report details see "https://www.dna-asmdb.com/download/batmeth2.html" .<br>
 
 
 ## Functions in BatMeth2
@@ -391,6 +391,8 @@ eg: methyPlot chromsome.bins.txt chrosome.methy.distri.pdf 0.025 gene.meth.Methy
 
 
 #### 5. BatMeth2 DMC or DMR/DMG
+
+![dmr-batmeth2.png](https://upload-images.jianshu.io/upload_images/19460405-a87a7571c57ef1f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ##### BatMeth2: DMR 
 

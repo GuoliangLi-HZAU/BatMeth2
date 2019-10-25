@@ -4,11 +4,7 @@ BatMeth2: An Integrated Package for Bisulfite DNA Methylation Data Analysis with
 This is a README file for the usage of Batmeth2.
 --------------------------------------------------
 
-Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
-
 BatMeth2 tutotial: https://www.dna-asmdb.com/tools/batmeth2-tutorial/batmeth2.html
-
-1) batmeth2-master.zip (the zip of the program)
 
 REQUIREMENTS
 -------

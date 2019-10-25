@@ -6,6 +6,8 @@ This is a README file for the usage of Batmeth2.
 
 Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
 
+BatMeth2 tutotial: https://www.dna-asmdb.com/tools/batmeth2-tutorial/batmeth2.html
+
 1) batmeth2-master.zip (the zip of the program)
 
 REQUIREMENTS
@@ -97,7 +99,7 @@ BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/g
 
 **BatMeth2 [mode][paramaters]**<br>
 
-mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, mkreport<br>
+mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample<br>
 
 **[build_index]** <br>
     Usage:  (must run this step first) <br>
@@ -189,13 +191,13 @@ Version: v1.0
 
 **Usage:**     batmeth2 -g INDEX -i INPUT -o OUTPUT
 
-Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read.fq -o outPrefix -p 6 -n 2
+Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read.fq -o outPrefix -p 10
 
 [ Paired-end-reads ]
 
 **Usage:**     batmeth2 -g INDEX -i INPUT_left -i INPUT_right -o OUTPUT
 
-Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read_R1_left.fq -i Read_R2_right.fq -o outPrefix -p 6 -n 2
+Example:   batmeth2 -g /data/index/hg19/hg19.fa -i Read_R1_left.fq -i Read_R2_right.fq -o outPrefix -p 10
 
 Parameters : 
 
@@ -205,61 +207,15 @@ Parameters :
 
 ​      --outputfile | -o <filename>  Name of output file prefix
 
-​      --buffersize | -b <integer>   Size of disk buffers
-
 ​      --indelsize                   indel size
-
-​      --seed                        seed length for alignment. suggest: n/2. n = length of the read.
-
-​      --maxhits | -m                maximum number of pairings to find
-
-​      --maxmismatches | -n          maximum mismatches allowed due to seq. errors
 
 ​      --non_directional             Alignments to all four bisulfite strands will be reported. Default: OFF. 
 
-​      --single | -u                 output singly mapped hits to file
-
-​       --editdist | -e               maximum edit distance/percentage  to allow in mate rescue
-
 ​      --insertsize | -s             inital insert size, default 800
-
-​      --matchlen | -E               minimum match len to allow in mate rescue
-
-​      --maxtags | -t <integer>      maximum pairs to scan
 
 ​      --std | -d <integer>          standard deviatiion of reads distribution
 
-​      --swon | -w(=rescdisc)        perform Smith-Waterman mate rescue. if rescdisc is set, try to rescue discordant pairs before marking them as discordant
-
-​      --swlow | -Z                  Assign low quality to rescued mate
-
 ​      --flanksize | -f <integer>    size of flanking region for Smith-Waterman
-
-​      --forcelength | -F <integer>  map only the first <integer> bases
-
-​      --bwapol | -B                 descend only one mismatch mote than opt hit
-
-​      --unique | -U                 Mark unique hits
-
-​      --lowestmis | -P              Pair Hits having lowest count of mismatches in Head and Tail
-
-​      --config | -c <file>          Load settings from configuration <file>  
-
-​      --verbose | -v <number>       1-turn off general info 2-turn off progress bar 
-
-​      --ntorand | N                 Replace N's in the read with random characters
-
-​      --ncount | C                  Maximum N's allowed in the read
-
-​      --logfile | -L                Log exit status to this log 
-
-​      --heuristic                   Skip 2 mismatch scan of end anchors
-
-​      --no_phred_filter             do not apply phred filter
-
-​      --easyphred                   apply lenient phred filter
-
-​      --general                     try to get most accurate mapping
 
 ​      --swlimit | <integer>         try at most <integer> sw extensions
 

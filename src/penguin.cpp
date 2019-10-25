@@ -385,7 +385,7 @@ int main(int argc, char* argv[])
 	if(FASTDECODE) {Load_Range_Index(RQHALF_GA,L_Main.STRINGLENGTH/2,GA,Entries_Half_GA);Load_Range_Index(RQHALF_CT,L_Main.STRINGLENGTH/2,CT,Entries_Half_CT);}
 	//Init(IN,FMFiles,RQ,BP,Head_File.SOLID,0,L_Main);
 	Init(IN,GA,RQ_GA,BP,Ffilelist1[0].SOLID,0,L_Main);
-	printf("==============================================================\nLoading genome: %s ...\n",GENOME);
+	fprintf(stderr, "==============================================================\nLoading genome: %s ...\n",GENOME);
 	//Init(IN,CT,RQ_CT,BP,Head_File.SOLID,0,L_Main); 
 	//---------------------------------------------------------------------------------------------------------------------------------
 	//--remove

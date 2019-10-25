@@ -63,6 +63,7 @@ int main(int argc, char* argv[]){
 			prefix=argv[++i];
 		}
     }
+    htmlFile = prefix + "." + htmlFile;
     enrichfile = prefix + ".AverMethylevel.1.txt";
     distri_mrfile = prefix + ".Methylevel.1.txt";
     heatmap_cg_file = prefix + ".1.txt.sorted.cg";

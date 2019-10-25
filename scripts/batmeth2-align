@@ -34,5 +34,4 @@ else
 	$DIR/penguin-a $CMDLINE
 	#fi
 fi
-echo "======      ======      ======"
 

@@ -30,14 +30,12 @@ d) Type
 - ./configure
 - make
 - make copy
-- Rscript scripts/install.rpackages.r (Optional, used in visulization)
 
 
 If your do not need process file of gzip format, you can install the tools:
 - ./configure
 - make nogzip
 - make copy-nogzip
-- Rscript scripts/install.rpackages.r (Optional, used in visulization)
 
 
 e) The binary of BatMeth2 will be created in bin/
@@ -81,13 +79,13 @@ The usage is here:
 Raw reads:
 
 ```bash
-BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff -f 1
+BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff
 ```
 
 Or clean reads:
 
 ```bash
-BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff -f 1 
+BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff
 ```
 
 

@@ -1,6 +1,4 @@
-compress.o: compress.c /usr/include/stdc-predef.h zlib.h zconf.h
-
-/usr/include/stdc-predef.h:
+compress.o: compress.c zlib.h zconf.h
 
 zlib.h:
 

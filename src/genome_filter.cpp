@@ -45,6 +45,9 @@ int main(int argc, char* argv[])
 				for(int i=0;i<strlen(Buffer);i++){
 					if(Buffer[i] == ' ' || Buffer[i] == '\t') Buffer[i]='\0';
 				}
+                                for(int i=0;i<strlen(Buffer);i++){
+                                        if(Buffer[i] == '\n') Buffer[i]='\0';
+                                }
 				//sscanf(Buffer,"%[^ |^\t|^\n]",tmpstring);
 				printf("%s\n",Buffer);
 			}

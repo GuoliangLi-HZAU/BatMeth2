@@ -10,7 +10,7 @@ Please go to https://github.com/GuoliangLi-HZAU/BatMeth2
 
 REQUIREMENTS
 -------
-1) gcc (v4.8) , gsl library, zlib < 1.2.5
+1) gcc (v4.8) , gsl library, zlib
 
 2) R (ggplot2, pheatmap, xtable)
 
@@ -35,7 +35,7 @@ d) Type
 - Rscript scripts/install.rpackages.r (Optional, used in visulization)
 
 
-If your zlib version bigger than 1.2.5, and you do not need process file of gzip format, you can install the tools:
+If your do not need process file of gzip format, you can install the tools:
 - ./configure
 - make nogzip
 - make copy-nogzip

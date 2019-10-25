@@ -1,6 +1,4 @@
-uncompr.o: uncompr.c /usr/include/stdc-predef.h zlib.h zconf.h
-
-/usr/include/stdc-predef.h:
+uncompr.o: uncompr.c zlib.h zconf.h
 
 zlib.h:
 

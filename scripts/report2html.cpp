@@ -6,8 +6,8 @@
 #include <string.h>
 #include <sstream>
 
-#include <chrono>
-#include <ctime>
+//#include <chrono>
+//#include <ctime>
 #include <time.h>
 
 #define BATBUF 2000
@@ -26,6 +26,7 @@ void printFooter(ofstream& ofs);
 void outputRow(ofstream& ofs, string key, long v);
 void outputRow(ofstream& ofs, string key, string v);
 FILE* File_Open(const char* File_Name,const char* Mode);
+string my_to_string(long n);
 int main(int argc, char* argv[]){
 	const char* Help_String="Command Format :  calmeth [options] -g GENOME  -i/-b <SamfileSorted/BamfileSorted> -m <methratio outfile prefix>\n"
 		"\nUsage:\n"
@@ -963,12 +964,17 @@ void printJS(ofstream& ofs){
 
 const string getCurrentSystemTime()
 {
-  auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  struct tm* ptm = localtime(&tt);
+  //auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  //struct tm* ptm = localtime(&tt);
   char date[60] = {0};
+
+  struct tm *current_date;
+  time_t seconds;
+  time(&seconds);
+  current_date = localtime(&seconds);
   sprintf(date, "%d-%02d-%02d      %02d:%02d:%02d",
-    (int)ptm->tm_year + 1900,(int)ptm->tm_mon + 1,(int)ptm->tm_mday,
-    (int)ptm->tm_hour,(int)ptm->tm_min,(int)ptm->tm_sec);
+    (int)1900+current_date->tm_year,(int)current_date->tm_mon+1,(int)current_date->tm_mday,
+    (int)current_date->tm_hour,(int)current_date->tm_min,(int)current_date->tm_sec);
   return std::string(date);
 }
 
@@ -1090,8 +1096,36 @@ void plot_chrom(ofstream& ofs, int x_len, double* chrom_cg_p, double* chrom_cg_n
     delete []x_axis;
 }
 
+string my_to_string(long n)
+{
+    long m = n;
+    int max=100;
+    char s[max];
+    char ss[max];
+    int i=0,j=0;
+    if (n < 0)// 处理负数
+    {
+        m = 0 - m;
+        j = 1;
+        ss[0] = '-';
+    }    
+    while (m>0)
+    {
+        s[i++] = m % 10 + '0';
+        m /= 10;
+    }
+    s[i] = '\0';
+    i = i - 1;
+    while (i >= 0)
+    {
+        ss[j++] = s[i--];
+    }    
+    ss[j] = '\0';    
+    return ss;
+}
+
 void outputRow(ofstream& ofs, string key, long v) {
-    ofs << "<tr><td class='col1'>" + key + "</td><td class='col2'>" + to_string(v) + "</td></tr>\n";
+    ofs << "<tr><td class='col1'>" + key + "</td><td class='col2'>" + my_to_string(v) + "</td></tr>\n";
 }
 
 void outputRow(ofstream& ofs, string key, string v) {

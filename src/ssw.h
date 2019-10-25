@@ -15,7 +15,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <emmintrin.h>
-#include <zlib.h>
+#ifdef DYNAMIC_ZLIB
+  #include <zlib.h>
+#else
+  #include "zlib.h"
+#endif
 #include "kseq.h"
 
 

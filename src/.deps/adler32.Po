@@ -1,6 +1,4 @@
-adler32.o: adler32.c /usr/include/stdc-predef.h zlib.h zconf.h
-
-/usr/include/stdc-predef.h:
+adler32.o: adler32.c zlib.h zconf.h
 
 zlib.h:
 

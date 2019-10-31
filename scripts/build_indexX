@@ -9,8 +9,8 @@ CURDIR=$(pwd)
 
 echo Building on $(pwd) 
 
-$CPATH/genome_filter $BASEX > ${BASEX}.format.fa
-mv ${BASEX}.format.fa $BASEX
+#$CPATH/genome_filter $BASEX > ${BASEX}.format.fa
+#mv ${BASEX}.format.fa $BASEX
 if [ "$2" = "color" ]
 then
 	echo Building Color-Space index

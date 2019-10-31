@@ -17,8 +17,8 @@ fi
 
 if [ -n "$BASEX" ];
 then
-	$CPATH/genome_filter $BASEX > ${BASEX}.format.fa
-	mv ${BASEX}.format.fa $BASEX
+	#$CPATH/genome_filter $BASEX > ${BASEX}.format.fa
+	#mv ${BASEX}.format.fa $BASEX
 	$CPATH/build_indexX $BASEX CTOT
 	$CPATH/build_indexX $BASEX GTOA
 	rm *.bin

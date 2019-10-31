@@ -56,7 +56,7 @@ unsigned int LastWordLength(unsigned int textLength, unsigned int bitPerChar);
 
 // Byte packed text functions
 unsigned int BitPerBytePackedChar(const unsigned int alphabetSize);
-unsigned int TextLengthFromBytePacked(unsigned int bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength);
+unsigned int TextLengthFromBytePacked(unsigned long bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength);
 unsigned int BytePackedLengthFromText(unsigned int textLength, unsigned int bitPerChar);
 unsigned char LastByteLength(unsigned int textLength, unsigned int bitPerChar);
 
@@ -151,7 +151,7 @@ unsigned int LastWordLength(unsigned int textLength, unsigned int bitPerChar);
 
 // Byte packed text functions
 unsigned int BitPerBytePackedChar(const unsigned int alphabetSize);
-unsigned int TextLengthFromBytePacked(unsigned int bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength);
+unsigned int TextLengthFromBytePacked(unsigned long bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength);
 unsigned int BytePackedLengthFromText(unsigned int textLength, unsigned int bitPerChar);
 unsigned char LastByteLength(unsigned int textLength, unsigned int bitPerChar);
 

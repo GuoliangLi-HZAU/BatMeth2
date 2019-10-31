@@ -111,7 +111,7 @@ BWTInc *BWTIncConstructFromPacked(MMPool *mmPool, const char *inputFileName, con
 								  const float targetNBit, const unsigned int initialMaxBuildSize, const unsigned int incMaxBuildSize) {
 
 	FILE *packedFile;
-	unsigned int packedFileLen;
+	unsigned long packedFileLen;
 	unsigned int totalTextLength;
 	unsigned int textToLoad, textSizeInByte;
 	unsigned int processedTextLength;
@@ -128,7 +128,7 @@ BWTInc *BWTIncConstructFromPacked(MMPool *mmPool, const char *inputFileName, con
 
 	fseek(packedFile, -1, SEEK_END);
 	packedFileLen = ftell(packedFile);
-	if ((int)packedFileLen < 0) {
+	if ((long)packedFileLen < 0) {
 		fprintf(stderr, "BWTIncConstructFromPacked: Cannot determine file length!\n");
 		exit(1);
 	}
@@ -2407,7 +2407,7 @@ BWTInc *BWTIncConstructFromPacked(MMPool *mmPool, const char *inputFileName, con
 								  const float targetNBit, const unsigned int initialMaxBuildSize, const unsigned int incMaxBuildSize) {
 
 	FILE *packedFile;
-	unsigned int packedFileLen;
+	unsigned long packedFileLen;
 	unsigned int totalTextLength;
 	unsigned int textToLoad, textSizeInByte;
 	unsigned int processedTextLength;
@@ -2424,7 +2424,7 @@ BWTInc *BWTIncConstructFromPacked(MMPool *mmPool, const char *inputFileName, con
 
 	fseek(packedFile, -1, SEEK_END);
 	packedFileLen = ftell(packedFile);
-	if ((int)packedFileLen < 0) {
+	if ((long)packedFileLen < 0) {
 		fprintf(stderr, "BWTIncConstructFromPacked: Cannot determine file length!\n");
 		exit(1);
 	}

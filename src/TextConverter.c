@@ -177,7 +177,7 @@ unsigned int BitPerBytePackedChar(const unsigned int alphabetSize) {
 	return bitPerChar;
 }
 
-unsigned int TextLengthFromBytePacked(unsigned int bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength) {
+unsigned int TextLengthFromBytePacked(unsigned long bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength) {
 
 //	if (bytePackedLength > ALL_ONE_MASK / (BITS_IN_BYTE / bitPerChar)) {
 //		fprintf(stderr, "TextLengthFromBytePacked(): text length > 2^32!\n");
@@ -1058,7 +1058,7 @@ unsigned int BitPerBytePackedChar(const unsigned int alphabetSize) {
 	return bitPerChar;
 }
 
-unsigned int TextLengthFromBytePacked(unsigned int bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength) {
+unsigned int TextLengthFromBytePacked(unsigned long bytePackedLength, unsigned int bitPerChar, unsigned int lastByteLength) {
 
 	if (bytePackedLength > ALL_ONE_MASK / (BITS_IN_BYTE / bitPerChar)) {
 		fprintf(stderr, "TextLengthFromBytePacked(): text length > 2^32!\n");

@@ -15,7 +15,7 @@ using std::string;
 using std::vector;
 //alignment
 int threads = 8;
-float mismatches = 0.05;
+float mismatches = 0.4;
 string genome_index = "";
 string outformat = "BAM";
 
@@ -881,7 +881,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
                     if(outformat=="BAM")
 		        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
                     else
-                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + outputdir + output_prefix + ".sam";
+                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{
@@ -921,7 +921,7 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
                     if(outformat=="BAM")
 			cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
                     else
-                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + outputdir + output_prefix + ".sam";
+                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{

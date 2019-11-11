@@ -1,2 +1,0 @@
-abs or fabs error
-sed -i 's/abs(/labs(/g' src/penguin.cpp src/penguin-a.cpp ./src/common.h ./src/batlib.cpp

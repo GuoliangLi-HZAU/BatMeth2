@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
     printHeader(ofs);
 
     char tp_str[100]; //temp
-    const unsigned int total = 200000;
+    const unsigned int total = 600000;
     const unsigned int chrlen = 10000;
     std::string json_str = "";
     float mr=0;
@@ -469,7 +469,7 @@ int main(int argc, char* argv[]){
 
     //html
     int* x_axis = new int[j_len];
-    for(int i=0;i<j_len+1;i++){
+    for(int i=0;i<j_len;i++){
         x_axis[i]=i+1;
     }
     json_str += "var trace_distri_cg ={";
@@ -556,7 +556,7 @@ int main(int argc, char* argv[]){
         int* x_axis;
         if(x_ax==0){
             x_axis = new int[j_len];
-            for(int i=0;i<j_len+1;i++){
+            for(int i=0;i<j_len;i++){
                 x_axis[i]=i+1;
             }
         }
@@ -616,7 +616,7 @@ int main(int argc, char* argv[]){
         int* x_axis;
         if(x_ax==0){
             x_axis = new int[j_len];
-            for(int i=0;i<j_len+1;i++){
+            for(int i=0;i<j_len;i++){
                 x_axis[i]=i+1;
             }
         }
@@ -676,7 +676,7 @@ int main(int argc, char* argv[]){
         int* x_axis;
         if(x_ax==0){
             x_axis = new int[j_len];
-            for(int i=0;i<j_len+1;i++){
+            for(int i=0;i<j_len;i++){
                 x_axis[i]=i+1;
             }
         }

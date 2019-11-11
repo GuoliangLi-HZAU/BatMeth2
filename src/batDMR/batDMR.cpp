@@ -1060,7 +1060,7 @@ int main(int argc, const char **argv) {
 	{
 	      cerr << "Adjust p-values." << endl; 
 	      adjust(pvals);
-	      if(Auto)
+	      if(0 && Auto)
 	      {
 		      cerr << "Combining p-values." << endl;
 		      combine_pvals(pvals, bin_for_dist);
@@ -1074,7 +1074,7 @@ int main(int argc, const char **argv) {
      ofstream OutFileAdjust;
      OutFileAdjust.open(dmc_outfile.c_str());
      
-     if(Auto) update_pval_loci(pvals, OutFileAdjust,cutoff,methdiff);
+     if(0 && Auto) update_pval_loci(pvals, OutFileAdjust,cutoff,methdiff);
      else 
      {
      	cout << "Printing result." <<endl;
@@ -1089,7 +1089,7 @@ int main(int argc, const char **argv) {
     	exit(0);
     }
     // ------  merge DMR
-    if (Auto) {
+    if (0 && Auto) {
      string bin_spec = "1:200:25";
      ofstream OutFiledmr;
      OutFiledmr.open(dmr_outfile.c_str());

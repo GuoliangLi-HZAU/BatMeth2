@@ -9,6 +9,8 @@ then
         if [ "$1" == "rrbs" ];
         then
 		BASEX=$2
+                awk '{print $1}' $BASEX > ${BASEX}.format.fa
+                mv ${BASEX}.format.fa $BASEX
                 $CPATH/build_index_rrbs $BASEX
                 mv $BASEX ${BASEX}.original.fa
                 mv ${BASEX}.rrbs.fa ${BASEX}
@@ -19,6 +21,8 @@ if [ -n "$BASEX" ];
 then
 	#$CPATH/genome_filter $BASEX > ${BASEX}.format.fa
 	#mv ${BASEX}.format.fa $BASEX
+        awk '{print $1}' $BASEX > ${BASEX}.format.fa
+        mv ${BASEX}.format.fa $BASEX
 	$CPATH/build_indexX $BASEX CTOT
 	$CPATH/build_indexX $BASEX GTOA
 	rm *.bin

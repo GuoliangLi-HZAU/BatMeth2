@@ -205,7 +205,7 @@ string getfilename(string filelocation){
 void printparamter1(string mkpath, string input_prefix, string input_prefix1, string input_prefix2, string outputdir, bool pairedend, string output_prefix){
 	fprintf(stderr, "[ BatMeth2 ] Process Paramater file.\n");
     //paramater file
-    string fparamater = mkpath + "/Paramater.txt";
+    string fparamater = mkpath + "/" + output_prefix +".Paramater.txt";
     FILE* Fparamater = File_Open(fparamater.c_str(), "w");
 
     string alignmode = "Single-end";
@@ -220,10 +220,10 @@ void printparamter1(string mkpath, string input_prefix, string input_prefix1, st
     fclose(Fparamater);
 }
 
-void printparamter2(string mkpath){
+void printparamter2(string mkpath, string output_prefix){
 	fprintf(stderr, "[ BatMeth2 ] Process Paramater file2.\n");
     //paramater2
-    string fparamater2 = mkpath + "/Paramater2.txt";
+    string fparamater2 = mkpath + "/" + output_prefix + ".Paramater2.txt";
     FILE* Fparamater = File_Open(fparamater2.c_str(), "w");
     fprintf(Fparamater, "Threads\t%d\nCalmeth\t----\nQuality_Score\t%d\nredup\t%d\nmeth region length\t%d\nPrint methstate samfile\t%d\ncalmeth and methyGff\t----\nCoverage\t%d\nmaxCoverage\t%d\nbinCoverage\t%d\nchromStep\t%d\nmethyGff\t----\nGene bins step\t%.3f\nDistance of upstream and downstream\t%d  ", threads, Qual, redup, region, sammeth, coverage, maxcoverage, binCover, chromstep, step, distance);
     fclose(Fparamater);
@@ -562,7 +562,7 @@ void *nprunpipel2(void *arg){
     string mkpath = outputdir;
 
     printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
-    printparamter2(mkpath);
+    printparamter2(mkpath, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
     string align_result = outputdir + output_prefix + ".sam";
     if(pairedend){
@@ -1166,7 +1166,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
 	fprintf(stderr, "[ BatMeth2 ] Outfile prefix: %s\n", output_prefix.c_str());
 
     printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
-    printparamter2(mkpath);
+    printparamter2(mkpath, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
     string align_result = outputdir + output_prefix + ".sam";
     if(pairedend){

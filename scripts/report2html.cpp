@@ -71,8 +71,8 @@ int main(int argc, char* argv[]){
     heatmap_chh_file = prefix + ".1.txt.sorted.chh";
     mrfile = prefix + ".mCcatero.txt";
     chrom_mrfile = prefix + ".methBins.txt";
-    string parafile = "Paramater.txt";
-    string parafile2 = "Paramater2.txt";
+    string parafile = prefix + ".Paramater.txt";
+    string parafile2 = prefix + ".Paramater2.txt";
     //awk -v FS="\t" -v OFS="\t" '{gsub(/ /,"_",$2);print $2,$1}' alignresults.txt > alignresults2.txt
     string alignfile = prefix + ".alignresults.txt";
     string mrbasicfile = prefix + ".methbasic.txt";
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]){
     ofs << "<table class='summary_table'>\n";
  
     FILE* ParaFile2 = File_Open(parafile2.c_str() , "r");
-    while(fgets(s2t, BATBUF, ParaFile)!=0){
+    while(fgets(s2t, BATBUF, ParaFile2)!=0){
         if(s2t == NULL) continue;
         char *subarr = strtok(s2t,"\t");
         strcpy(opt1, subarr);

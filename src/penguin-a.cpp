@@ -4298,7 +4298,7 @@ void Print_Pair(std::priority_queue <Alignment_Pair,std::vector <Alignment_Pair>
 			}
 			int ed = Get_ED(T.CIG);
 			//if( (R2.Real_Len*0.02+1 >= ed) && T.Mismatch <=BP.MAX_MISMATCHES)//T.Quality_Score>20 && !Print_hits &&
-printf("\nStore %ld %d\n", T.Loc, T.Quality_Score);
+//printf("\nStore %ld %d\n", T.Loc, T.Quality_Score);
 			{
 				Alignment_Pair Pai; 
 				Pai.chrom1=Ann2.Name;Pai.Loc1=T.Loc;Pai.Flag1=T.Flag;Pai.source1=T.hitType;Pai.Mismatch1=T.Mismatch;Pai.ReadLen1=R2.Real_Len;Pai.Cigar1=T.CIG;

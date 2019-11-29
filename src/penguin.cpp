@@ -3011,6 +3011,7 @@ if(Ann.Size-H.Loc < RawR.Real_Len) return false;
                                         else {
                                                 fprintf(stderr, "\nUne Error 2 !\n"); exit(0);
                                         }
+					Mismatch_Hit = H;
 					return true;
 				}
 				else
@@ -3023,6 +3024,7 @@ if(Ann.Size-H.Loc < RawR.Real_Len) return false;
 				if(!PRINT)
 				{
 					Get_Best_Alignment_Pair(RawR,source,Original_Text,A,B,R,StringLength,Read,H,Alignments,Good_Alignments,Force_Indel,Clip_H,Clip_T,CIG,PRINT,DUMMY_FORCED);
+					Mismatch_Hit = H;
 					return true;
 				}
 				if(!Report_Single_SW(RawR,source,Original_Text,Err,R,Single_File,StringLength,Read,Mismatch_Hit,Print_Status,Alignments,Good_Alignments,0,0,NULL)) 
@@ -3094,6 +3096,7 @@ if(Ann.Size-H.Loc < RawR.Real_Len) return false;
                                                 fprintf(stderr, "\nUne Error 3 !\n");
                                                 exit(0);
                                         }
+					Mismatch_Hit = H;
 					Print_Status=true;
 				}
 				if(Flag==4)
@@ -3129,6 +3132,7 @@ if(Ann.Size-H.Loc < RawR.Real_Len) return false;
                                 else {
                                         fprintf(stderr, "\nUne Error 4!\n"); exit(0);
                                 }
+				Mismatch_Hit = H;
 				Print_Status=true;
 				if(TOP_TEN)
 				{

@@ -504,9 +504,10 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 					//string id="";
 					if(InputGff)
 					{
-						//sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^;]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
-						if(GTF) sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%s\t%s",Chrom,temp,temp,&start,&end,temp,&Strand,temp,temp,Symbol);
-			                        else sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^\n\t]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
+						//if(GTF) sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%s \"%[^\"]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,temp,Symbol);
+			                        //else sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%s\t%s\t%s\t%[^\n\t]",Chrom,temp,temp,&start,&end,temp,&Strand,temp,Symbol);
+			                        if(GTF) sscanf(Gff,"%s\t%s\t%s\t%d\t%d\t%*s\t%c\t%*s\t%*s \"%[^\"]",Chrom,temp,temp,&start,&end,&Strand,Symbol);
+	 			            else    sscanf(Gff,"%s\t%s\t%s\t%u\t%u\t%*s\t%c\t%*s\t%[^;\n\t]",Chrom,temp,temp,&start,&end,&Strand,Symbol);
 						for(int i=0;i<strlen(Symbol); i++){
 							if(Symbol[i] == ';') {
 								Symbol[i]='\0';

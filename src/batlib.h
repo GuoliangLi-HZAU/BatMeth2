@@ -132,9 +132,9 @@ unsigned Process_GIS(char FILETYPE,BWT* fwfmi,BWT* revfmi,Output_Record Record,M
 
 //{---------------------------------------- MISC ---------------------------------------------
 //#define Init_Progress()	fprintf(stderr,"======================]\r[");//progress bar....
-#define Init_Progress()  printf("+===========================================================================================]\r[");
+#define Init_Progress()  fprintf(stderr, "+===========================================================================================]\r[");
 void Show_Progress(unsigned Percentage);
-#define Done_Progress()  printf("\r[++++++++++++++++++++++++++++++++++++++++++ 100%% ++++++++++++++++++++++++++++++++++++++++++]\n");//progress bar....
+#define Done_Progress()  fprintf(stderr, "\r[++++++++++++++++++++++++++++++++++++++++++ 100%% ++++++++++++++++++++++++++++++++++++++++++]\n");//progress bar....
 //}---------------------------------------- MISC ---------------------------------------------
 int fprintf_time(FILE *stream, const char *format, ...);
 #endif

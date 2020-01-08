@@ -94,36 +94,46 @@ void chromLengthExact(string & refSeqFile)
                 exit(1);
         }
         
-        if(!(oFPtr = fopen(chrLenFile.c_str(), "w"))) {
-                printf("File %s open error.\n", chrLenFile.c_str());
-                exit(1);
-        }
-        
-        while(fgets(readBuffer, BUFSIZE, iFPtr)) {
+        if(!(oFPtr = fopen(chrLenFile.c_str(), "r"))) {
+                oFPtr = fopen(chrLenFile.c_str(), "w");
+                while(fgets(readBuffer, BUFSIZE, iFPtr)) {
                 if(strlen(readBuffer) >= BUFSIZE - 1) {
-         		   fprintf(stderr, "Too many characters in one row! Try to split the long row into several short rows (fewer than %d characters per row).\n", BUFSIZE);
-           	 	   exit(1);
+                           fprintf(stderr, "Too many characters in one row! Try to split the long row into several short rows (fewer than %d characters per row).\n", BUFSIZE);
+                           exit(1);
                 }
-                
+
                 if(readBuffer[0] == '>') {
                         if(lines > 0) {
                                 fprintf(oFPtr, "%s\t%d\n", chrName, len);
                         }
                         // Save name
-                        token = strtok(readBuffer + 1, seps);   
+                        token = strtok(readBuffer + 1, seps);
                         strcpy(chrName, token);
-                        len = 0;        
+                        len = 0;
+                }
+                        if(lines > 0) {
+                                fprintf(oFPtr, "%s\t%d\n", chrName, len);
+                        }
+                        // Save name
+                        token = strtok(readBuffer + 1, seps);
+                        strcpy(chrName, token);
+                        len = 0;
                 }
                 else {
                         // Substract \n
                         len += strlen(readBuffer) - 1;
                 }
-                
+
                 lines++;
-        }
-        
-        if(lines > 0) {
+             }
+
+             if(lines > 0) {
                 fprintf(oFPtr, "%s\t%d\n", chrName, len);
+             }
+            if(!(oFPtr = fopen(chrLenFile.c_str(), "r"))){
+                printf("File %s open error.\n", chrLenFile.c_str());
+                exit(1);
+            }
         }
         
         fclose(iFPtr);

@@ -119,13 +119,6 @@ void chromLengthExact(string & refSeqFile)
                         strcpy(chrName, token);
                         len = 0;
                 }
-                else {
-                        // Substract \n
-                        len += strlen(readBuffer) - 1;
-                }
-
-                lines++;
-             }
 
              if(lines > 0) {
                 fprintf(oFPtr, "%s\t%d\n", chrName, len);

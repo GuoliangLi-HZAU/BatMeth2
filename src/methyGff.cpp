@@ -490,6 +490,7 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
 				Strand = '.';
 				while(fgets(Gff,BATBUF,GFFINFILE)!=0) //(!feof(GFFINFILE))
 				{
+                                        if(Gff[0]=='#') continue;
 					Total_Reads++;
 					Progress++;
 					if (Progress>Number_of_Tags) 

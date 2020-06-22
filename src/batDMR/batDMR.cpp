@@ -387,8 +387,8 @@ Cpg::Cpg(string encoding) {
   //char sign;
   //string name;
   //double level;
-
     istringstream encoding_stream(encoding);	
+        if(encoding[0]=='#') return;
 	//if(!(encoding_stream >> chrom_ >> locus_ >> strand_ >> context_ >> meth_ >> total_ >> name))
 	  if (!(encoding_stream >> chrom_ >> locus_ >> strand_ >> context_ >> meth_ >> total_))
 		throw (std::logic_error("Couldn't parse a line \"" + encoding + "\".\n"));
@@ -472,6 +472,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 			meth_it = methylomes_fstream.erase(meth_it);
 			continue;
 		}
+                if(encoding[0]=='#') continue;
 		Cpg cpg(encoding);
 		if(String_Hash.find(cpg.chrom())==String_Hash.end()) 
 		{

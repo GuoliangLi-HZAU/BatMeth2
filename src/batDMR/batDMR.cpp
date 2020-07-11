@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
+#include "zlib.h"
 #if __GNUC__>2
 //#include <ext/hash_set>
 #include <ext/hash_map>
@@ -184,6 +185,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
         output_encoding << meth_factor  << "\t" << coverage_factor << "\t"<< meth_rest  << "\t" << coverage_rest << "\t" << signed_methdiff
     			<< "\n" ;
         if(singleAuto){
+            if(prevchrom=="null") prevchrom = chrom;
 //fprintf(stderr, "\nHHHH %d %d %d %d %d %d %d", Ndmc, mindmc, dmrstart, dmrend, prevdmc, position, position - prevdmc );
             if(dmrstart == 0){ 
                 dmrstart = position;
@@ -199,6 +201,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
                 }
             }
             else if(prevchrom != chrom) {
+//fprintf(stderr, "\nzzzTTT %d %d %d %s %s", dmrtotalLen, dmrtotalLen + position - prevdmc, maxdmrlen, prevchrom.c_str(), chrom.c_str());
                 if(Ndmc >= mindmc){
                     OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
                     << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
@@ -262,6 +265,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
         }// end single auto
     } //end print
   } //end for
+//printf("\n%d\n", Ndmc);
   if(Ndmc >= mindmc){
      OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
      << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
@@ -388,8 +392,8 @@ Cpg::Cpg(string encoding) {
   //string name;
   //double level;
     istringstream encoding_stream(encoding);	
-        if(encoding[0]=='#') return;
 	//if(!(encoding_stream >> chrom_ >> locus_ >> strand_ >> context_ >> meth_ >> total_ >> name))
+	if(encoding[0]=='#') return;
 	  if (!(encoding_stream >> chrom_ >> locus_ >> strand_ >> context_ >> meth_ >> total_))
 		throw (std::logic_error("Couldn't parse a line \"" + encoding + "\".\n"));
 	if(geneid) encoding_stream >> name_;
@@ -432,6 +436,162 @@ std::string int_to_String(int n)
     return ss;
 }
 
+void merge_methylomes_gz(vector<string> names, vector<string> methylomes, ostream &count_table, ostream &count_inform_table , unsigned Sample1Size,Methy_Hash* Methy_List,std::map <string,int> &String_Hash) {
+  
+  vector<string>::const_iterator it = names.begin();
+  
+  count_inform_table << "base\tcase\n" << *it;
+  count_table << *it++;
+  unsigned nSize=0;
+  while (it != names.end())
+  {
+  if(nSize < Sample1Size)
+  { 
+    count_inform_table << "\t1\t0\n" << *it;
+    nSize++;
+  }else
+    count_inform_table << "\t1\t1\n" << *it;
+  count_table << "\t" << *it++;
+  }
+  count_inform_table << "\t1\t1" ;
+  
+  //
+  int MAXDES = 600;
+  //output matrix
+  vector<gzFile> methylomes_fstream;
+  vector<string>::iterator meth_it = methylomes.begin();
+  while(meth_it != methylomes.end())
+  {
+      methylomes_fstream.push_back(gzopen((*meth_it).c_str(), "rb"));
+      ++meth_it;
+  }
+
+  //vector<gzFile>::iterator meth_if = methylomes_fstream.begin();
+  char encoding[MAXDES];
+  for(int i=0;i<methylomes_fstream.size();i++){
+    strcpy(encoding, "0");
+    gzgets(methylomes_fstream[i],encoding,MAXDES);
+    if(encoding[0]=='0' || strlen(encoding)<5){
+      fprintf(stderr, "\nnot find input file!\n");
+      exit(0);
+    }
+    //if(meth_if == methylomes_fstream.end() ) break;
+    //++meth_if;
+  }
+
+  std::string methTmp;
+  while(true)
+  {
+    vector<gzFile>::iterator meth_it = methylomes_fstream.begin();
+  char encoding[MAXDES];
+  while(meth_it != methylomes_fstream.end() ) {
+    if (!gzgets(*meth_it,encoding,MAXDES)) 
+    {
+      meth_it = methylomes_fstream.erase(meth_it);
+      continue;
+    }
+    if(encoding[0]=='#') continue;
+    Cpg cpg((string)encoding);
+
+    if(String_Hash.find(cpg.chrom())==String_Hash.end()) 
+    {
+      //meth_it++;
+      continue;
+    }
+
+    int H=String_Hash[cpg.chrom()];
+    if(cpg.total()>0) 
+    {
+      if(!geneid){
+        methTmp = cpg.chrom() + "_";
+        methTmp = methTmp + int_to_String(cpg.locus());
+      }else methTmp = cpg.name();
+      if(cpg.strand()=="+"){
+        Methy_List[H].positiveMap[methTmp]++; 
+      }else if(cpg.strand()=="-"){
+        Methy_List[H].Neg_positiveMap[methTmp]++;
+      }
+    }
+    //meth_it++;
+  }
+
+    if( methylomes_fstream.size()==0 )
+    {
+      methylomes_fstream.clear();
+      break;
+    }
+  }
+
+  meth_it = methylomes.begin();
+  while(meth_it != methylomes.end())
+  {
+      methylomes_fstream.push_back(gzopen((*meth_it).c_str(), "rb"));
+      meth_it++;
+  }
+
+  while (true) {
+    
+    vector<gzFile>::iterator meth_it = methylomes_fstream.begin();
+    char encoding[MAXDES];
+    if (!gzgets(*meth_it,encoding,MAXDES))
+      break;
+      
+    Cpg cpg1((string)encoding);
+    if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+    count_table << "\n";
+    int H=String_Hash[cpg1.chrom()];
+    unsigned int loci=cpg1.locus();
+    string strand=cpg1.strand();
+    if(!geneid){
+      methTmp = cpg1.chrom() + "_";
+      methTmp = methTmp + int_to_String(loci);
+    }else methTmp = cpg1.name();
+    while(  (strand=="+" && Methy_List[H].positiveMap[methTmp] != (int)methylomes.size())  || 
+        (strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] != (int)methylomes.size() )  )
+    {
+      if (!gzgets(*meth_it,encoding,MAXDES))
+        break;
+      Cpg cpg((string)encoding);
+      cpg1=cpg;
+      if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+  if(!geneid){
+    methTmp = cpg1.chrom() + "_";
+    methTmp = methTmp + int_to_String(cpg1.locus());
+  }else methTmp = cpg1.name();
+      H=String_Hash[cpg1.chrom()];
+      loci=cpg1.locus();
+      strand=cpg1.strand();
+    }
+    
+    bool validc = false;    
+    if(  ( (strand=="+" && Methy_List[H].positiveMap[methTmp] == (int)methylomes.size())  || 
+        (strand=="-" && Methy_List[H].Neg_positiveMap[methTmp] == (int)methylomes.size() ) ) && cpg1.total()>0) {
+      count_table << cpg1.chrom() << ":" << cpg1.locus() << ":" << cpg1.strand() << ":" << cpg1.context() 
+                << "\t" << cpg1.meth() << "\t" << cpg1.total();
+        validc=true;
+    }
+
+    meth_it++;
+    while(validc && meth_it != methylomes_fstream.end()) {
+
+  while( gzgets(*meth_it,encoding,MAXDES) )
+  {
+          Cpg cpg2((string)encoding);
+          if( (geneid && cpg2.name()==cpg1.name()) || (!geneid && H==String_Hash[cpg2.chrom()] &&  cpg1.locus()==cpg2.locus() && cpg1.strand()==cpg2.strand() && cpg2.total()>0) )
+          {
+          count_table << "\t" << cpg2.meth() << "\t" << cpg2.total();
+          if(geneid) count_table << "\t" << cpg2.name();
+          break;
+          }
+    }
+      meth_it++;
+    }
+  }
+
+  for(size_t ind = 0; ind < methylomes_fstream.size(); ++ind)
+    delete methylomes_fstream[ind];
+}
+//
 void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &count_table, ostream &count_inform_table , unsigned Sample1Size,Methy_Hash* Methy_List,std::map <string,int> &String_Hash) {
   
   vector<string>::const_iterator it = names.begin();
@@ -458,6 +618,19 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
   {
   	  methylomes_fstream.push_back(new ifstream( (*meth_it).c_str() ));
   	  ++meth_it;
+  }
+
+  vector<istream*>::iterator meth_if = methylomes_fstream.begin();
+  while(true){
+    string encoding;
+    getline(*(*meth_if), encoding);
+    if (encoding.empty())
+    {
+        fprintf(stderr, "no such file, please check the file name!\n");
+        exit(0);
+    }
+    if(meth_if == methylomes_fstream.end() ) break;
+    meth_if++;
   }
 
   std::string methTmp;
@@ -766,6 +939,7 @@ int main(int argc, const char **argv) {
     int mindmc = 4;
     int mindmcdis = 100;
     int maxdmrlen = 1000000000;
+    bool gzinfile = false;
 	//----help  arguments
     printf("\nBatMeth2: DMR  v1.0\n");
     const char* Help_String="Command Format :  DMR [options] -g genome.fa -o_dm <DM_result>  -1 [Sample1-methy ..] -2 [sample2-methy ..] \n"
@@ -784,6 +958,7 @@ int main(int argc, const char **argv) {
                 "\t-element     caculate gene or TE etc function elements.\n"
                 //"\t-f auto\n"
                 "\t-L          predefinded regions or loci.\n"
+                "\t-gz         gzip infile.\n"
                 "\t-h|--help";
 	//-----
     for(int i=1;i<argc;i++)
@@ -800,6 +975,9 @@ int main(int argc, const char **argv) {
             }else if(!strcmp(argv[i], "-element")  )
             {
                     geneid=true;
+            }else if(!strcmp(argv[i], "-gz")  )
+            {
+                    gzinfile=true;
             }
             else if(!strcmp(argv[i], "-g") || !strcmp(argv[i], "--genome"))
 		    {
@@ -913,8 +1091,10 @@ int main(int argc, const char **argv) {
     combineTmp.open( (outTmp+"_combined.file.temp.txt").c_str() );
     ofstream combineInf;
     combineInf.open( (outTmp+"_combined.infrom.temp.txt").c_str() );
-   if (!methylomes.empty())
-   	merge_methylomes(names, methylomes, combineTmp ,combineInf ,methy1End-methy1Start+1,Methy_List,String_Hash);
+   if (!methylomes.empty()){
+    if(gzinfile) merge_methylomes_gz(names, methylomes, combineTmp ,combineInf ,methy1End-methy1Start+1,Methy_List,String_Hash);
+   	else merge_methylomes(names, methylomes, combineTmp ,combineInf ,methy1End-methy1Start+1,Methy_List,String_Hash);
+   }
 
    combineInf.close();combineTmp.close();
 /*
@@ -965,7 +1145,6 @@ int main(int argc, const char **argv) {
 
       string sample_names_encoding;
       getline(table_file, sample_names_encoding);
-
       if (full_regression.design.sample_names != split(sample_names_encoding))
         throw DNAmethException(sample_names_encoding + " does not match factor "
                                 "names or their order in the design matrix. "
@@ -1018,9 +1197,9 @@ int main(int argc, const char **argv) {
 
 	          // If error occured in the fitting algorithm (i.e. p-val is nan or -nan).
 	          pval= ( (pval != pval) ? -1 : pval);
-	       }else if(Sample1Size ==1 && Sample2Size ==1)
+	       }else if(Sample1Size ==1 || Sample2Size ==1)
 	      {
-	      	  pval=fishers_exact(meth_factor, coverage_factor, meth_rest, coverage_rest) ;
+	      	  pval=fishers_exact(meth_factor/Sample1Size, coverage_factor/Sample1Size, meth_rest/Sample2Size, coverage_rest/Sample2Size) ;
 	      }
 	   }
 	          std::string chrom=full_regression.props.chrom;

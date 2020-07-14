@@ -50,6 +50,7 @@ using std::map;
 map <string,int> String_Hash;
 bool geneid=false;
 int Genome_Count = 0;
+std::string filtercontext = "ALL";
 
 struct str_hash{
         size_t operator()(const string& str) const
@@ -493,7 +494,7 @@ void merge_methylomes_gz(vector<string> names, vector<string> methylomes, ostrea
     if(encoding[0]=='#') continue;
     Cpg cpg((string)encoding);
 
-    if(String_Hash.find(cpg.chrom())==String_Hash.end()) 
+    if(String_Hash.find(cpg.chrom())==String_Hash.end() || (cpg.context() != filtercontext && filtercontext != "ALL") ) 
     {
       //meth_it++;
       continue;
@@ -537,7 +538,7 @@ void merge_methylomes_gz(vector<string> names, vector<string> methylomes, ostrea
       break;
       
     Cpg cpg1((string)encoding);
-    if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+    if(String_Hash.find(cpg1.chrom())==String_Hash.end()  || (cpg1.context() != filtercontext && filtercontext != "ALL")) continue;
     count_table << "\n";
     int H=String_Hash[cpg1.chrom()];
     unsigned int loci=cpg1.locus();
@@ -553,7 +554,7 @@ void merge_methylomes_gz(vector<string> names, vector<string> methylomes, ostrea
         break;
       Cpg cpg((string)encoding);
       cpg1=cpg;
-      if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+      if(String_Hash.find(cpg1.chrom())==String_Hash.end()  || (cpg1.context() != filtercontext && filtercontext != "ALL")) continue;
   if(!geneid){
     methTmp = cpg1.chrom() + "_";
     methTmp = methTmp + int_to_String(cpg1.locus());
@@ -577,6 +578,7 @@ void merge_methylomes_gz(vector<string> names, vector<string> methylomes, ostrea
   while( gzgets(*meth_it,encoding,MAXDES) )
   {
           Cpg cpg2((string)encoding);
+          if( (cpg2.context() != filtercontext && filtercontext != "ALL")) continue;
           if( (geneid && cpg2.name()==cpg1.name()) || (!geneid && H==String_Hash[cpg2.chrom()] &&  cpg1.locus()==cpg2.locus() && cpg1.strand()==cpg2.strand() && cpg2.total()>0) )
           {
           count_table << "\t" << cpg2.meth() << "\t" << cpg2.total();
@@ -647,7 +649,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 		}
                 if(encoding[0]=='#') continue;
 		Cpg cpg(encoding);
-		if(String_Hash.find(cpg.chrom())==String_Hash.end()) 
+		if(String_Hash.find(cpg.chrom())==String_Hash.end()  || (cpg.context() != filtercontext && filtercontext != "ALL")) 
 		{
 			//meth_it++;
 			continue;
@@ -690,7 +692,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
       break;
       
     Cpg cpg1(encoding);
-    if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+    if(String_Hash.find(cpg1.chrom())==String_Hash.end()  || (cpg1.context() != filtercontext && filtercontext != "ALL")) continue;
     count_table << "\n";
     int H=String_Hash[cpg1.chrom()];
     unsigned int loci=cpg1.locus();
@@ -707,7 +709,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
       	break;
     	Cpg cpg(encoding);
     	cpg1=cpg;
-    	if(String_Hash.find(cpg1.chrom())==String_Hash.end()) continue;
+    	if(String_Hash.find(cpg1.chrom())==String_Hash.end()  || (cpg1.context() != filtercontext && filtercontext != "ALL")) continue;
 	if(!geneid){
 		methTmp = cpg1.chrom() + "_";
 		methTmp = methTmp + int_to_String(cpg1.locus());
@@ -731,6 +733,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
 	while( getline(*(*meth_it), encoding) )
 	{
     		  Cpg cpg2(encoding);
+                  if( (cpg2.context() != filtercontext && filtercontext != "ALL")) continue;
 	    	  if( (geneid && cpg2.name()==cpg1.name()) || (!geneid && H==String_Hash[cpg2.chrom()] &&  cpg1.locus()==cpg2.locus() && cpg1.strand()==cpg2.strand() && cpg2.total()>0) )
 	    	  {
       		count_table << "\t" << cpg2.meth() << "\t" << cpg2.total();
@@ -956,9 +959,10 @@ int main(int argc, const char **argv) {
                 "\t-FDR         adjust pvalue cutoff default : 1.0\n"
                 "\t-methdiff    the cutoff of methylation differention. default: 0.25 [CpG]\n"
                 "\t-element     caculate gene or TE etc function elements.\n"
+                "\t-context     Context for DM. [CG/CHG/CHH/ALL]\n"
                 //"\t-f auto\n"
-                "\t-L          predefinded regions or loci.\n"
-                "\t-gz         gzip infile.\n"
+                "\t-L           predefinded regions or loci.\n"
+                "\t-gz          gzip infile.\n"
                 "\t-h|--help";
 	//-----
     for(int i=1;i<argc;i++)
@@ -975,6 +979,9 @@ int main(int argc, const char **argv) {
             }else if(!strcmp(argv[i], "-element")  )
             {
                     geneid=true;
+            }else if(!strcmp(argv[i], "-context")  )
+            {
+                    filtercontext=argv[++i];
             }else if(!strcmp(argv[i], "-gz")  )
             {
                     gzinfile=true;

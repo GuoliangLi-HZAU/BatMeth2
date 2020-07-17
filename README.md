@@ -372,7 +372,7 @@ Command Format :  DMR [options] -g genome.fa -o_dm <DM_result>  -1 [Sample1-meth
 
 
 
-1. Pre-definded regions (Gene/TE/UTR/CDS...,but must run 'combined.element sample1 sample2 sample1out sample2out' before batDMR.) 
+1. Pre-definded regions (Gene/TE/UTR/CDS...,but must run 'combined.element sample1 sample2 sample1out sample2out' before batDMR) 
 
 $ `BatMeth2 batDMR -g genome -L -o_dm dm.output.txt -1 [sample1.methC.txt replicates ..] -2 [sample2.methC.txt replicates ..]` 
 

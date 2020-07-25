@@ -623,7 +623,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
   }
 
   vector<istream*>::iterator meth_if = methylomes_fstream.begin();
-  while(true){
+  while(meth_if != methylomes_fstream.end()){
     string encoding;
     getline(*(*meth_if), encoding);
     if (encoding.empty())
@@ -631,7 +631,6 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
         fprintf(stderr, "no such file, please check the file name!\n");
         exit(0);
     }
-    if(meth_if == methylomes_fstream.end() ) break;
     meth_if++;
   }
 

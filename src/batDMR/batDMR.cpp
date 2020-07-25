@@ -1058,7 +1058,11 @@ int main(int argc, const char **argv) {
 	  Genome_CountX++;
     }
     rewind(GenomeLen);
-    
+    if(Genome_CountX==0){
+        fprintf(stderr, "%s is empty! Please rerun!", Genome_Len.c_str());    
+        exit(0);
+    }
+
     Genome_Count=0;
     Offset_Record Genome_Offsets[Genome_CountX];
     while (fgets(Temp_OR,190,GenomeLen)!=0)//count genomes..

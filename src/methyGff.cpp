@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 	bool GTF=false;
 	int Coverage = 5;
 	int nC=5;
-	int beddistance=200;
+	int beddistance=1;
 	//
 	if(argc<8)
 	{
@@ -545,7 +545,7 @@ if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
                                         	continue;
                                 	}
 					int H=String_Hash[Chrom];
-					if(start>distance && end+distance <Genome_Offsets[H+1].Offset && end-start > nLevel ) //&& end-start > nLevel 
+					if(start>distance && end+distance <Genome_Offsets[H+1].Offset ) //&& end-start > nLevel 
 					{
 						start--;end--;
 						if(Strand=='-')
@@ -841,7 +841,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( ((nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end) && end-start > nLevel){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -926,7 +926,7 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                            methGff_List.countCHH++;
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( ((nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end) && end-start > nLevel){
                 	if(i==end) nbins=nLevel;
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
@@ -997,7 +997,7 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 	                            countCHH+=MethyList.NegCount_CT[i];
 	                        }
 			}
-                if( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end){
+                if( ((nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end) && end-start > nLevel){
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
                     	{

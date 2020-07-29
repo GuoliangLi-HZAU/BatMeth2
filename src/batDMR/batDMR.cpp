@@ -929,7 +929,7 @@ int main(int argc, const char **argv) {
     const string prog_name = strip_methpath(argv[0]);
     string dmc_outfile;
     string dmr_outfile;      
-    double Pcutoff=0.01; double cutoff = 1; double methdiff=0.25;
+    double Pcutoff=0.01; double cutoff = 1; double methdiff=0.1;
     bool Auto = false;
     bool singleAuto = false;
     //unsigned length_dmr = 1000;
@@ -956,7 +956,7 @@ int main(int argc, const char **argv) {
                 "\t-maxdis      max length of dmr [default : 0]\n"
                 "\t-pvalue      pvalue cutoff, default: 0.01\n"
                 "\t-FDR         adjust pvalue cutoff default : 1.0\n"
-                "\t-methdiff    the cutoff of methylation differention. default: 0.25 [CpG]\n"
+                "\t-methdiff    the cutoff of methylation differention. default: 0.1 [CpG]\n"
                 "\t-element     caculate gene or TE etc function elements.\n"
                 "\t-context     Context for DM. [CG/CHG/CHH/ALL]\n"
                 //"\t-f auto\n"

@@ -701,8 +701,9 @@ void *Map_And_Pair_Solexa(void *T)
 	SW_THRESHOLD=80*Read_Length*match/100;
 //}--------------------------- INIT STUF ---------------------------------------
     for(; fi < filelist1.size(); ){
-		if(!ESTIMATE && Thread_ID==1)
+		if(!ESTIMATE && Thread_ID==1){
 			fprintf(stderr, "Process input file: %s, %s\n", filelist1[fi].c_str(), filelist2[fi].c_str());
+		}
 	while ((gzinfile && Read_Tag_gz(Ffilelist1[fi].gzfp,Ffilelist2[fi].gzfp,Ffilelist1[fi].FILETYPE,R,M) ) || (!gzinfile && Read_Tag(Ffilelist1[fi].Input_File,Ffilelist2[fi].Input_File,Ffilelist1[fi].FILETYPE,R,M)))
 	{
 		RECOVER_N=0;

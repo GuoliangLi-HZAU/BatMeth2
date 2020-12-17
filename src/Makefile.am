@@ -1,6 +1,6 @@
 EXTRA_DIST =  batmeth2
-AM_CFLAGS = -w -O3 -funroll-loops -maccumulate-outgoing-args -msse2 -lz -lm -pthread -no-pie
-AM_CXXFLAGS = -w -O3 -funroll-loops -maccumulate-outgoing-args -msse2 -lz -lm -pthread -no-pie
+AM_CFLAGS = -w -O3 -funroll-loops -maccumulate-outgoing-args -msse2 -lz -lm -pthread 
+AM_CXXFLAGS = -w -O3 -funroll-loops -maccumulate-outgoing-args -msse2 -lz -lm -pthread 
 RANLIB=ranlib
 #AM_CPPFLAGS = -O3 -funroll-loops -maccumulate-outgoing-args -msse2 -lm
 

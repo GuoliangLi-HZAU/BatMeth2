@@ -41,7 +41,7 @@ COMMON_DIR = ./ # ../common
 INCLUDEDIRS =  $(CPP) $(COMMON_DIR)
 INCLUDEARGS = $(addprefix -I,$(INCLUDEDIRS))
 
-LIBS = -lgsl -lgslcblas -lm -lz -no-pie
+LIBS = -lgsl -lgslcblas -lm -lz
 
 # Flags for Mavericks
 ifeq "$(shell uname)" "Darwin"

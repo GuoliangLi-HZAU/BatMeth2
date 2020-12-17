@@ -15,7 +15,7 @@ using std::string;
 using std::vector;
 //alignment
 int threads = 8;
-float mismatches = 0.4;
+float mismatches = 0.1;
 string genome_index = "";
 string outformat = "BAM";
 
@@ -26,18 +26,18 @@ string bwamethparamaters="";
 string fastp="";
 
 //calmeth
-int Qual = 10;
-int redup = 0;
+int Qual = 20;
+int redup = 1;
 int region = 1000;
 int sammeth = 0;
 //calmeth and methyGff
-int coverage = 5;
+int coverage = 4;
 int maxcoverage = 1000;
-int binCover = 3;
+int binCover = 1;
 int chromstep = 50000;
 
 //methyGff
-float step = 0.025;
+float step = 0.01;
 int distance = 2000;
 string gfffile = "None";
 string bedfile = "None";
@@ -62,8 +62,8 @@ string programname;
 void usage(){
     fprintf(stderr, "\nBatMeth2 [mode] [paramaters]\n");
     fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, DMCplot\n\n");
-    fprintf(stderr, "Example:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -1 in1.fq.gz -2 in2.fq.gz --gff gene.gff -f 1 -o outprefix\n");
-    fprintf(stderr, "Or single-end:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -i in.fq.gz --gff gene.gff -f 1 -o outprefix\n\n");
+    fprintf(stderr, "Example:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -1 in1.fq.gz -2 in2.fq.gz --gff gene.gff -o outprefix\n");
+    fprintf(stderr, "Or single-end:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -i in.fq.gz --gff gene.gff -o outprefix\n\n");
 //    ~/software_devp/batmeth2/bin/test pipel --aligner bwa-meth --go ~/practice/Genome/arabidopsis/arabidopsis_bwa-meth/TAIR10_chr_all.fa --fastp ~/software/fastp/fastp -g ~/practice/Genome/arabidopsis/arabidopsis_batmeth2_index/TAIR10_chr_all.fa -1 test1.fq -2 test2.fq --gff ~/practice/Genome/arabidopsis/TAIR10.gene.modify.gff -f 1 -o pipel.clean
     fprintf(stderr, "\n[build_index]\n");
     fprintf(stderr, "    Usage: BatMeth2 build_index genomefile. (wgbs data, must run this step first), or\n");
@@ -98,25 +98,26 @@ void usage(){
     fprintf(stderr, "    -g    Name of the genome mapped against, make sure build index first.\n");
     fprintf(stderr, "    -p    Launch <integer> threads\n");
     fprintf(stderr, "\n[calmeth paramaters]\n");
-    fprintf(stderr, "    --Qual      calculate the methratio while read QulityScore >= Q. default:10\n");
-    fprintf(stderr, "    --redup     REMOVE_DUP, 0 or 1, default 0\n");
+    fprintf(stderr, "    --Qual      calculate the methratio while read QulityScore >= Q. default:20\n");
+    fprintf(stderr, "    --redup     REMOVE_DUP, 0 or 1, default 1\n");
     fprintf(stderr, "    --region    Bins for DMR calculate , default 1000bp .\n");
     fprintf(stderr, "    -f          for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file).\n");
-	fprintf(stderr, "    -n          maximum mismatches allowed due to seq. default 0.05 percentage of the read length. [0-0.3]\n");
+	fprintf(stderr, "    -n          maximum mismatches allowed due to seq. default 0.1 percentage of the read length. [0-0.3]\n");
     fprintf(stderr, "\n[calmeth and annoation paramaters]\n");
-    fprintf(stderr, "    --coverage    >= <INT> coverage. default:5\n");
-    fprintf(stderr, "    --binCover    >= <INT> nCs per region. default:3\n");
+    fprintf(stderr, "    --coverage    >= <INT> coverage. default:4\n");
+    fprintf(stderr, "    --binCover    >= <INT> nCs per region. default:1\n");
     fprintf(stderr, "    --chromstep   Chromsome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n");
     fprintf(stderr, "\n[annoation paramaters]\n");
     fprintf(stderr, "    --gtf/--gff/--bed    Gtf or gff file / bed file\n");
     fprintf(stderr, "    --distance           DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000\n");
-    fprintf(stderr, "    --step               Gene body and their flanking sequences using an overlapping sliding window of 0.05 of the sequence length at a step of 0.025 of the sequence length. So default step: 0.025 (2.5%)\n");
+    fprintf(stderr, "    --step               Gene body and their flanking sequences using an overlapping sliding window of 0.02 of the sequence length at a step of 0.01 of the sequence length. So default step: 0.01 (1%)\n");
     fprintf(stderr, "    -C                   <= <INT> coverage. default:1000\n");
     fprintf(stderr, "\n[MethyPlot paramaters]\n");
     fprintf(stderr, "    --CG       CG ratio for heatmap, [0-1], default 0.6\n");
     fprintf(stderr, "    --CHG      CHG ratio for heatmap, [0-1], default 0.2\n");
     fprintf(stderr, "    --CHH      CHH ratio for heatmap, [0-1], default 0.1\n");
 
+    fprintf(stderr, "    --bigwig   print bigwig files.\n");
     fprintf(stderr, "\n[align paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 align'\n");
     fprintf(stderr, "\n[calmeth paramaters:]\n");
@@ -288,6 +289,7 @@ struct Threading
 };
 
 std::vector<struct SAMPLE> v_samples;
+bool printbigwig = false;
 int main(int argc, char* argv[])
 {
 	string outputdir="./";
@@ -390,6 +392,8 @@ int main(int argc, char* argv[])
             aligner = argv[++i];
         else if(!strcmp(argv[i], "--go"))
             genome_others = argv[++i];
+        else if(!strcmp(argv[i], "--bigwig"))
+            printbigwig = true;
         else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help") || !strcmp(argv[i], "-help")){
             usage();
             exit(0);
@@ -419,7 +423,6 @@ int main(int argc, char* argv[])
 	char abspathtmp[MAX_PATH];
 	get_executable_path(abspathtmp, processname, sizeof(abspathtmp));
 	abspath= abspathtmp;
-	fprintf(stderr, "[ Program directory ] %s\n[ Program name ] %s\n",abspathtmp, processname);
 	programname = processname;
 
 	if(!deletelog && output_prefix != "None" && output_prefix != ""){
@@ -452,9 +455,7 @@ int main(int argc, char* argv[])
         }
 	}
     mkpath = outputdir;
-
-    fprintf(stderr, "[ Workdir ] %s\n", workdirtmp);
-    fprintf(stderr, "[ outputdir ] %s\n", outputdir.c_str());
+    
 	if (argc < 4){
 	    if (mode == "pipel")
 	        usage();
@@ -462,6 +463,9 @@ int main(int argc, char* argv[])
 	        detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend);
 	    exit(0);
 	}
+    fprintf(stderr, "[ Program directory ] %s\n[ Program name ] %s\n",abspathtmp, processname);
+    fprintf(stderr, "[ Workdir ] %s\n", workdirtmp);
+    fprintf(stderr, "[ outputdir ] %s\n", outputdir.c_str());
 
 	if(configfile!="" && mode != "pipel"){
 		fprintf(stderr, "\nConfigure files only valid in pipel mode!\n");
@@ -615,11 +619,11 @@ void calmeth(string inputf, string outputdir, string output_prefix){
     string cmd = abspath + "calmeth" + " -g " + genome_index + " -n " + getstring(mismatches) + " -b " + inputf + " -m " + outputdir + output_prefix  + rd + sammethfile;
     if(chromstep != 50000)
         cmd = cmd + " -s " + getstring(chromstep);
-    if(coverage != 5)
+    if(coverage != 4)
         cmd = cmd + " -c " + getstring(coverage);
-    if(binCover != 3)
+    if(binCover != 1)
         cmd = cmd + " -nC " + getstring(binCover);
-    if(Qual != 10)
+    if(Qual != 20)
         cmd = cmd + " -Q " + getstring(Qual);
     if(region != 1000)
         cmd = cmd + " -R " + getstring(region);
@@ -725,9 +729,9 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 	    }
 	    if(aligner=="BatMeth2"){
                 if(outformat == "BAM")
-	    	    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
+	    	    cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " | samtools sort -m 2G -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
                 else
-                    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " -o " + outputdir + output_prefix + ".sam";
+                    cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{
@@ -765,9 +769,9 @@ void alignmentSingle(string outputdir, string input_prefix, string input_prefix1
 		}
 	    if(aligner=="BatMeth2"){
                 if(outformat == "BAM")
-	    	    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
+	    	    cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " | samtools sort -m 2G -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
                 else
-                    cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " -o " + outputdir + output_prefix + ".sam";
+                    cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{
@@ -878,10 +882,10 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		    executeCMD(cmd.c_str(), outputdir, output_prefix);
 		}
 		if(aligner=="BatMeth2"){
-                    if(outformat=="BAM")
-		        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
-                    else
-                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " -o " + outputdir + output_prefix + ".sam";
+            if(outformat=="BAM")
+                cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " | samtools sort -m 2G -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
+            else
+                cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + clenfiles1 + " -i " + clenfiles2 + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{
@@ -918,10 +922,10 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 		    executeCMD(cmd.c_str(), outputdir, output_prefix);
 		}
 		if(aligner=="BatMeth2"){
-                    if(outformat=="BAM")
-			cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " | samtools sort -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
-                    else
-                        cmd = abspath + "batmeth2-align" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + outputdir + output_prefix + ".sam";
+            if(outformat=="BAM")
+			    cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " | samtools sort -m 2G -@ " + getstring(threads) + " -O BAM -o " + outputdir + output_prefix + ".sort.bam -";
+            else
+                cmd = abspath + "batmeth2-align" + " -L " + outputdir + output_prefix + ".align.log.txt" + " -g " + genome_index + " -p " + getstring(threads) + " -i " + input_prefix1 + " -i " + input_prefix2 + " -o " + outputdir + output_prefix + ".sam";
 	    	cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
 	    	executeCMD(cmd.c_str(), outputdir, output_prefix);
 	    }else{
@@ -955,15 +959,15 @@ void annoation(string outputdir, string output_prefix){
     	fprintf(stderr, "\nWarning: not defined gtf/gff/bed file, so skip annatation.\n");
     	return;
     }
-    if(step != 0.025)
+    if(step != 0.01)
         cmd = cmd + " -s " + getstring(step);
     if(chromstep != 50000)
         cmd = cmd + " -S " + getstring(chromstep);
-    if (coverage != 5)
+    if (coverage != 4)
         cmd = cmd + " -c " + getstring(coverage);
     if (maxcoverage != 1000)
         cmd = cmd + " -C " + getstring(maxcoverage);
-    if (binCover != 3)
+    if (binCover != 1)
         cmd = cmd + " -nC " + getstring(binCover);
     if (distance != 2000)
         cmd = cmd + " -d " + getstring(distance);
@@ -1100,17 +1104,17 @@ void doc2html(string outputdir, string mkpath, string output_prefix){
 }
 
 void alignmentstate(string outputdir, string output_prefix, string mkpath){
-    string alignresults = outputdir + output_prefix + ".alignresults.txt";
-    FILE* Falignresults = File_Open(alignresults.c_str(), "w");
-    fprintf(Falignresults, "Value\tState\n");
-    fclose(Falignresults);
+    //string alignresults = outputdir + output_prefix + ".alignresults.txt";
+    //FILE* Falignresults = File_Open(alignresults.c_str(), "w");
+    //fprintf(Falignresults, "Value\tState\n");
+    //fclose(Falignresults);
     if(aligner != "BatMeth2" || outformat=="SAM"){
-        string alignsortbam = "samtools sort -@ " + getstring(threads) +" -o " + outputdir + output_prefix + ".sort.bam " + outputdir + output_prefix + ".sam";
+        string alignsortbam = "samtools sort -m 2G -@ " + getstring(threads) +" -o " + outputdir + output_prefix + ".sort.bam " + outputdir + output_prefix + ".sam";
         alignsortbam = alignsortbam + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(alignsortbam.c_str(), outputdir, output_prefix);
     }
-    string alignsummarycmd = "samtools flagstat " + outputdir + output_prefix + ".sort.bam | tail -14 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + output_prefix + ".alignresults.txt";
-    executeCMD(alignsummarycmd.c_str(), outputdir, output_prefix);
+    //string alignsummarycmd = "samtools flagstat " + outputdir + output_prefix + ".sort.bam | tail -14 | sed 's/ /_/' | sed 's/ /_/' | sed 's/ /\\t/' | sed 's/_/ /g' > " + mkpath + output_prefix + ".alignresults.txt";
+    //executeCMD(alignsummarycmd.c_str(), outputdir, output_prefix);
 }
 
 void methyPlot(string outputdir, string output_prefix ){
@@ -1123,12 +1127,12 @@ void methyPlot(string outputdir, string output_prefix ){
     executeCMD(cmd.c_str(), outputdir, output_prefix);
     return;
     //
-    cmd = abspath + "methyPlot " + outputdir + output_prefix + ".methBins.txt " + outputdir + output_prefix + ".Methygenome.pdf " + getstring(step) + " " + outputdir +output_prefix + ".Methylevel.1.txt " + outputdir + output_prefix + ".function.pdf TSS TTS " + outputdir +  output_prefix + ".AverMethylevel.1.txt " + outputdir +  output_prefix + ".Methenrich.pdf";
+    cmd = abspath + "methyPlot " + outputdir + output_prefix + ".methBins.txt " + outputdir + output_prefix + ".Methygenome.pdf " + getstring(step) + " " + outputdir +output_prefix + ".AverMethylevel.txt " + outputdir + output_prefix + ".function.pdf TSS TTS " + outputdir +  output_prefix + ".Methylevel.txt " + outputdir +  output_prefix + ".Methenrich.pdf";
     //cmd = "{output_prefix}.bins..."
     //cmd = cmd.format(**locals())
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str(), outputdir, output_prefix);
-    cmd = "Rscript "+ abspath + "density_plot_with_methyl_oneSample_oneGff.r "+ outputdir + output_prefix + ".methBins.txt " + outputdir +  output_prefix + ".annoDensity.1.txt " + outputdir +  output_prefix + ".density.pdf " + output_prefix;
+    cmd = "Rscript "+ abspath + "density_plot_with_methyl_oneSample_oneGff.r "+ outputdir + output_prefix + ".methBins.txt " + outputdir +  output_prefix + ".annoDensity.txt " + outputdir +  output_prefix + ".density.pdf " + output_prefix;
     //cmd = cmd.format(**locals())
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str(), outputdir, output_prefix);
@@ -1154,6 +1158,16 @@ void fastptrim(string outputdir, string output_prefix, string input_prefix1, str
         cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }
+}
+
+void mr2bw(string output_prefix, string outputdir){
+    string cmd;
+    cmd = "samtools faidx " + genome_index;
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    cmd = "python " + abspath + "batmeth2_to_bigwig.py -sort " + genome_index + ".fai " + output_prefix + ".methratio.txt";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    cmd = "python " + abspath + "batmeth2_to_bigwig.py -sort -strand " + genome_index + ".fai " + output_prefix + ".methratio.txt";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
 }
 
 // whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
@@ -1191,6 +1205,9 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     cmd += newlogfile;
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str(), outputdir, output_prefix);
+    fprintf(stderr, "[ BatMeth2 ] mr to bigwig ...\n");
+    if(printbigwig)
+        mr2bw(output_prefix, outputdir);
     fprintf(stderr, "[ BatMeth2 ] Visulization ...\n");
     methyPlot(outputdir, output_prefix );
     //mvpng(outputdir, mkpath, output_prefix);

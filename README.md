@@ -10,11 +10,9 @@ REQUIREMENTS
 -------
 1) gcc (v4.8) , gsl library, zlib
 
-2) R (ggplot2, pheatmap, xtable)
+2) samtools (suggest: v1.3.1)
 
-3) samtools (suggest: v1.3.1)
-
-4) fastp, raw reads as input need
+3) fastp, raw reads as input need
 
 INSTALL
 -------
@@ -29,19 +27,12 @@ d) Type
 
 - ./configure
 - make
-- make copy
-
-
-If your do not need process file of gzip format, you can install the tools:
-- ./configure
-- make nogzip
-- make copy-nogzip
-
+- make install
 
 e) The binary of BatMeth2 will be created in bin/
 
 
-BUILDING INDEX
+Building index
 -------
 
 a) Have a fasta-formatted reference file ready 
@@ -50,12 +41,13 @@ b) Type "`BatMeth2 build_index GENOME.fa`"  for WGBS or `BatMeth2 build_index rr
 
 c) Run "`BatMeth2`" to see information on usage.
 
-USAGE of BatMeth2
+Usage of BatMeth2
 ------
 
 **Example Data**
 
-You can download the test data on `https://drive.google.com/open?id=1SEpvJbkjwndYcpkd39T11lrBytEq_MaC` .
+You can download the test data on `https://drive.google.com/open?id=1SEpvJbkjwndYcpkd39T11lrBytEq_MaC` 
+Or `https://pan.baidu.com/s/1mliGjbn_33wlQLieqy5YOQ` with extraction code: `kr32`.
 
 **Example data contain files:**
 
@@ -79,21 +71,21 @@ The usage is here:
 Raw reads:
 
 ```bash
-BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff
+BatMeth2 pipel --fastp ~/location/to/fastp -1 Raw_reads_1.fq.gz -2 Raw_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 8 --gff ./gene.gff
 ```
 
 Or clean reads:
 
 ```bash
-BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 6 --gff ./gene.gff
+BatMeth2 pipel -1 Clean_reads_1.fq.gz -2 Clean_read_2.fq.gz -g ./batmeth2index/genome.fa -o meth -p 8 --gff ./gene.gff
 ```
 
 
 ### BatMeth2 pipeline parameters
 
-**BatMeth2 [mode][paramaters]**<br>
+**BatMeth2 [mode][paramaters]**
 
-mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample<br>
+mode:  build_index, pipel, align, calmeth, annoation, batDMR<br>
 
 **[build_index]** <br>
     Usage:  (must run this step first) <br>
@@ -141,22 +133,10 @@ mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2s
     **[mkreport paramaters]** <br>
       Make a batmeth2 html report, can see the detail in BatMeth2_Report/ directory. <br>
       **-o [outprefix]** <br>
-    **[align paramaters:]** <br>
-      see the details in 'BatMeth2 align' <br>
-    **[calmeth paramaters:]** <br>
-      see the details in 'BatMeth2 calmeth' <br>
-    **[annotion paramaters:]** <br>
-      see the details in 'BatMeth2 annoation' <br>
-    **[methyPlot paramaters:]** <br>
-      see the details in 'BatMeth2 methyPlot' <br>
-    **[batDMR paramaters:]** <br>
-      see the details in 'BatMeth2 batDMR' <br>
-    **[visul2sample paramaters:]** <br>
-      see the details in 'BatMeth2 visul2sample' <br>
     -h|--help   usage <br>
 
 
-## OUTPUT FILE
+## Output files
 
 Output file format and details see "https://github.com/GuoliangLi-HZAU/BatMeth2/blob/master/output_details.pdf".<br>
 
@@ -223,15 +203,13 @@ Note: To use BatMeth2, you need to first index the genome with `build_all genome
 
 
 
-
-
 #### 2. BatMeth2 calmeth
 
 Command Format :  calmeth [options] -g GENOME  -i/-b <Samfile/Bamfile> -m <methratio outfile prefix> -p 6
 
 **Usage:**
 
-​       -g|--genome           Genome
+-g|--genome           Genome
 
 ​	-i|--input            Sam format file
 

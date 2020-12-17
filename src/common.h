@@ -48,7 +48,7 @@ extern "C"
 
 enum {VERYFAST=0,FAST=1,SENSITIVE=2,VERYSENSITIVE=3};
 enum {UNIQUEHIT/*only one hit*/,SHARP_UNIQUEHIT/*well resolved multi hit*/,MULTI_HIT/*Top hit, but multi hits*/,SW_RECOVERED/*same as above, but recovered with SW,no multihit indicated by Sub_Opt_Score=INT_MAX*/,SW_INDELSTEP/*multi hits found at indel stage*/,UNMAPPED/*No mapping*/,UNRESOLVED_HIT/*Several hits with the same score*/,PAIRED_SW/*paired hit recovered by SW*/};
-const int MX=6,MN=2,BOPEN=6,BEXT=3,MATCH_BONUS=0;//2;
+const int MX=6,MN=2,BOPEN=6,BEXT=1,MATCH_BONUS=0;//2;
 //{-----------------------------  STRUCTS  -------------------------------------------------/
 
 struct Ann_Info

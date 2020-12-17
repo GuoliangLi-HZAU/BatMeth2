@@ -10,7 +10,7 @@
 //#include <ctime>
 #include <time.h>
 
-#define BATBUF 2000
+#define BATBUF 30000
 #define BT2_VER "2.1"
 
 using namespace std;
@@ -28,23 +28,9 @@ void outputRow(ofstream& ofs, string key, string v);
 FILE* File_Open(const char* File_Name,const char* Mode);
 string my_to_string(long n);
 int main(int argc, char* argv[]){
-	const char* Help_String="Command Format :  calmeth [options] -g GENOME  -i/-b <SamfileSorted/BamfileSorted> -m <methratio outfile prefix>\n"
+	const char* Help_String="Command Format :  report2html -p prefix \n"
 		"\nUsage:\n"
-		"\t-g|--genome           Genome\n"
-		"\t-i|--input            Sam format file, sorted by chrom.\n"
-		"\t-b|--binput           Bam format file, sorted by chrom.\n"
-		//"\t-p|--threads          the number of threads.\n"
-		"\t-n|--Nmismatch [float]  Number of mismatches, default 0.06 percentage of read length. [0-1]\n"
-		"\t-m|--methratio        [MethFileNamePrefix]  Predix of methratio output file\n"
-		"\t-Q [int]              caculate the methratio while read QulityScore >= Q. default:10\n"
-		"\t-c|--coverage         >= <INT> coverage. default:5\n"
-		"\t-nC		         >= <INT> nCs per region. default:5\n"
-		"\t-R |--Regions         Bins for DMR caculate , default 1kb .\n"
-		"\t--binsfile            DNA methylation level distributions in chrosome, default output file: {methratioPrefix}.methBins.txt\n"
-		"\t-s|--step             Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n"
-		"\t-r|--remove_dup       REMOVE_DUP, default:false\n"
-		"\t-f|--sam [outfile]    f for sam format outfile contain methState. default: sam format.\n"
-		"\t--sam-seq-beforeBS    Converting BS read to the genome sequences.\n"
+		"\t-p           Prefix same as run BatMeth2 pipel\n"
 		"\t-h|--help";
 
     std::string enrichfile="";
@@ -54,6 +40,7 @@ int main(int argc, char* argv[]){
     string heatmap_chg_file="";
     string heatmap_chh_file="";
     string mrfile="";
+    string coverage_mrfile = "";
     string prefix="";
     string chrom_mrfile="";
     char s2t[BATBUF];
@@ -64,17 +51,18 @@ int main(int argc, char* argv[]){
 		}
     }
     htmlFile = prefix + "." + htmlFile;
-    enrichfile = prefix + ".AverMethylevel.1.txt";
-    distri_mrfile = prefix + ".Methylevel.1.txt";
-    heatmap_cg_file = prefix + ".1.txt.sorted.cg";
-    heatmap_chg_file = prefix + ".1.txt.sorted.chg";
-    heatmap_chh_file = prefix + ".1.txt.sorted.chh";
+    enrichfile = prefix + ".Methylevel.txt";
+    distri_mrfile = prefix + ".AverMethylevel.txt";
+    heatmap_cg_file = prefix + ".txt.sorted.cg";
+    heatmap_chg_file = prefix + ".txt.sorted.chg";
+    heatmap_chh_file = prefix + ".txt.sorted.chh";
     mrfile = prefix + ".mCcatero.txt";
+    coverage_mrfile = prefix + ".NCcoverage.txt";
     chrom_mrfile = prefix + ".methBins.txt";
     string parafile = prefix + ".Paramater.txt";
     string parafile2 = prefix + ".Paramater2.txt";
     //awk -v FS="\t" -v OFS="\t" '{gsub(/ /,"_",$2);print $2,$1}' alignresults.txt > alignresults2.txt
-    string alignfile = prefix + ".alignresults.txt";
+    string alignfile = prefix + ".align.log.txt";
     string mrbasicfile = prefix + ".methbasic.txt";
 
     ofstream ofs;
@@ -162,7 +150,7 @@ int main(int argc, char* argv[]){
         strcpy(opt1, subarr);
         subarr = strtok(NULL,"\t");
         strcpy(opt2, subarr);
-        outputRow(ofs, opt2, opt1);
+        outputRow(ofs, opt1, opt2);
     }
 
     ofs << "</table>\n";
@@ -430,6 +418,91 @@ int main(int argc, char* argv[]){
     ofs << "</div>\n";
 
 //-------------------------------------------------------------------------------------------------------------------------
+//DNA methylation Coverage
+    // coverage_mr header
+    ofs << "<div class='section_div'>\n";
+
+    //html of function part
+    ofs << "<div id='coverage_mr_figure'>\n";
+    ofs << "<div class='section_title' onclick=showOrHide('coverage_mr')><a name='summary'>DNA methylation Coverage</a></div>\n";
+    ofs << "<div id='coverage_mr' style='display:flex'>\n";
+    ofs << "<div class='col-md-5 figure' id='plot_coverage_mr' style='display:flex;height:400px; width: 600px'></div>\n";
+    ofs << "<div class='col-md-5 figure' id='plot_coverage_percent' style='display:flex;height:400px; width: 600px'></div>\n";
+    ofs << "</div>\n";
+
+    // script of plotly
+    ofs << "\n<script type=\"text/javascript\">" << endl;
+    json_str="";
+
+    FILE* Coverage_MR = File_Open(coverage_mrfile.c_str(), "r");
+    int i=0;
+
+    double** NcoverageC = new double*[2];
+    for(int i=0;i<2;i++)
+        NcoverageC[i] = new double[total];
+    int j_len=0;
+    while(fgets(s2t, BATBUF, Coverage_MR)!=0){
+        char *subarr = strtok(s2t,"\t");
+        j_len=0;
+        while(subarr!=NULL){
+            if(subarr[0]=='N' || subarr[0]=='P') {
+                subarr = strtok(NULL,"\t");
+                continue;
+            }
+            NcoverageC[i][j_len] = atof(subarr);
+            
+            subarr = strtok(NULL,"\t");
+            j_len++;
+        }
+        i++;
+    }
+    fclose(Coverage_MR);
+
+    //html
+    int* x_axis = new int[j_len];
+    for(int i=0;i<j_len;i++){
+        x_axis[i]=i+1;
+    }
+    json_str += "var trace_cover ={";
+    json_str += "x: [" + list2string_int(x_axis, j_len) +"],";
+    json_str += "y: [" + list2string(NcoverageC[0], j_len) + "],";
+    json_str += "name: 'Coverage',";
+    json_str += "mode:'lines+markers',";
+    json_str += "marker: {color: '#1C86EE'}";
+    json_str += "};\n";
+
+    json_str += "var data = [trace_cover];\n";
+    json_str += "var layout={yaxis: { title:'DNA Methylation Coverage'}, xaxis: {title: 'Covergae'} };\n";
+
+    json_str += "Plotly.newPlot('plot_coverage_mr', data, layout);\n";
+    ofs << json_str;
+
+    //percentage
+    json_str = "";
+    json_str += "var trace_cover_p ={";
+    json_str += "x: [" + list2string_int(x_axis, j_len) +"],";
+    json_str += "y: [" + list2string(NcoverageC[1], j_len) + "],";
+    json_str += "name: 'Percentage',";
+    json_str += "mode:'lines+markers',";
+    json_str += "marker: {color: '#FF4136'}";
+    json_str += "};\n";
+
+    json_str += "var data = [trace_cover_p];\n";
+    json_str += "var layout={yaxis: { title:'DNA Methylation Coverage Percentage'}, xaxis: {title: 'Covergae'} };\n";
+
+    json_str += "Plotly.newPlot('plot_coverage_percent', data, layout);\n";
+
+    ofs << json_str;
+    ofs << "</script>" << endl;
+
+    //distri footer
+    ofs << "</div>\n";
+    ofs << "</div>\n";
+    for(int i=0;i<2;i++)
+        delete []NcoverageC[i];
+    delete []NcoverageC;
+
+//-------------------------------------------------------------------------------------------------------------------------
 //DNA methylation distribution
     // distri_mr header
     ofs << "<div class='section_div'>\n";
@@ -443,13 +516,14 @@ int main(int argc, char* argv[]){
 
     // script of plotly
     ofs << "\n<script type=\"text/javascript\">" << endl;
+    json_str="";
 
     FILE* Distri_MR = File_Open(distri_mrfile.c_str(), "r");
-    int i=0;
+    i=0;
     double** cg_dis_mr = new double*[3];
     for(int i=0;i<3;i++)
         cg_dis_mr[i] = new double[total];
-    int j_len=0;
+    j_len=0;
     while(fgets(s2t, BATBUF, Distri_MR)!=0){
         char *subarr = strtok(s2t,"\t");
         j_len=0;
@@ -468,7 +542,7 @@ int main(int argc, char* argv[]){
     fclose(Distri_MR);
 
     //html
-    int* x_axis = new int[j_len];
+    x_axis = new int[j_len];
     for(int i=0;i<j_len;i++){
         x_axis[i]=i+1;
     }

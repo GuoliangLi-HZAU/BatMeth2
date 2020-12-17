@@ -876,7 +876,7 @@ void align_destroy (s_align* a) {
 void init_SSW() {
 	match = 2;
 	mismatch = 2;
-	gap_open = 3;//11;//3;
+	gap_open = 6;//11;//3; 3改为6
 	gap_extension = 1;
 
 	path = 1;

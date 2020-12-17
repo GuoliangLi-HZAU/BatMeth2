@@ -397,7 +397,7 @@ void ssw_cigar_process(char Sign,int ReadSpan,char* rawRead,char* rawRef,s_align
 void ssw_cigar_processQ(char Sign,char* rawRead,char* rawRef,s_align* a,Cigar_Info & C,char* Ref,int Ref_Off,char* Pattern,int Pat_Off,int StringLength,const char* Qual,char* Cigar,int Clip_H,int Clip_T,bool Hard_Penalty) { //print the cigar out //,READ & R
 	bool Cig_Err=false;
 	const int gap_openN=40,gap_extensionN=6; //changed by qiangwei and temp
-	const int MX=6,MN=2,BOPEN=6,BEXT=3,MATCH_BONUS=0; //0;//2;
+	const int MX=6,MN=2,BOPEN=6,BEXT=1,MATCH_BONUS=0; //0;//2;
 	int c = 0,Tot_Length=0;char* Cigar_Ptr=Cigar;
 	float Score=0,QScore=0,BQScore=0;
 	float TScore=0,TQScore=0,TBQScore=0;

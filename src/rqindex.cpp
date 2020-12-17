@@ -19,7 +19,7 @@ unsigned long Block_Size = 0;
  */
 void Load_Hits_File(BATPARAMETERS BP,FILELIST & FList,In_File & IN,char MODE)
 {
-#define READ_ASSERT(X,Y) {if ((X)<(Y)) {if(LOG_SUCCESS_FILE)fprintf(Log_SFile,"Load_Hits_File(): Read error...\n"); printf("Load_Hits_File(): Read error...\n");exit(-1);}}
+#define READ_ASSERT(X,Y) {if ((X)<(Y)) { printf("Load_Hits_File(): Read error...\n");exit(-1);}}
 
 if (BATFILEMODE == MODE)
 {
@@ -31,7 +31,6 @@ if (BATFILEMODE == MODE)
 	READ_ASSERT(fread(&Head,1,sizeof(Header),FList.Head),sizeof(Header));
 	if(!(Head.ID[0]=='B'&&Head.ID[1]=='A'&&Head.ID[2]=='T')) 
 	{
-		if (LOG_SUCCESS_FILE) fprintf(Log_SFile,"Not a BAT file\n");
 		printf("Not a BAT file\n");
 		exit(-1);
 	}
@@ -81,7 +80,7 @@ else
 char Read_Pair(BWT* fwfmi,BWT* revfmi,SARange* Head_Hits_Pos,SARange* Head_Hits_Neg, SARange* Tail_Hits_Pos,SARange* Tail_Hits_Neg,FILE* Data_File,In_File & IN,Record_Info & Hit_Details,char & MAX_HIT_FAULT,unsigned Conversion_Factor)
 {
 #undef READ_ASSERT
-#define READ_ASSERT(X,Y) {if ((X)<(Y)) {if(LOG_SUCCESS_FILE)fprintf(Log_SFile,"Read_Pair(): Read error...\n"); printf("Read_Pair(): Read error...\n");exit(-1);}}
+#define READ_ASSERT(X,Y) {if ((X)<(Y)) { printf("Read_Pair(): Read error...\n");exit(-1);}}
 	MAX_HIT_FAULT=FALSE;
 	int Head_Hit_Pos_Count=0;
 	int Head_Hit_Neg_Count=0;
@@ -116,7 +115,7 @@ char Read_Pair(BWT* fwfmi,BWT* revfmi,SARange* Head_Hits_Pos,SARange* Head_Hits_
 	Output_Record Record;
 
 	if (First_Pass) {READ_ASSERT(fread(&Tag_Type,1,1,Data_File),1);} 
-	if(fgets(Hit_Details.Description,MAXDES,Data_File)==NULL) {if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Read_Pair(): error reading file...\n");printf("Read_Pair(): error reading file...\n");exit(-1);};
+	if(fgets(Hit_Details.Description,MAXDES,Data_File)==NULL) {printf("Read_Pair(): error reading file...\n");exit(-1);};
 	Seek_Tail=Hit_Details.Description;
 	while(*(Seek_Tail)!='\n'&&*(Seek_Tail)!='\t'&&*(Seek_Tail)!=' ') Seek_Tail++;*Seek_Tail=0;//make description to a string...
 	READ_ASSERT(fread(Stats1,IN.Stat_Size,1,Data_File),1);
@@ -239,7 +238,7 @@ char Read_Pair(BWT* fwfmi,BWT* revfmi,SARange* Head_Hits_Pos,SARange* Head_Hits_
 void Load_Range_Index(RQINDEX & R,int STRINGLENGTH,FMFILES F,unsigned & Entries)
 {
 #undef READ_ASSERT
-#define READ_ASSERT(X,Y) {if ((X)<(Y)) {if(LOG_SUCCESS_FILE)fprintf(Log_SFile,"Load_Range_Index(): Read error...\n"); printf("Load_Range_Index(): Read error...\n");exit(-1);}}
+#define READ_ASSERT(X,Y) {if ((X)<(Y)) {printf("Load_Range_Index(): Read error...\n");exit(-1);}}
 	unsigned long Index_Size = 0; //,Block_Size;
 	int T1=strlen(F.INDFILE);
 	int T2=strlen(F.BLKFILE);
@@ -253,7 +252,6 @@ void Load_Range_Index(RQINDEX & R,int STRINGLENGTH,FMFILES F,unsigned & Entries)
 	//memset(R.SA_Blocks, 0, Block_Size);
 	if (!R.SA_Index || !R.SA_Blocks)
 	{
-		if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Load_Range_Index(): Memory allocation failed!..\n");
 		printf ("Load_Range_Index(): Memory allocation failed!..\n");
 		exit(-1);
 	}

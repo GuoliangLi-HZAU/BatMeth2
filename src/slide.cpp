@@ -16,9 +16,9 @@ const int OPEN=-4;
 const int EXTEND=-1;
 const int SCOREDIFF=8*MATCH;
 const int MAX_SIGLEN=10;
-const int gap_open = 3;
+const int gap_open = 6; //原来是3改为6
 const int gap_extension = 1;
-int MX=6,MN=2,BOPEN=6,BEXT=3,MATCH_BONUS=0;
+int MX=6,MN=2,BOPEN=6,BEXT=1,MATCH_BONUS=0;
 int gap_openP=40,gap_extensionP=6; 
 float Match_FA_Score;
 float Mis_FA_Score; 

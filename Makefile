@@ -51,7 +51,7 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
 	install-html-recursive install-info-recursive \
-	install-pdf-recursive install-ps-recursive install-recursive \
+	install-pdf-recursive install-ps-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -560,7 +560,8 @@ check: check-recursive
 all-am: Makefile config.h
 installdirs: installdirs-recursive
 installdirs-am:
-install: install-recursive
+install: myinstall
+#install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -673,13 +674,62 @@ uninstall-am:
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 script:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread
+	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -no-pie
+	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread -no-pie
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html 
-copy:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread
+myinstall:
+	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -no-pie
+	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread -no-pie
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
+	cp scripts/batmeth2_to_bigwig.py bin
+	cp scripts/bedGraphToBigWig bin
+	cp scripts/bedSort bin
+	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp -lpthread
+	g++ ./scripts/report2html.cpp -o ./scripts/report2html
+	cp ./scripts/BatMeth2 ./bin/batmeth2
+	cp scripts/strip.pl bin 
+	cp scripts/report2html bin
+	cp scripts/b2c.pl bin 
+	cp scripts/build_complement bin 
+	cp scripts/filter.pl bin
+	cp scripts/build_indexX bin 
+	cp scripts/build_all bin
+	cp scripts/ann2loc.pl bin 
+	cp scripts/build_location.pl bin 
+	cp scripts/build_revcmp bin 
+	cp scripts/complement.pl bin
+	cp scripts/ReverseComplteFQ bin
+	cp src/bwtformatdb bin 
+	cp src/reverse bin 
+	cp src/penguin bin 
+	cp src/penguin-a bin
+	cp src/calmeth bin
+	cp src/batmethindex bin
+	cp src/filter bin
+	cp bwtformatdb.ini bin
+	cp src/splitSam bin
+	cp src/methyGff bin
+	cp src/methyPlot bin
+	cp src/*.r bin
+	cp scripts/*.r bin
+	cp src/DMCannotation* bin
+	cp scripts/GeneMethHeatmap ./bin/
+	cp scripts/chrLenExtract ./bin
+	cp scripts/combined.element* bin
+	cp scripts/batmeth2-align bin
+	cp scripts/BatMeth2 bin
+	cp scripts/build_ann_location.pl bin
+	cp scripts/preGenome bin
+	cp src/batDMR/batDMR ./bin
+	cp src/genome_filter bin
+	cp src/build_index_rrbs bin
+copy:
+	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -no-pie
+	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread -no-pie
+	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
+	cp scripts/batmeth2_to_bigwig.py bin
+	cp scripts/bedGraphToBigWig bin
+	cp scripts/bedSort bin
 	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp -lpthread
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html
 	cp ./scripts/BatMeth2 ./bin/batmeth2

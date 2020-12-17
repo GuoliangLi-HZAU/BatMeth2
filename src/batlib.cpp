@@ -92,12 +92,12 @@ void Analyze_File(INFILE & I,LEN & L)
 	for(;;)//ignore comments...
 	{
 		if(I.filegz == '1') gzgets(I.gzfp,Description,MAXDES);
-		else if(!fgets(Description,MAXDES,I.Input_File)) {if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Analyze_File(): error reading file...\n");printf("Analyze_File(): error reading file...\n");exit(-1);}
+		else if(!fgets(Description,MAXDES,I.Input_File)) {printf("Analyze_File(): error reading file...\n");exit(-1);}
 		if (Description[0] != '#') break;
 		Last=ftello64(I.Input_File);//mark last comment...
 	}
 	if(I.filegz == '1') gzgets(I.gzfp,Current_Tag,MAXDES);
-	else if(!fgets(Current_Tag,MAXTAG,I.Input_File)){if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Analyze_File(): error reading file...\n");printf("Analyze_File(): error reading file...\n");exit(-1);}
+	else if(!fgets(Current_Tag,MAXTAG,I.Input_File)){printf("Analyze_File(): error reading file...\n");exit(-1);}
 	if(Current_Tag[2]>='0' && Current_Tag[2] <='3') I.SOLID=TRUE;else I.SOLID =FALSE;//csfasta has numbers..
 	for(I.TAG_COPY_LEN=0;Current_Tag[I.TAG_COPY_LEN]!='\n' && Current_Tag[I.TAG_COPY_LEN]!='\r' && Current_Tag[I.TAG_COPY_LEN]!=0;I.TAG_COPY_LEN++);// Find the length of tag line.should be the same length is quality is present.. 
 	for(L.STRINGLENGTH=0;Current_Tag[L.STRINGLENGTH]!='\n' && Current_Tag[L.STRINGLENGTH]!='\r' && Current_Tag[L.STRINGLENGTH]!=0 && Current_Tag[L.STRINGLENGTH]!=PAIR_END_SEPERATOR;L.STRINGLENGTH++);//scan for a split that indicates tab seperated PET
@@ -105,18 +105,18 @@ void Analyze_File(INFILE & I,LEN & L)
 	if(Current_Tag[L.STRINGLENGTH]==PAIR_END_SEPERATOR) 
 	{
 		I.TAB_SEPERATED=TRUE;//we have pair ended tags..
-		if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Analyse_File(): Tab seperated files not supported yet ..\n");printf("Analyse_File(): Tab seperated files not supported yet ..\n");exit(-1);
+		printf("Analyse_File(): Tab seperated files not supported yet ..\n");exit(-1);
 		I.PAIR_LENGTH_LEFT=L.STRINGLENGTH;
 		for(I.PAIR_LENGTH_RIGHT=0;Current_Tag[L.STRINGLENGTH+1+I.PAIR_LENGTH_RIGHT]!='\n' && Current_Tag[L.STRINGLENGTH+1+I.PAIR_LENGTH_RIGHT]!='\r' && Current_Tag[L.STRINGLENGTH+1+I.PAIR_LENGTH_RIGHT]!=0;I.PAIR_LENGTH_RIGHT++);
 	}
 	else I.TAB_SEPERATED=FALSE;
 	if(I.filegz == '1') gzgets(I.gzfp,Quality,MAXDES);
-	else if(!fgets(Quality,MAXTAG,I.Input_File)){if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Analyze_File(): error reading file...\n");printf("Analyze_File(): error reading file...\n");exit(-1);}//plus
+	else if(!fgets(Quality,MAXTAG,I.Input_File)){printf("Analyze_File(): error reading file...\n");exit(-1);}//plus
 	if (Quality[0]=='>') I.FILETYPE=FA;
 	else 
 	{
 		I.FILETYPE=FQ;
-		if(Quality[0] != '+' || Description[0] != '@') {if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Init_Variables: Cannot determine file type ...\n");printf("Init_Variables: Cannot determine file type ...\n");exit(1);}
+		if(Quality[0] != '+' || Description[0] != '@') {printf("Init_Variables: Cannot determine file type ...\n");exit(1);}
 	}
 	if(I.filegz == '1') gzrewind(I.gzfp);
 	else fseek(I.Input_File,0,SEEK_SET);//go top
@@ -200,7 +200,6 @@ void Allocate_Memory(MEMX & M)
 
 	if (NULL==M.BMHStack||NULL==M.FSHStackX0X||NULL==M.FSHStack||NULL==M.FSSStack||NULL==M.FSSStackX||NULL==M.BMStack_X11H||NULL==M.BMStack_X11||NULL==M.BMStack||NULL==M.BMStackX||NULL==M.Exact_Match_Backward||NULL==M.Exact_Match_Forward||NULL==M.Exact_Match_Forward||NULL==M.PSBStack)
 	{
-		if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Allocate_Memory(): out of memory");
 		printf("Allocate_Memory(): out of memory");
 		exit(1);
 	}
@@ -301,7 +300,6 @@ void Load_Indexes(BWT* & fwfmi,BWT* & revfmi,MMPool* & mmPool,FMFILES & FM)//cha
 	unsigned SOURCELENGTH = fwfmi->textLength;
 	if (SOURCELENGTH!=revfmi->textLength)
 	{ 
-		if(LOG_SUCCESS_FILE) fprintf(Log_SFile,"Load_Indexes():FM index load error \n"); 
 		printf("Load_Indexes():FM index load error \n"); 
 		exit(-1);
 	}
@@ -407,7 +405,6 @@ FILE* File_Open(const char* File_Name,const char* Mode)
 	Handle=fopen64(File_Name,Mode);
 	if (Handle==NULL)
 	{
-		if (LOG_SUCCESS_FILE) fprintf(Log_SFile,"File %s Cannot be opened ....\n",File_Name);
 		printf("File %s Cannot be opened ....\n",File_Name);
 		exit(-1);
 	}
@@ -462,13 +459,13 @@ char Read_Tag_gz(gzFile Input_File,const char FILETYPE, READ & Read )
         {
                 char* C=Read.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
                 //gzgets(Input_File,Current_Tag-IGNOREHEAD,MAXDES);//tag
-                if(!gzgets(Input_File,Read.Tag_Copy,MAXDES)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+                if(!gzgets(Input_File,Read.Tag_Copy,MAXDES)) { printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
                 if (FILETYPE == FQ)
                 {
                         //gzgets(Input_File,Plus,MAXTAG);//plus
-                        if(!gzgets(Input_File,Read.Plus,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+                        if(!gzgets(Input_File,Read.Plus,MAXTAG)){ printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
                         //gzgets(Input_File,Quality,MAXTAG);//phred
-                        if(!gzgets(Input_File,Read.Quality,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+                        if(!gzgets(Input_File,Read.Quality,MAXTAG)){ printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
                 }
                 else
                 {
@@ -494,13 +491,13 @@ char Read_Tag(FILE *Input_File,const char FILETYPE, READ & Read )
         {
                 char* C=Read.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
                 //gzgets(Input_File,Current_Tag-IGNOREHEAD,MAXDES);//tag
-                if(!fgets(Read.Tag_Copy,MAXDES,Input_File)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+                if(!fgets(Read.Tag_Copy,MAXDES,Input_File)) {printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
                 if (FILETYPE == FQ)
                 {
                         //gzgets(Input_File,Plus,MAXTAG);//plus
-                        if(!fgets(Read.Plus,MAXTAG,Input_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+                        if(!fgets(Read.Plus,MAXTAG,Input_File)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
                         //gzgets(Input_File,Quality,MAXTAG);//phred
-                        if(!fgets(Read.Quality,MAXTAG,Input_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+                        if(!fgets(Read.Quality,MAXTAG,Input_File)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
                 }
                 else
                 {
@@ -532,13 +529,13 @@ char Read_Tag(FILE *Input_File,FILE *Mate_File,const char FILETYPE, READ & Read,
 	{
 		char* C=Read.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
 		//gzgets(Input_File,Current_Tag-IGNOREHEAD,MAXDES);//tag
-		if(!fgets(Read.Tag_Copy,MAXDES,Input_File)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+		if(!fgets(Read.Tag_Copy,MAXDES,Input_File)) {printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
 		if (FILETYPE == FQ)
 		{
 			//gzgets(Input_File,Plus,MAXTAG);//plus
-			if(!fgets(Read.Plus,MAXTAG,Input_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+			if(!fgets(Read.Plus,MAXTAG,Input_File)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
 			//gzgets(Input_File,Quality,MAXTAG);//phred
-			if(!fgets(Read.Quality,MAXTAG,Input_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+			if(!fgets(Read.Quality,MAXTAG,Input_File)){ printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
 		}
 		else
 		{
@@ -550,13 +547,13 @@ char Read_Tag(FILE *Input_File,FILE *Mate_File,const char FILETYPE, READ & Read,
 		{
 			char* C=Mate.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
 			//gzgets(Mate_File,Current_Tag-IGNOREHEAD,MAXDES);//tag
-			if(!fgets(Mate.Tag_Copy,MAXDES,Mate_File)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+			if(!fgets(Mate.Tag_Copy,MAXDES,Mate_File)) { printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
 			if (FILETYPE == FQ)
 			{
 				//gzgets(Mate_File,Plus,MAXTAG);//plus
-				if(!fgets(Mate.Plus,MAXTAG,Mate_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+				if(!fgets(Mate.Plus,MAXTAG,Mate_File)){ printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
 				//gzgets(Mate_File,Quality,MAXTAG);//phred
-				if(!fgets(Mate.Quality,MAXTAG,Mate_File)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+				if(!fgets(Mate.Quality,MAXTAG,Mate_File)){ printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
 			}
 			else
 			{
@@ -585,11 +582,11 @@ char Read_Tag_gz(gzFile Input_File,gzFile Mate_File,const char FILETYPE, READ & 
 	if (gzgets(Input_File,Read.Description,MAXDES)!=0)// read a tag...
 	{
 		char* C=Read.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
-		if(!gzgets(Input_File,Read.Tag_Copy,MAXDES)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+		if(!gzgets(Input_File,Read.Tag_Copy,MAXDES)) {printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
 		if (FILETYPE == FQ)
 		{
-			if(!gzgets(Input_File,Read.Plus,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
-			if(!gzgets(Input_File,Read.Quality,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+			if(!gzgets(Input_File,Read.Plus,MAXTAG)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+			if(!gzgets(Input_File,Read.Quality,MAXTAG)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
 		}
 		else
 		{
@@ -600,11 +597,11 @@ char Read_Tag_gz(gzFile Input_File,gzFile Mate_File,const char FILETYPE, READ & 
 		if (PAIRED && gzgets(Mate_File,Mate.Description,MAXDES)!=0)// read a tag...
 		{
 			char* C=Mate.Description;while (*C!=' ' && *C!='\t' &&*C != '\r' && *C != '\n') C++;*C=0;
-			if(!gzgets(Mate_File,Mate.Tag_Copy,MAXDES)) {if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
+			if(!gzgets(Mate_File,Mate.Tag_Copy,MAXDES)) {printf ("Read_Tag():Error reading file..\n");exit(-1);};//tag
 			if (FILETYPE == FQ)
 			{
-				if(!gzgets(Mate_File,Mate.Plus,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
-				if(!gzgets(Mate_File,Mate.Quality,MAXTAG)){if(LOG_SUCCESS_FILE) fprintf (Log_SFile,"Read_Tag():Error reading file..\n"); printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
+				if(!gzgets(Mate_File,Mate.Plus,MAXTAG)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//plus
+				if(!gzgets(Mate_File,Mate.Quality,MAXTAG)){printf ("Read_Tag():Error reading file..\n");exit(-1);};//phred
 			}
 			else
 			{
@@ -4562,7 +4559,7 @@ unsigned Process_GIS(bool & Whole_Len,int Paired_Score,READ & RawR,int & Top_Pen
 	int Genome_Position;
 	unsigned int minHits=0;
 	Ann_Info A;
-	const int MX=6,MN=2,BOPEN=6,BEXT=3,MATCH_BONUS=0;//2;
+	const int MX=6,MN=2,BOPEN=6,BEXT=1,MATCH_BONUS=0;//2;
 	float Score=0,QScore=0,BQScore=0;
 
 	int Mismatch_Count = Record.Mismatches;
@@ -4644,8 +4641,8 @@ unsigned Process_GIS(bool & Whole_Len,int Paired_Score,READ & RawR,int & Top_Pen
 				int i;int Lens=RawR.Real_Len;
 				for (i=0;i<=Lens-1;i++){RawRs.Tag_Copy[Lens-1-i]=Char_To_CharC[RawR.Tag_Copy[i]];}
 				RawRs.Tag_Copy[Lens]=0;
-		                Reverse_Quality_bat(Rev_Qual,RawR.Quality,Lens);
-		                Quality=Rev_Qual;
+				Reverse_Quality_bat(Rev_Qual,RawR.Quality,Lens);
+				Quality=Rev_Qual;
 			}
 			else
 			{

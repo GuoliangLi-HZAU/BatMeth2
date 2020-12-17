@@ -441,6 +441,13 @@ void Parse_Command_line(int argc, char* argv[],char* & GENOME,unsigned & MAXCOUN
 				break;
 			case 'o':
 				F.OUTPUTFILE=optarg;
+				if(!LOG_SUCCESS_FILE){
+					char temfp[1000];
+					strcpy(temfp, optarg);
+					strcat(temfp, ".align.log.txt");
+					LOG_SUCCESS_FILE=temfp;
+					Log_SFile=File_Open(LOG_SUCCESS_FILE,"w");
+				}
 				break;
 			case 'D':
 				F.DISCORDANTFILE=optarg;

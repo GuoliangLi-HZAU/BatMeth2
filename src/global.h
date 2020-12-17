@@ -67,6 +67,7 @@
 		unsigned SW_HITS,SW_DUP;
 		unsigned Total_Paired=0;
 		unsigned Total_Mapped=0;
+		unsigned passed20=0;
 		unsigned Total_Reads=0;
 		int READS_TO_PROCESS =0;
 		int PAIRING_SCHEME=5335;

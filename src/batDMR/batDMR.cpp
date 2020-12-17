@@ -216,7 +216,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
             }
             else if(position - prevdmc <= mindmcdis) {
 //fprintf(stderr, "\nTTT %d %d %d", dmrtotalLen, dmrtotalLen + position - prevdmc, maxdmrlen);
-               if(dmrtotalLen + position - prevdmc <= maxdmrlen){
+               if(dmrtotalLen + position - prevdmc <= maxdmrlen){ //未超出最大长度
                    Ndmc ++ ;
                    if(signed_methdiff > 0) hyperNdmc++;
                    else hypoNdmc++;
@@ -225,7 +225,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
                    prevdmc = position;
                    dmrC1 += meth_factor; dmrCover1 += coverage_factor;
                    dmrC2 += meth_rest; dmrCover2 += coverage_rest;
-               }else{
+               }else{ //超出了最大长度
                    if(Ndmc >= mindmc){
                        OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
                         << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
@@ -240,6 +240,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
                         hypoNdmc=1;
                         hyperNdmc=0;
                    }
+                  dmrC1 = 0; dmrCover1 = 0; dmrC2 = 0; dmrCover2 = 0;
                    dmrstart = position;
                    dmrC1 += meth_factor; dmrCover1 += coverage_factor;
                    dmrC2 += meth_rest; dmrCover2 += coverage_rest;
@@ -259,6 +260,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
                      hypoNdmc=1;
                      hyperNdmc=0;
                 }
+                dmrC1 = 0; dmrCover1 = 0; dmrC2 = 0; dmrCover2 = 0;
                 dmrstart = position;
                 dmrC1 += meth_factor; dmrCover1 += coverage_factor;
                 dmrC2 += meth_rest; dmrCover2 += coverage_rest;
@@ -271,6 +273,7 @@ void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encodin
      OutFiledmr << prevchrom << "\t" << dmrstart << "\t" << dmrend << "\t"
      << (double)dmrC1/dmrCover1 << "\t" << (double)dmrC2/dmrCover2 << "\t" << Ndmc
      << "\t" << hyperNdmc << "," << hypoNdmc << "\n";
+     dmrC1 = 0; dmrCover1 = 0; dmrC2 = 0; dmrCover2 = 0;
   }
   return;
 };
@@ -631,6 +634,7 @@ void merge_methylomes(vector<string> names, vector<string> methylomes, ostream &
         fprintf(stderr, "no such file, please check the file name!\n");
         exit(0);
     }
+//    if(meth_if == methylomes_fstream.end() ) break;
     meth_if++;
   }
 
@@ -929,7 +933,9 @@ int main(int argc, const char **argv) {
     const string prog_name = strip_methpath(argv[0]);
     string dmc_outfile;
     string dmr_outfile;      
-    double Pcutoff=0.01; double cutoff = 1; double methdiff=0.1;
+    double Pcutoff=0.01; double cutoff = 1; 
+    double methdiff=0.25;
+    double mdcg = 0.2; double mdchg = 0.1; double mdchh = 0.1;
     bool Auto = false;
     bool singleAuto = false;
     //unsigned length_dmr = 1000;
@@ -956,7 +962,7 @@ int main(int argc, const char **argv) {
                 "\t-maxdis      max length of dmr [default : 0]\n"
                 "\t-pvalue      pvalue cutoff, default: 0.01\n"
                 "\t-FDR         adjust pvalue cutoff default : 1.0\n"
-                "\t-methdiff    the cutoff of methylation differention. default: 0.1 [CpG]\n"
+                "\t-methdiff    the cutoff of methylation differention. default: 0.25 [CpG]\n"
                 "\t-element     caculate gene or TE etc function elements.\n"
                 "\t-context     Context for DM. [CG/CHG/CHH/ALL]\n"
                 //"\t-f auto\n"
@@ -1058,11 +1064,7 @@ int main(int argc, const char **argv) {
 	  Genome_CountX++;
     }
     rewind(GenomeLen);
-    if(Genome_CountX==0){
-        fprintf(stderr, "%s is empty! Please rerun!", Genome_Len.c_str());    
-        exit(0);
-    }
-
+    
     Genome_Count=0;
     Offset_Record Genome_Offsets[Genome_CountX];
     while (fgets(Temp_OR,190,GenomeLen)!=0)//count genomes..

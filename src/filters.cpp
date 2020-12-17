@@ -318,6 +318,7 @@ void Reverse_Quality(char* Dest,const READ & R,int StringLength)
 
 	for (int i=StringLength-1;i>=0;i--)
 	{
+		//if(R.Quality[i]=='\n') continue;
 		*Dest=R.Quality[i];Dest++;
 	}
 	*Dest=0;
@@ -327,6 +328,7 @@ void Reverse_Quality(char* Dest,char* Quality,int StringLength)
 {
 	for (int i=StringLength-1;i>=0;i--)
 	{
+		//if(Quality[i]=='\n') continue;
 		*Dest=Quality[i];Dest++;
 	}
 	*Dest=0;

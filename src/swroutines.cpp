@@ -559,7 +559,7 @@ void ssw_cigar_processQ(char Sign,char* rawRead,char* rawRef,s_align* a,Cigar_In
 			}
 			Cigar_Ptr++;C.M+=length;
 		}
-		else if (letter == 1)
+		else if (letter == 1) //insert
 		{
 			Tot_Length+=length;
 			C.Indel_Count++;

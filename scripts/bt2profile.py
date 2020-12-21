@@ -20,18 +20,24 @@ plt.switch_backend('agg')
 y = []
 z = []
 k = []
+averm = []
 
-def readfile(filename, y, z, k):
+def readfile(filename):
     nline=0
     with open(filename, 'r') as fig:
         for line in fig:
             data = line.split()
             if nline == 0:
                 y.append(list(map(float,data[1:])))
+                myaver = np.array(map(float,data[1:]))
             elif nline == 1:
                 z.append(list(map(float,data[1:])))
+                myaver+=np.array(map(float,data[1:]))
             elif nline == 2:
                 k.append(list(map(float,data[1:])))
+                myaver+=np.array(map(float,data[1:]))
+                myaver=myaver/3
+                averm.append(list(myaver))
             nline=nline+1
  
 ######################################################
@@ -171,7 +177,7 @@ def getArgs(args=None):
                             'the number of plots, the values are recycled.',
                         type=float)
     parser.add_argument('--yMax',
-                        default=[1.0],
+                        default=[],
                         nargs='+',
                         help='Maximum value for the Y-axis. Multiple values, separated by '
                             'spaces can be set for each profile. If the number of yMin values is smaller than'
@@ -211,8 +217,8 @@ def getArgs(args=None):
                         type=int
                         )
     parser.add_argument('--context',
-                        default="C",
-                        choices=["C", "CG", "CHG","CHH"],
+                        default="ALL",
+                        choices=["ALL", "C", "CG", "CHG","CHH"],
                         help='List of colors to use, should same as the number of samples,'
                         'Color names and html hex strings (e.g., #eeff22) are accepted. The color names should '
                         'be space separated. For example, --color red blue green ')
@@ -243,7 +249,7 @@ if __name__ == '__main__':
         exit()
 
     for x in range(0, len(args.mrfile)):
-        readfile(args.mrfile[x], y,z,k)
+        readfile(args.mrfile[x])
 
     plotx = np.linspace(1, len(y[0]), len(y[0]))
     scale_ls = args.scale
@@ -267,6 +273,7 @@ if __name__ == '__main__':
     newy=[]
     newz=[]
     newk=[]
+    newA=[]
     if(len(sample)>1 or sample[0]>1):
         nsample=len(sample)
         for ns in range(0, len(sample)):
@@ -275,10 +282,12 @@ if __name__ == '__main__':
                     npy = np.array(y[i])
                     npz = np.array(z[i])
                     npk = np.array(k[i])
+                    npA = np.array(averm[i])
                 else:
                     npy = npy+np.array(y[i])
                     npz = npz+np.array(z[i])
                     npk = npk+np.array(k[i])
+                    npA = npA+np.array(averm[i])
             j+=sample[ns]
             npy=npy/sample[ns]
             newy.append(npy)
@@ -286,9 +295,12 @@ if __name__ == '__main__':
             newz.append(npz)
             npk=npk/sample[ns]
             newk.append(npk)
+            npA=npA/sample[ns]
+            newA.append(npA)
         y=newy
         z=newz
         k=newk
+        averm=newA
 
     percentage=1
     #cutoff=6
@@ -338,11 +350,12 @@ if __name__ == '__main__':
             data.append(y[x])
             data.append(z[x])
             data.append(k[x])
+            data.append(averm[x])
             print(data)
             if skipyaxis:
-                plotline(plotx, data, label[x], title, 3, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,0,1)
+                plotline(plotx, data, label[x], title, 4, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,0,1)
             else:
-                plotline(plotx, data, label[x], title, 3, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[x],ymax[x])
+                plotline(plotx, data, label[x], title, 4, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[x],ymax[x])
             plotn +=1
             data=[]
     
@@ -351,24 +364,24 @@ if __name__ == '__main__':
         plt.savefig(filename, dpi=mydpi, format=image_format)
         exit()
 
-    if(context=="C" and len(title) <3):
+    if(context=="ALL" and len(title) <4):
         print("title is not enough!")
-        title=["CG methylation level", "CHG methylation level", "CHH methylation level"]
+        title=["C methylation level", "CG methylation level", "CHG methylation level", "CHH methylation level"]
     
     #if(len(mycolor) < nsample):
     #    mycolor=["#E4007F", "#00A0E9"]
-    if(context=="C"):
+    if(context=="ALL"):
         plotonly = False
-        fig = plt.figure(figsize=((4+figextend)*3,3))
+        fig = plt.figure(figsize=((4+figextend)*4,3))
     else:
         plotonly = True
         fig = plt.figure(figsize=(4+figextend,3))
-    if(context=="C"):
-        if(len(ymax)<3):
+    if(context=="ALL"):
+        if(len(ymax)<4):
             skipyaxis = True
-        while(len(ymax)<3):
+        while(len(ymax)<4):
             ymax.append(1.0)
-        while(len(ymin)<3):
+        while(len(ymin)<4):
             ymin.append(0.0)
     else:
         if(len(ymax)<1):
@@ -380,22 +393,27 @@ if __name__ == '__main__':
 
     plotn = 1
     Nfigure=1
-    if(context=="C"):
-        Nfigure=3
+    if(context=="ALL"):
+        Nfigure=4
         if lastlegend:
             showlegend = 12
-        plotline(plotx, y, title[0], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotline(plotx, averm, title[0], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
         plotn+=1
-        plotline(plotx, z, title[1], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[1],ymax[1])
+        plotline(plotx, y, title[1], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotn+=1
+        plotline(plotx, z, title[2], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[1],ymax[1])
         plotn+=1
         showlegend = legend
-        plotline(plotx, k, title[2], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
+        plotline(plotx, k, title[3], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
     elif(context=="CG"):
-        plotline(plotx, y, title[0], label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotline(plotx, y, "CG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
     elif(context=="CHG"):
-        plotline(plotx, z, title[0], label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotline(plotx, z, "CHG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
     elif(context=="CHH"):
-        plotline(plotx, k, title[0], label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotline(plotx, k, "CHH meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+    elif(context=="C"):
+        plotline(plotx, averm, "mC meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+    
     #pdf.savefig(fig)
     plt.subplots_adjust(wspace=0.05, hspace=0.3)
     plt.tight_layout()

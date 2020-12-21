@@ -139,7 +139,7 @@ void chromLengthExact(string & refSeqFile)
 void Print_dm_result(const vector<PvalLocus> &pval_loci, ostream &output_encoding, double cutoff, double Pcutoff, double methdiff, string dmr_outfile, 
     bool singleAuto, int mindmc, int mindmcdis, int maxdmrlen) {
   string record, chrom, context, sign;string name;
-  size_t position, coverage_factor, meth_factor, coverage_rest, meth_rest;
+  int position, coverage_factor, meth_factor, coverage_rest, meth_rest; //size_t
   double pval;double adjust_pvalue;
   ofstream OutFiledmr;
   if(singleAuto) OutFiledmr.open(dmr_outfile.c_str());

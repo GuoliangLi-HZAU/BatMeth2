@@ -1119,9 +1119,9 @@ void alignmentstate(string outputdir, string output_prefix, string mkpath){
 
 void methyPlot(string outputdir, string output_prefix ){
     string cmd="";
-    cmd = abspath + "GeneMethHeatmap " + outputdir + output_prefix + " None " + getstring(CG) + " " + getstring(CHG) + " " + getstring(CHH);
-    cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
-    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    //cmd = abspath + "GeneMethHeatmap " + outputdir + output_prefix + " None " + getstring(CG) + " " + getstring(CHG) + " " + getstring(CHH);
+    //cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
+    //executeCMD(cmd.c_str(), outputdir, output_prefix);
     cmd = abspath + "report2html " + "-p " + outputdir + output_prefix;
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str(), outputdir, output_prefix);

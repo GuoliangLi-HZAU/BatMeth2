@@ -25,8 +25,8 @@ else
 	fi
 	done
 
-	Sequence=`head $Filename -n2|tail -n1`
-	Seq_Length=${#Sequence}
+	#Sequence=`head $Filename -n2|tail -n1`
+	#Seq_Length=${#Sequence}
 	#if [ $Seq_Length -gt 149 ]
 	#then
 	#	echo "Please use the long read align program : batmeth2-l"

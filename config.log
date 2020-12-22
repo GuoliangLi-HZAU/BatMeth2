@@ -28,10 +28,12 @@ uname -v = #1 SMP Wed Oct 15 04:27:16 UTC 2014
 /bin/universe          = unknown
 
 PATH: /public/home/qwzhou/software/axel/bin/
+PATH: /public/home/qwzhou/anaconda/bin
+PATH: /public/home/qwzhou/software_devp/methyhaplo/bin
 PATH: /public/home/qwzhou/software/fastp/
 PATH: /public/home/qwzhou/localperlv5.8/bin
 PATH: /public/home/qwzhou/software/emase/scripts
-PATH: /public/home/qwzhou/software_devp/batmeth2-qwgit/bin/
+PATH: /public/home/qwzhou/practice/mouse_tet2/WT-SC/test/batmeth2-qwgit/bin/
 PATH: /public/home/qwzhou/software/batmeth-1.04_mmx/bin
 PATH: /public/home/qwzhou/software/biscuit
 PATH: /public/home/qwzhou/software/jdk1.8.0_172/bin
@@ -43,7 +45,6 @@ PATH: /public/home/qwzhou/software/aseq-v1.1.11/
 PATH: /public/home/qwzhou/software/bwa-meth-master
 PATH: /public/home/qwzhou/software/R-3.4.3/bin
 PATH: /public/home/qwzhou/software/HapCUT2/build
-PATH: /public/home/qwzhou/anaconda/bin
 PATH: /public/home/qwzhou/software/R-3.4.3/bin
 PATH: /public/home/qwzhou/software/packagesR
 PATH: /public/home/qwzhou/software/packagesR/bin
@@ -532,7 +533,7 @@ configure:4843: $? = 0
 configure:4843: result: yes
 configure:4849: checking for _doprnt
 configure:4849: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-/tmp/cc5XjLlb.o: In function `main':
+/tmp/cctayuqS.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_doprnt'
 collect2: ld returned 1 exit status
 configure:4849: $? = 1
@@ -615,7 +616,7 @@ configure:4849: result: no
 configure:4863: checking for floor
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:60: warning: conflicting types for built-in function 'floor'
-/tmp/cc9BjPAn.o: In function `main':
+/tmp/ccNQPy43.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `floor'
 collect2: ld returned 1 exit status
 configure:4863: $? = 1
@@ -712,7 +713,7 @@ configure:4863: result: yes
 configure:4863: checking for pow
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:63: warning: conflicting types for built-in function 'pow'
-/tmp/ccyjPbBY.o: In function `main':
+/tmp/cc5RFSYN.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: ld returned 1 exit status
 configure:4863: $? = 1
@@ -802,7 +803,7 @@ configure:4863: result: yes
 configure:4863: checking for sqrt
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 conftest.c:64: warning: conflicting types for built-in function 'sqrt'
-/tmp/ccA0Loxm.o: In function `main':
+/tmp/ccuX8t4Z.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sqrt'
 collect2: ld returned 1 exit status
 configure:4863: $? = 1
@@ -1014,14 +1015,14 @@ am_cv_CXX_dependencies_compiler_type=gcc3
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run aclocal-1.11'
+ACLOCAL='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aclocal-1.11'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run tar'
-AUTOCONF='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run autoconf'
-AUTOHEADER='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run autoheader'
-AUTOMAKE='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run automake-1.11'
+AMTAR='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run tar'
+AUTOCONF='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoconf'
+AUTOHEADER='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoheader'
+AUTOMAKE='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run automake-1.11'
 AWK='gawk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -1048,7 +1049,7 @@ LDFLAGS='-L/public/home/qwzhou/software/packagesR/lib'
 LIBOBJS=''
 LIBS=''
 LTLIBOBJS=''
-MAKEINFO='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/missing --run makeinfo'
+MAKEINFO='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run makeinfo'
 MKDIR_P='/bin/mkdir -p'
 OBJEXT='o'
 PACKAGE='BatMeth'
@@ -1088,7 +1089,7 @@ host_alias=''
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /public/home/qwzhou/software_devp/batmeth2-qwgit/install-sh'
+install_sh='${SHELL} /public/home/qwzhou/software_devp/batmeth2/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
@@ -1154,38 +1155,3 @@ target_alias=''
 #define MMX 1
 
 configure: exit 0
-
-## ---------------------- ##
-## Running config.status. ##
-## ---------------------- ##
-
-This file was extended by BatMeth config.status 2.00(mmx), which was
-generated by GNU Autoconf 2.69.  Invocation command line was
-
-  CONFIG_FILES    = 
-  CONFIG_HEADERS  = 
-  CONFIG_LINKS    = 
-  CONFIG_COMMANDS = 
-  $ ./config.status Makefile
-
-on login
-
-config.status:879: creating Makefile
-
-## ---------------------- ##
-## Running config.status. ##
-## ---------------------- ##
-
-This file was extended by BatMeth config.status 2.00(mmx), which was
-generated by GNU Autoconf 2.69.  Invocation command line was
-
-  CONFIG_FILES    = 
-  CONFIG_HEADERS  = 
-  CONFIG_LINKS    = 
-  CONFIG_COMMANDS = 
-  $ ./config.status src/Makefile depfiles
-
-on login
-
-config.status:879: creating src/Makefile
-config.status:1108: executing depfiles commands

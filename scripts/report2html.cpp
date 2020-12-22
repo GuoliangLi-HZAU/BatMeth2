@@ -53,9 +53,9 @@ int main(int argc, char* argv[]){
     htmlFile = prefix + "." + htmlFile;
     enrichfile = prefix + ".Methylevel.txt";
     distri_mrfile = prefix + ".AverMethylevel.txt";
-    heatmap_cg_file = prefix + ".txt.sorted.cg";
-    heatmap_chg_file = prefix + ".txt.sorted.chg";
-    heatmap_chh_file = prefix + ".txt.sorted.chh";
+    heatmap_cg_file = prefix + ".GENE.cg.txt";
+    heatmap_chg_file = prefix + ".GENE.chg.txt";
+    heatmap_chh_file = prefix + ".GENE.chh.txt";
     mrfile = prefix + ".mCcatero.txt";
     coverage_mrfile = prefix + ".NCcoverage.txt";
     chrom_mrfile = prefix + ".methBins.txt";

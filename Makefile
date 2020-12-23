@@ -98,15 +98,15 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run aclocal-1.11
-AMTAR = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run tar
-AUTOCONF = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run autoconf
-AUTOHEADER = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run autoheader
-AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run automake-1.11
+ACLOCAL = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aclocal-1.11
+AMTAR = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run tar
+AUTOCONF = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoconf
+AUTOHEADER = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoheader
+AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run automake-1.11
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/public/home/qwzhou/software/packagesR/include
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
@@ -118,20 +118,20 @@ DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EGREP = /usr/bin/grep -E
+EGREP = /bin/grep -E
 EXEEXT = 
-GREP = /usr/bin/grep
+GREP = /bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/public/home/qwzhou/software/packagesR/lib
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/missing --run makeinfo
-MKDIR_P = /usr/bin/mkdir -p
+MAKEINFO = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run makeinfo
+MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = BatMeth
 PACKAGE_BUGREPORT = qiangwei.zhou2013@gmail.com
@@ -144,10 +144,10 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = 
 VERSION = 2.00_mmx
-abs_builddir = /public/home/qwzhou/software_devp/BatMeth2
-abs_srcdir = /public/home/qwzhou/software_devp/BatMeth2
-abs_top_builddir = /public/home/qwzhou/software_devp/BatMeth2
-abs_top_srcdir = /public/home/qwzhou/software_devp/BatMeth2
+abs_builddir = /public/home/qwzhou/software_devp/batmeth2
+abs_srcdir = /public/home/qwzhou/software_devp/batmeth2
+abs_top_builddir = /public/home/qwzhou/software_devp/batmeth2
+abs_top_srcdir = /public/home/qwzhou/software_devp/batmeth2
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -167,13 +167,13 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /public/home/qwzhou/software_devp/BatMeth2/install-sh
+install_sh = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = /usr/bin/mkdir -p
+mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local
@@ -576,6 +576,7 @@ install-strip:
 	  `test -z '$(STRIP)' || \
 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
+	-rm -rf bin
 
 clean-generic:
 
@@ -678,8 +679,8 @@ script:
 	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html 
 myinstall:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
+	g++ $(CXXFLAGS) ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
+	g++ $(CXXFLAGS) ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin

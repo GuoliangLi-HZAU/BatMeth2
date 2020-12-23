@@ -123,7 +123,7 @@ unsigned Tot_Unique_Org=0;//total unique hits obtained
 unsigned ALL_MAP_Org=0;
 unsigned Tot_Unique_Remdup=0;//total unique hits obtained after removing dups...
 unsigned ALL_Map_Remdup=0;
-float UPPER_MAX_MISMATCH=0.06;
+float UPPER_MAX_MISMATCH=0.1;
 bool REMOVE_DUP=false; //true; //true to removeDup, false will not remove PCR-dup
 unsigned Mismatch_Qual[255][255][255]; //[readLength][255][255]
 int QualCut=20;
@@ -1309,8 +1309,8 @@ void *Process_read(void *arg)
 		}
 		hitType = 0;
 		Total_Reads++;
-                Progress++;
-                fileprocess++;
+		Progress++;
+		fileprocess++;
 
 		if(bamformat) 
 		{
@@ -1318,18 +1318,19 @@ void *Process_read(void *arg)
 			//bam_tostring(((ARGS *)arg)->header , b, s2t);
 			int ct = processbamread(((ARGS *)arg)->header, b, Dummy,Flag,Chrom,pos,mapQuality,CIG,Chrom_P,pos_P,Insert_Size,forReadString,forQuality, hitType);
 			if(ct == -1) continue;
+			if(r<=0) break;
 		}
 		
 		if ( fileprocess>=1000000  ) {
-                        fprintf_time(stderr, "Processed %d reads.\n", Total_Reads);
-                        fileprocess = 0;
-        	}
+			fprintf_time(stderr, "Processed %d reads.\n", Total_Reads);
+			fileprocess = 0;
+        }
 
 		if(s2t[0]=='@') 
 		{
 			continue;
 		}
-                printheader = false;
+        printheader = false;
 		if(!bamformat)
 			sscanf(s2t,"%s%d%s%d%d%s%s%d%d%s%s",Dummy,&Flag,Chrom,&pos,&mapQuality,CIG,Chrom_P,&pos_P,&Insert_Size,forReadString,forQuality);
 		map<string, int>::iterator iter;
@@ -1400,7 +1401,7 @@ void *Process_read(void *arg)
             Mark=((ARGS *)arg)->Marked_Genome[pos+G_Skip];
             MarkE=((ARGS *)arg)->Marked_GenomeE[pos+G_Skip+readString.size()];
         }
-            if( !REMOVE_DUP || (!Mark || !(Mark & Flag_rm)) || (!MarkE || !(MarkE & Flag_rm)) )
+        if( !REMOVE_DUP || (!Mark || !(Mark & Flag_rm)) || (!MarkE || !(MarkE & Flag_rm)) )
 		{
 			int Hash_Index=((ARGS *)arg)->Genome_List[H].Index;//load current genome..
 			strcpy(rawReadBeforeBS,readString.c_str());

@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
 		"\t-d|--distance    DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000\n"
 		"\t-B|--body        For different analysis input format, gene/TEs body methylation level. [Different Methylation Gene(DMG/DMT...)]\n"
 		"\t-P|--promoter    For different analysis input format.[Different Methylation Promoter(DMP)]\n"
-		"\t--TSS            Caculate heatmap for TSS. [Outfile: outPrefix.TSS.cg.n.txt]\n"
-		"\t--TTS            Caculate heatmap for TTS. [Outfile: outPrefix.TTS.cg.n.txt] \n"
-		"\t--GENE           Caculate heatmap for GENE and flank 2k. [Outfile: outPrefix.GENE.cg.n.txt] \n"
+		"\t--TSS            Caculate matrix for TSS. [Outfile: outPrefix.TSS.cg.n.txt]\n"
+		"\t--TTS            Caculate matrix for TTS. [Outfile: outPrefix.TTS.cg.n.txt] \n"
+		"\t--GENE           Caculate matrix for GENE and flank 2k. [Outfile: outPrefix.GENE.cg.n.txt] \n"
 		"\t-s|--step        Gene body and their flanking sequences using an overlapping sliding window of 2% of the sequence length at a step of 1% of the sequence length. So default step: 0.01 (1%)\n"
 		"\t-bl|--bodyLen    Body length to which all regions will be fit. (default: same as -d)\n"
 		"\t-S|--chromStep   Caculate the density of genes/TEs in chromsome using an overlapping sliding window of 100000bp at a step of 50000bp, must equal \"-s\" in Split.. default step: 50000(bp)\n"//
@@ -410,13 +410,23 @@ int main(int argc, char* argv[])
 				methGff_List[i].countCHH=0;
 				methGff_List[i].Index=i;
 			}
+			//TSS and center profile
 			Methy_Gff methGff_TSS;
-			methGff_TSS.CG_C=new long[nLevel]();
-			methGff_TSS.CHG_C=new long[nLevel]();
-			methGff_TSS.CHH_C=new long[nLevel]();
-			methGff_TSS.CG_CT=new long[nLevel]();
-			methGff_TSS.CHG_CT=new long[nLevel]();
-			methGff_TSS.CHH_CT=new long[nLevel]();
+			int profilelen = nLevel*2;
+			methGff_TSS.CG_C=new long[profilelen]();
+			methGff_TSS.CHG_C=new long[profilelen]();
+			methGff_TSS.CHH_C=new long[profilelen]();
+			methGff_TSS.CG_CT=new long[profilelen]();
+			methGff_TSS.CHG_CT=new long[profilelen]();
+			methGff_TSS.CHH_CT=new long[profilelen]();
+
+			Methy_Gff methGff_center;
+			methGff_center.CG_C=new long[profilelen]();
+			methGff_center.CHG_C=new long[profilelen]();
+			methGff_center.CHH_C=new long[profilelen]();
+			methGff_center.CG_CT=new long[profilelen]();
+			methGff_center.CHG_CT=new long[profilelen]();
+			methGff_center.CHH_CT=new long[profilelen]();
 
 			string du[3];
 			du[0]="UP";du[1]="BODY";du[2]="DOWN";
@@ -435,6 +445,44 @@ int main(int argc, char* argv[])
 				exit(0);
 			}
 			for(int f=FileS,ip=0;f<=FileE;f++,ip++){
+				for ( int i=0;i<3;i++)
+				{//0--UP 1--BODY 2--DOWN
+					for(int j=0;j<longerlen; j++){
+						methGff_List[i].CG_C[j]=0;
+						methGff_List[i].CHG_C[j]=0;
+						methGff_List[i].CHH_C[j]=0;
+						methGff_List[i].CG_CT[j]=0;
+						methGff_List[i].CHG_CT[j]=0;
+						methGff_List[i].CHH_CT[j]=0;
+					}
+					methGff_List[i].AverPerCG=0;
+					methGff_List[i].AverPerCHG=0;
+					methGff_List[i].AverPerCHH=0;
+					methGff_List[i].AverCG=0;
+					methGff_List[i].AverCHG=0;
+					methGff_List[i].AverCHH=0;
+					methGff_List[i].countCG=0;
+					methGff_List[i].countCHG=0;
+					methGff_List[i].countCHH=0;
+					methGff_List[i].Index=i;
+				}
+				//TSS and center profile
+				for(int j=0;j<profilelen; j++){
+					methGff_TSS.CG_C[j]=0;
+					methGff_TSS.CHG_C[j]=0;
+					methGff_TSS.CHH_C[j]=0;
+					methGff_TSS.CG_CT[j]=0;
+					methGff_TSS.CHG_CT[j]=0;
+					methGff_TSS.CHH_CT[j]=0;
+
+					methGff_center.CG_C[j]=0;
+					methGff_center.CHG_C[j]=0;
+					methGff_center.CHH_C[j]=0;
+					methGff_center.CG_CT[j]=0;
+					methGff_center.CHG_CT[j]=0;
+					methGff_center.CHH_CT[j]=0;
+				}
+
 				AverPerCG=0;AverPerCHG=0;AverPerCHH=0;AverCG=0;AverCHG=0;AverCHH=0;
 				printf("\nProcessing %d out of %d. InFile: %s\n", f-FileS+1,FileE-FileS+1, argv[f]);
 					FILE* GFFINFILE=File_Open(argv[f],"r");
@@ -453,6 +501,7 @@ int main(int argc, char* argv[])
 					char TSS_cg[100];
 					char TSS_chg[100];
 					char TSS_chh[100];
+
 					//char TSS_cg_matrix[100];
 					//char TSS_chg_matrix[100];
 					//char TSS_chh_matrix[100];
@@ -465,6 +514,7 @@ int main(int argc, char* argv[])
 					char N[100];
 					char D[100];
 					char TSSprofile[100];
+					char centerprofile[100];
 					if(PrefixStart == 0 || ( (PrefixEnd-PrefixStart) != (FileE-FileS) )){
 						//only one inputfile or not same
 						if(PrefixStart!=0){
@@ -499,6 +549,7 @@ int main(int argc, char* argv[])
 						sprintf (N, "%s.AverMethylevel.txt", Output_Name);
 						sprintf (D, "%s.annoDensity.txt", Output_Name);
 						sprintf (TSSprofile, "%s.TSSprofile.txt", Output_Name);
+						sprintf (centerprofile, "%s.centerprofile.txt", Output_Name);
 					}else{
 						int Nprefix = PrefixStart+ip;
 						sprintf (T, "%s.Methylevel.txt", argv[Nprefix]);
@@ -528,6 +579,7 @@ int main(int argc, char* argv[])
 						sprintf (N, "%s.AverMethylevel.txt", argv[Nprefix]);
 						sprintf (D, "%s.annoDensity.txt", argv[Nprefix]);
 						sprintf (TSSprofile, "%s.TSSprofile.txt", argv[Nprefix]);
+						sprintf (centerprofile, "%s.centerprofile.txt", argv[Nprefix]);
 					}
 
 					char mode[10];
@@ -706,20 +758,27 @@ int main(int argc, char* argv[])
 								caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, true); //,MethGff_TSS_OUTFILEcg_matrix, MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 							}
 						}
-						//body
+						//body tss center
+						binspan = binspan/2.0;
+						caculate(start-distance,start+distance,Methy_List[H],Strand,methGff_TSS);
 						
+						caculate(start+(end-start)/2-distance,start+(end-start)/2+1+distance,Methy_List[H],Strand,methGff_center);
+						binspan = binspan_b;
+						//body
 						if(bodyLen != distance){
 							binspan = bodyspan;
 						}
 						caculate(start,end,Methy_List[H],Strand,methGff_List[1],GeneD_List[H]);
 						binspan = binspan_b;
 						//tss extend 2k，基因内部
+						/*
 						if(Strand=='-')
 							caculate(end-distance,end,Methy_List[H],Strand,methGff_TSS);
 						else
 						{
 							caculate(start,start+distance,Methy_List[H],Strand,methGff_TSS);
 						}
+						*/
 						
 						if(Strand!='-' && GENE){
 							//binspan = binspan_b/2;
@@ -877,48 +936,83 @@ int main(int argc, char* argv[])
 						fprintf(MethGffOUTFILE,"\t%f",(double)methGff_List[i].CHH_C[j]/(double)methGff_List[i].CHH_CT[j]);
 					}
 				}
+				//C
+				fprintf(MethGffOUTFILE,"\nC");
+				for(int i=0;i<3;i++)
+				{
+					if(i==1) printlen = bodynLevel;
+					else printlen = nLevel;
+					for(int j=0;j<printlen;j++)
+					{
+						fprintf(MethGffOUTFILE,"\t%f",((double)methGff_List[i].CHH_C[j]/(double)methGff_List[i].CHH_CT[j]+(double)methGff_List[i].CHG_C[j]/(double)methGff_List[i].CHG_CT[j]+(double)methGff_List[i].CG_C[j]/(double)methGff_List[i].CG_CT[j])/3.0  );
+					}
+				}
 				fprintf(MethGffOUTFILE,"\n");
 				fclose(MethGffOUTFILE);
 				//TSS distribution
 				FILE* fTSSprofile=File_Open(TSSprofile,mode);
+				int profilelen = nLevel*2;
 				//CG
-				Methy_Gff Meth_out;
+				Methy_Gff Meth_out=methGff_TSS;
 				fprintf(fTSSprofile,"CG");
-				for(int i=0;i<2;i++)
+				for(int j=0;j<profilelen;j++)
 				{
-					if(i==0) Meth_out = methGff_List[i];
-					else Meth_out = methGff_TSS;
-					for(int j=0;j<nLevel;j++)
-					{
-						if(Meth_out.CG_C[j] > Meth_out.CG_CT[j])
-							printf("\nError bin %d, %ld %ld", i, Meth_out.CG_C[j], Meth_out.CG_CT[j]);
-						fprintf(fTSSprofile,"\t%f",(double)Meth_out.CG_C[j]/(double)Meth_out.CG_CT[j]);
-					}
+					if(Meth_out.CG_C[j] > Meth_out.CG_CT[j])
+						printf("\nError bin %d, %ld %ld", j, Meth_out.CG_C[j], Meth_out.CG_CT[j]);
+					fprintf(fTSSprofile,"\t%f",(double)Meth_out.CG_C[j]/(double)Meth_out.CG_CT[j]);
 				}
 				//CHG
 				fprintf(fTSSprofile,"\nCHG");
-				for(int i=0;i<2;i++)
+				for(int j=0;j<profilelen;j++)
 				{
-					if(i==0) Meth_out = methGff_List[i];
-					else Meth_out = methGff_TSS;
-					for(int j=0;j<nLevel;j++)
-					{
-						fprintf(fTSSprofile,"\t%f",(double)Meth_out.CHG_C[j]/(double)Meth_out.CHG_CT[j]);
-					}
+					fprintf(fTSSprofile,"\t%f",(double)Meth_out.CHG_C[j]/(double)Meth_out.CHG_CT[j]);
 				}
 				//CHH
 				fprintf(fTSSprofile,"\nCHH");
-				for(int i=0;i<2;i++)
+				for(int j=0;j<profilelen;j++)
 				{
-					if(i==0) Meth_out = methGff_List[i];
-					else Meth_out = methGff_TSS;
-					for(int j=0;j<nLevel;j++)
-					{
-						fprintf(fTSSprofile,"\t%f",(double)Meth_out.CHH_C[j]/(double)Meth_out.CHH_CT[j]);
-					}
+					fprintf(fTSSprofile,"\t%f",(double)Meth_out.CHH_C[j]/(double)Meth_out.CHH_CT[j]);
+				}
+				//C
+				fprintf(fTSSprofile,"\nC");
+				for(int j=0;j<profilelen;j++)
+				{
+					fprintf(fTSSprofile,"\t%f",((double)Meth_out.CHG_C[j]/(double)Meth_out.CHG_CT[j]+(double)Meth_out.CG_C[j]/(double)Meth_out.CG_CT[j]+(double)Meth_out.CHH_C[j]/(double)Meth_out.CHH_CT[j])/3.0 );
 				}
 				fprintf(fTSSprofile,"\n");
 				fclose(fTSSprofile);
+
+				//center distribution
+				FILE* fcenterprofile=File_Open(centerprofile,mode);
+				//CG
+				Meth_out=methGff_center;
+				fprintf(fcenterprofile,"CG");
+				for(int j=0;j<profilelen;j++)
+				{
+					if(Meth_out.CG_C[j] > Meth_out.CG_CT[j])
+						printf("\nError bin %d, %ld %ld", j, Meth_out.CG_C[j], Meth_out.CG_CT[j]);
+					fprintf(fcenterprofile,"\t%f",(double)Meth_out.CG_C[j]/(double)Meth_out.CG_CT[j]);
+				}
+				//CHG
+				fprintf(fcenterprofile,"\nCHG");
+				for(int j=0;j<profilelen;j++)
+				{
+					fprintf(fcenterprofile,"\t%f",(double)Meth_out.CHG_C[j]/(double)Meth_out.CHG_CT[j]);
+				}
+				//CHH
+				fprintf(fcenterprofile,"\nCHH");
+				for(int j=0;j<profilelen;j++)
+				{
+					fprintf(fcenterprofile,"\t%f",(double)Meth_out.CHH_C[j]/(double)Meth_out.CHH_CT[j]);
+				}
+				//C
+				fprintf(fcenterprofile,"\nC");
+				for(int j=0;j<profilelen;j++)
+				{
+					fprintf(fcenterprofile,"\t%f",((double)Meth_out.CHG_C[j]/(double)Meth_out.CHG_CT[j]+(double)Meth_out.CG_C[j]/(double)Meth_out.CG_CT[j]+(double)Meth_out.CHH_C[j]/(double)Meth_out.CHH_CT[j])/3.0 );
+				}
+				fprintf(fcenterprofile,"\n");
+				fclose(fcenterprofile);
 				
 				printf("\n%s\nC : %f\n",argv[f],(double)(AverPerCG+AverPerCHG+AverPerCHH)/(double)(AverCG+AverCHG+AverCHH) );//AverPerCHG
 				printf("CG : %f\n",(double)AverPerCG/(double)AverCG);

@@ -49,7 +49,7 @@ FILE* File_Open(const char* File_Name,const char* Mode);
 void Show_Progress(float Percentage);
 void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List);
 void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List,GeneDensity & GeneD_List);
-void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS,int geneE,bool printtitle=true); //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
+void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffc,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS,int geneE,bool printtitle=true); //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
 #define Init_Progress()	printf("======================]\r[");//progress bar....
 #define Done_Progress()	printf("\r[++++++++ 100%% ++++++++]\n");//progress bar....
 unsigned u=0;
@@ -498,6 +498,7 @@ int main(int argc, char* argv[])
 					char P_chg[100];
 					char P_chh[100];
 
+					char TSS_c[100];
 					char TSS_cg[100];
 					char TSS_chg[100];
 					char TSS_chh[100];
@@ -505,9 +506,11 @@ int main(int argc, char* argv[])
 					//char TSS_cg_matrix[100];
 					//char TSS_chg_matrix[100];
 					//char TSS_chh_matrix[100];
+					char TTS_c[100];
 					char TTS_cg[100];
 					char TTS_chg[100];
 					char TTS_chh[100];
+					char GENE_c[100];
 					char GENE_cg[100];
 					char GENE_chg[100];
 					char GENE_chh[100];
@@ -532,16 +535,19 @@ int main(int argc, char* argv[])
 						sprintf (P_chg, "%s.Promoter.chg.txt", Output_Name);
 						sprintf (P_chh, "%s.Promoter.chh.txt", Output_Name);
 						//gene
+						sprintf (TSS_c, "%s.TSS.c.txt", Output_Name);
 						sprintf (TSS_cg, "%s.TSS.cg.txt", Output_Name);
 						sprintf (TSS_chg, "%s.TSS.chg.txt", Output_Name);
 						sprintf (TSS_chh, "%s.TSS.chh.txt", Output_Name);
 						//sprintf (TSS_cg_matrix, "%s.TSS.cg.matrix", Output_Name);
                 	    //sprintf (TSS_chg_matrix, "%s.TSS.chg.matrix", Output_Name);
                 	    //sprintf (TSS_chh_matrix, "%s.TSS.chh.matrix", Output_Name);
+						sprintf (TTS_c, "%s.TTS.c.txt", Output_Name);
 						sprintf (TTS_cg, "%s.TTS.cg.txt", Output_Name);
 						sprintf (TTS_chg, "%s.TTS.chg.txt", Output_Name);
 						sprintf (TTS_chh, "%s.TTS.chh.txt", Output_Name);
 						//GENE
+						sprintf (GENE_c, "%s.GENE.c.txt", Output_Name);
 						sprintf (GENE_cg, "%s.GENE.cg.txt", Output_Name);
 						sprintf (GENE_chg, "%s.GENE.chg.txt", Output_Name);
 						sprintf (GENE_chh, "%s.GENE.chh.txt", Output_Name);
@@ -562,16 +568,19 @@ int main(int argc, char* argv[])
 						sprintf (P_chg, "%s.Promoter.chg.txt", argv[Nprefix]);
 						sprintf (P_chh, "%s.Promoter.chh.txt", argv[Nprefix]);
 						//gene
+						sprintf (TSS_c, "%s.TSS.c.txt", argv[Nprefix]);
 						sprintf (TSS_cg, "%s.TSS.cg.txt", argv[Nprefix]);
 						sprintf (TSS_chg, "%s.TSS.chg.txt", argv[Nprefix]);
 						sprintf (TSS_chh, "%s.TSS.chh.txt", argv[Nprefix]);
 						//sprintf (TSS_cg_matrix, "%s.TSS.cg.matrix", argv[Nprefix]);
                 	    //sprintf (TSS_chg_matrix, "%s.TSS.chg.matrix", argv[Nprefix]);
                 	    //sprintf (TSS_chh_matrix, "%s.TSS.chh.matrix", argv[Nprefix]);
+						sprintf (TTS_c, "%s.TTS.c.txt", argv[Nprefix]);
 						sprintf (TTS_cg, "%s.TTS.cg.txt", argv[Nprefix]);
 						sprintf (TTS_chg, "%s.TTS.chg.txt", argv[Nprefix]);
 						sprintf (TTS_chh, "%s.TTS.chh.txt", argv[Nprefix]);
 						//GENE
+						sprintf (GENE_c, "%s.GENE.c.txt", argv[Nprefix]);
 						sprintf (GENE_cg, "%s.GENE.cg.txt", argv[Nprefix]);
 						sprintf (GENE_chg, "%s.GENE.chg.txt", argv[Nprefix]);
 						sprintf (GENE_chh, "%s.GENE.chh.txt", argv[Nprefix]);
@@ -588,15 +597,18 @@ int main(int argc, char* argv[])
 					if(f == FileS) 
 						strcpy(mode, "w");
 					//FILE*
+					FILE* MethGff_TSS_OUTFILEc;
 					FILE* MethGff_TSS_OUTFILEcg;
 					FILE* MethGff_TSS_OUTFILEchg;
 					FILE* MethGff_TSS_OUTFILEchh;
 					//FILE* MethGff_TSS_OUTFILEcg_matrix;
                     //FILE* MethGff_TSS_OUTFILEchg_matrix;
                     //FILE* MethGff_TSS_OUTFILEchh_matrix;
+					FILE* MethGff_TTS_OUTFILEc;
 					FILE* MethGff_TTS_OUTFILEcg;
 					FILE* MethGff_TTS_OUTFILEchg;
 					FILE* MethGff_TTS_OUTFILEchh;
+					FILE* MethGff_GENE_OUTFILEc;
 					FILE* MethGff_GENE_OUTFILEcg;
 					FILE* MethGff_GENE_OUTFILEchg;
 					FILE* MethGff_GENE_OUTFILEchh;
@@ -626,6 +638,7 @@ int main(int argc, char* argv[])
 					//TSS
 					if(TSS)
 					{
+						MethGff_TSS_OUTFILEc=File_Open(TSS_c,mode);
 						MethGff_TSS_OUTFILEcg=File_Open(TSS_cg,mode);
 						MethGff_TSS_OUTFILEchg=File_Open(TSS_chg,mode);
 						MethGff_TSS_OUTFILEchh=File_Open(TSS_chh,mode);
@@ -636,12 +649,14 @@ int main(int argc, char* argv[])
 					//TTS
 					if(TTS)
 					{
+						MethGff_TTS_OUTFILEc=File_Open(TTS_c,mode);
 						MethGff_TTS_OUTFILEcg=File_Open(TTS_cg,mode);
 						MethGff_TTS_OUTFILEchg=File_Open(TTS_chg,mode);
 						MethGff_TTS_OUTFILEchh=File_Open(TTS_chh,mode);
 					}
 					if(GENE)
 					{
+						MethGff_GENE_OUTFILEc=File_Open(GENE_c,mode);
 						MethGff_GENE_OUTFILEcg=File_Open(GENE_cg,mode);
 						MethGff_GENE_OUTFILEchg=File_Open(GENE_chg,mode);
 						MethGff_GENE_OUTFILEchh=File_Open(GENE_chh,mode);
@@ -742,7 +757,7 @@ int main(int argc, char* argv[])
 							if(TTS)
 							{
 								binspan = binspan/2.0;
-								caculateHeatmap("TTS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("TTS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEc,MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 								binspan = binspan_b;
 							}
 						}else 
@@ -751,11 +766,11 @@ int main(int argc, char* argv[])
 							if(TSS)
 							{
 								binspan = binspan/2.0;
-								caculateHeatmap("TSS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("TSS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEc,MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 								binspan = binspan_b;
 							}
 							if(GENE) {
-								caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, true); //,MethGff_TSS_OUTFILEcg_matrix, MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, true); //,MethGff_TSS_OUTFILEcg_matrix, MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 							}
 						}
 						//body tss center
@@ -785,7 +800,7 @@ int main(int argc, char* argv[])
 							if(bodyLen != distance){
 								binspan = bodyspan;
 							}
-							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
+							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
 							binspan = binspan_b;
 						}
 						//down
@@ -795,11 +810,11 @@ int main(int argc, char* argv[])
 							if(TSS)
 							{
 								binspan = binspan/2.0;
-								caculateHeatmap("TSS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("TSS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEc,MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 								binspan = binspan_b;
 							}
 							if(GENE) {
-								caculateHeatmap("GENE",end,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom, start,end, true); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix, 
+								caculateHeatmap("GENE",end,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom, start,end, true); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix, 
 							}
 						}else
 						{//down
@@ -807,11 +822,11 @@ int main(int argc, char* argv[])
 							if(TTS)
 							{
 								binspan = binspan/2.0;
-								caculateHeatmap("TTS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("TTS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEc,MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 								binspan = binspan_b;
 							}
 							if(GENE) {
-								caculateHeatmap("GENE",end, end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
+								caculateHeatmap("GENE",end, end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
 							}
 						}
 						if(Strand=='-' && GENE) {
@@ -819,9 +834,9 @@ int main(int argc, char* argv[])
 							if(bodyLen != distance){
 								binspan = bodyspan;
 							}
-							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end,false); // MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
+							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end,false); // MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
 							binspan = binspan_b;
-							caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
+							caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
 						}
 						if(GENE) {
 							fprintf(MethGff_GENE_OUTFILEcg, "\n");
@@ -1289,14 +1304,14 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 }
 
 //caculate gene heatmap //http://www.sciencedirect.com/science/article/pii/S0092867413002225  //Fig.6G
-void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS, int geneE , bool printtitle){ //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
+void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffc,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS, int geneE , bool printtitle){ //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
         int step = floor((double(end - start))*((double)binspan/2)); //5%  2.5% step
 	unsigned nLevel=ceil(1/((double)binspan/2))-1;
 //	int step = floor((double(end - start))*((double)binspan/1));
 //	unsigned nLevel=ceil(1/((double)binspan/1))-1;
         int nbins=0;
         double* Smeth_cg=new double[nLevel]();double* Smeth_chg=new double[nLevel]();double* Smeth_chh=new double[nLevel]();
-        
+        double* Smeth_c=new double[nLevel]();
             int countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
             int countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;
 
@@ -1333,22 +1348,30 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
                     if(nbins<=nLevel &&nbins>0){
                     	if(Strand=='+' || Strand=='.')
                     	{
-					  //if(countCG+countCG_1>0) fprintf(methGffcg,"\t%f",double(countperCG+countperCG_1)/double(countCG+countCG_1));
-					  if(countCG+countCG_1>0) Smeth_cg[nbins-1]=double(countperCG+countperCG_1)/(double(countCG+countCG_1));
-					  if(countCG+countCG_1<=5) Smeth_cg[nbins-1]=-1;
-					  if(countCHG+countCHG_1>0) Smeth_chg[nbins-1]=double(countperCHG+countperCHG_1)/(double(countCHG+countCHG_1));
-					  if(countCHG+countCHG_1<=5) Smeth_chg[nbins-1] = -1;
-					  if(countCHH+countCHH_1>0) Smeth_chh[nbins-1]=double(countperCHH+countperCHH_1)/(double(countCHH+countCHH_1));
-					  if(countCHH+countCHH_1<=5) Smeth_chh[nbins-1]=-1;
+							//if(countCG+countCG_1>0) fprintf(methGffcg,"\t%f",double(countperCG+countperCG_1)/double(countCG+countCG_1));
+							if(countCG+countCG_1>0) Smeth_cg[nbins-1]=double(countperCG+countperCG_1)/(double(countCG+countCG_1));
+							if(countCG+countCG_1<=5) Smeth_cg[nbins-1]=-1;
+							if(countCHG+countCHG_1>0) Smeth_chg[nbins-1]=double(countperCHG+countperCHG_1)/(double(countCHG+countCHG_1));
+							if(countCHG+countCHG_1<=5) Smeth_chg[nbins-1] = -1;
+							if(countCHH+countCHH_1>0) Smeth_chh[nbins-1]=double(countperCHH+countperCHH_1)/(double(countCHH+countCHH_1));
+							if(countCHH+countCHH_1<=5) Smeth_chh[nbins-1]=-1;
+							//C
+							if(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1>0) Smeth_c[nbins-1]=double(countperCG+countperCG_1+countperCHG+countperCHG_1+countperCHH+countperCHH_1)/(double(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1));
+							if(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1<=5) Smeth_c[nbins-1]=-1;
+
                         }
                         else
                         {
-					  if(countCG+countCG_1>0) Smeth_cg[nLevel-nbins]=double(countperCG+countperCG_1)/(double(countCG+countCG_1));
-					  if(countCG+countCG_1<=5) Smeth_cg[nLevel-nbins] = -1;
-					  if(countCHG+countCHG_1>0) Smeth_chg[nLevel-nbins]=double(countperCHG+countperCHG_1)/(double(countCHG+countCHG_1));
-					  if(countCHG+countCHG_1<=5) Smeth_chg[nLevel-nbins] = -1;
-					  if(countCHH+countCHH_1>0) Smeth_chh[nLevel-nbins]=double(countperCHH+countperCHH_1)/(double(countCHH+countCHH_1));
-					  if(countCHH+countCHH_1<=5) Smeth_chh[nLevel-nbins] = -1;
+							if(countCG+countCG_1>0) Smeth_cg[nLevel-nbins]=double(countperCG+countperCG_1)/(double(countCG+countCG_1));
+							if(countCG+countCG_1<=5) Smeth_cg[nLevel-nbins] = -1;
+							if(countCHG+countCHG_1>0) Smeth_chg[nLevel-nbins]=double(countperCHG+countperCHG_1)/(double(countCHG+countCHG_1));
+							if(countCHG+countCHG_1<=5) Smeth_chg[nLevel-nbins] = -1;
+							if(countCHH+countCHH_1>0) Smeth_chh[nLevel-nbins]=double(countperCHH+countperCHH_1)/(double(countCHH+countCHH_1));
+							if(countCHH+countCHH_1<=5) Smeth_chh[nLevel-nbins] = -1;
+							//C
+							if(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1>0) Smeth_c[nLevel-nbins]=double(countperCG+countperCG_1+countperCHG+countperCHG_1+countperCHH+countperCHH_1)/(double(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1));
+							if(countCG+countCG_1+countCHG+countCHG_1+countCHH+countCHH_1<=5) Smeth_c[nLevel-nbins]=-1;
+
                         }
                     }
                     countperCG_1=countperCG;countperCHG_1=countperCHG;countperCHH_1=countperCHH;countCG_1=countCG;countCHG_1=countCHG;countCHH_1=countCHH;
@@ -1365,6 +1388,7 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 			fprintf(methGffchg,"%s\t%d\t%d\t%s\t.\t.",chrom,geneS+1,geneE+1,id);
 			fprintf(methGffchh,"%s\t%d\t%d\t%s\t.\t.",chrom,geneS+1,geneE+1,id);
 			*/
+			fprintf(methGffc,"%s",id);
 			fprintf(methGffcg,"%s",id);
 			fprintf(methGffchg,"%s",id);
 			fprintf(methGffchh,"%s",id);
@@ -1372,11 +1396,13 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 			//fprintf(methGffcg_matrix,"%s\t%d\t%d\t%s\t.\t.",chrom,geneS+1,geneE+1,id);
 			//fprintf(methGffchg_matrix,"%s\t%d\t%d\t%s\t.\t.",chrom,geneS+1,geneE+1,id);
 			//fprintf(methGffchh_matrix,"%s\t%d\t%d\t%s\t.\t.",chrom,geneS+1,geneE+1,id);
+			fprintf(methGffc,"%s",id);
 			fprintf(methGffcg,"%s",id);
 			fprintf(methGffchg,"%s",id);
 			fprintf(methGffchh,"%s",id);
 		}
 	}else if(printtitle) {
+		fprintf(methGffc,"%s",id);
 		fprintf(methGffcg,"%s",id);
 	    fprintf(methGffchg,"%s",id);
 		fprintf(methGffchh,"%s",id);
@@ -1396,16 +1422,16 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 		        	}
 	        	}  
 	        	if(Smeth_cg[i]>1) Smeth_cg[i]=0;
-			if(Smeth_cg[i] < 0){
-				if(!strcmp(type, "GENE")) fprintf(methGffcg,"\tnan");
-				else if(!strcmp(type, "TSS")) {
-					fprintf(methGffcg,"\t0");
-					//fprintf(methGffcg_matrix,"\tnan");
-				}else fprintf(methGffcg,"\t0");
-			}else {
-				fprintf(methGffcg,"\t%f",Smeth_cg[i]);
-				//fprintf(methGffcg_matrix,"\t%f", Smeth_cg[i]);
-			}
+				if(Smeth_cg[i] < 0){
+					if(!strcmp(type, "GENE")) fprintf(methGffcg,"\tnan");
+					else if(!strcmp(type, "TSS")) {
+						fprintf(methGffcg,"\t0");
+						//fprintf(methGffcg_matrix,"\tnan");
+					}else fprintf(methGffcg,"\t0");
+				}else {
+					fprintf(methGffcg,"\t%f",Smeth_cg[i]);
+					//fprintf(methGffcg_matrix,"\t%f", Smeth_cg[i]);
+				}
 	        	if(BeginNo_chg==0 && !strcmp(type,"TSS"))
 	        	{	
 		        	if(i>=cut)
@@ -1422,9 +1448,9 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 						//fprintf(methGffchg_matrix,"\tnan");
 					}else fprintf(methGffchg,"\t0");
 				}else {
-				fprintf(methGffchg,"\t%f",Smeth_chg[i]);
+					fprintf(methGffchg,"\t%f",Smeth_chg[i]);
 				//fprintf(methGffchg_matrix,"\t%f",Smeth_chg[i]);
-			}
+				}
 	        	if(BeginNo_chh==0 && !strcmp(type,"TSS"))
 	        	{	
 		        	if(i>=cut)
@@ -1434,16 +1460,27 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 		        	}
 	        	}  
 	        	if(Smeth_chh[i]>1) Smeth_chh[i]=0;
-			if(Smeth_chh[i] < 0){
-                                if(!strcmp(type, "GENE")) fprintf(methGffchh,"\tnan");
-                                else if(!strcmp(type, "TSS")) {
-                                        fprintf(methGffchh,"\t0");
-                                        //fprintf(methGffchh_matrix,"\tnan");
-                                }else fprintf(methGffchh,"\t0");
-                        }else {
-				fprintf(methGffchh,"\t%f",Smeth_chh[i]);
-				//fprintf(methGffchh_matrix,"\t%f", Smeth_chh[i]);
-			}
+				if(Smeth_chh[i] < 0){
+					if(!strcmp(type, "GENE")) fprintf(methGffchh,"\tnan");
+					else if(!strcmp(type, "TSS")) {
+							fprintf(methGffchh,"\t0");
+							//fprintf(methGffchh_matrix,"\tnan");
+					}else fprintf(methGffchh,"\t0");
+				}else {
+					fprintf(methGffchh,"\t%f",Smeth_chh[i]);
+					//fprintf(methGffchh_matrix,"\t%f", Smeth_chh[i]);
+				}
+				//for C
+				if(Smeth_c[i]>1) Smeth_c[i]=0;
+				if(Smeth_c[i] < 0){
+					if(!strcmp(type, "GENE")) fprintf(methGffc,"\tnan");
+					else if(!strcmp(type, "TSS")) {
+						fprintf(methGffc,"\t0");
+					}else fprintf(methGffc,"\t0");
+				}else {
+					fprintf(methGffc,"\t%f",Smeth_c[i]);
+				}
+				
 	        }
         }
         
@@ -1480,6 +1517,7 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 	if(strcmp(type,"GENE")!=0){
         	//fprintf(methGffcg,"\t%d\n",BeginNo_cg);
 			fprintf(methGffcg,"\n");
+			fprintf(methGffc,"\n");
 		if(strcmp(type,"TSS")==0) {
 			//fprintf(methGffcg_matrix,"\n");
 			//fprintf(methGffchg_matrix,"\n");
@@ -1490,4 +1528,8 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 			fprintf(methGffchg,"\n");
         	fprintf(methGffchh,"\n");
 	}
+	delete []Smeth_c;
+	delete []Smeth_cg;
+	delete []Smeth_chg;
+	delete []Smeth_chh;
 }

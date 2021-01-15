@@ -6,7 +6,7 @@ BASEX=$1
 if [ $# -eq 2 ];
 then
         echo "BatMeth2 RRBS build index " $2
-        if [ "$1" == "rrbs" ];
+        if [ "$1" == "rrbsf" ];
         then
 		BASEX=$2
                 awk '{print $1}' $BASEX > ${BASEX}.format.fa

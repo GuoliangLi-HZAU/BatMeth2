@@ -10,7 +10,7 @@
 //#include <ctime>
 #include <time.h>
 
-#define BATBUF 30000
+#define BATBUF 50000
 #define BT2_VER "2.1"
 
 using namespace std;
@@ -520,8 +520,8 @@ int main(int argc, char* argv[]){
 
     FILE* Distri_MR = File_Open(distri_mrfile.c_str(), "r");
     i=0;
-    double** cg_dis_mr = new double*[3];
-    for(int i=0;i<3;i++)
+    double** cg_dis_mr = new double*[4];
+    for(int i=0;i<4;i++)
         cg_dis_mr[i] = new double[total];
     j_len=0;
     while(fgets(s2t, BATBUF, Distri_MR)!=0){
@@ -580,7 +580,7 @@ int main(int argc, char* argv[]){
     //distri footer
     ofs << "</div>\n";
     ofs << "</div>\n";
-    for(int i=0;i<3;i++)
+    for(int i=0;i<4;i++)
         delete []cg_dis_mr[i];
     delete []cg_dis_mr;
 //----------------------------------------------------------------------------------------------------------
@@ -612,15 +612,14 @@ int main(int argc, char* argv[]){
     double* cg_heatmap = new double[total];
     j_len=0; int x_ax=0; 
     while(fgets(s2t, BATBUF, Heatmap_Cg)!=0){
-        char *subarr = strtok(s2t,"\t");
+        char *subarr = strtok(s2t,"\t"); // geneid
         j_len=0;
+        subarr = strtok(NULL,"\t");
         while(subarr!=NULL){
-            if(subarr[0]!='0') {
-                subarr = strtok(NULL,"\t");
-                continue;
-            }
-            //printf("%s\n",subarr);
-            mr=atof(subarr);
+            if(subarr[0]=='n') {
+                mr = 0.0;
+            }else
+                mr=atof(subarr);
             if(mr>0.6) mr=0.6;
             cg_heatmap[j_len] = mr;
             subarr = strtok(NULL,"\t");
@@ -674,13 +673,12 @@ int main(int argc, char* argv[]){
     while(fgets(s2t, BATBUF, Heatmap_Chg)!=0){
         char *subarr = strtok(s2t,"\t");
         j_len=0;
+        subarr = strtok(NULL,"\t");
         while(subarr!=NULL){
-            if(subarr[0]!='0') {
-                subarr = strtok(NULL,"\t");
-                continue;
-            }
-            //printf("%s\n",subarr);
-            mr=atof(subarr);
+            if(subarr[0]=='n') {
+                mr = 0.0;
+            }else
+                mr=atof(subarr);
             if(mr>0.1) mr=0.1;
             chg_heatmap[j_len] = mr;
             subarr = strtok(NULL,"\t");
@@ -734,13 +732,12 @@ int main(int argc, char* argv[]){
     while(fgets(s2t, BATBUF, Heatmap_Chh)!=0){
         char *subarr = strtok(s2t,"\t");
         j_len=0;
+        subarr = strtok(NULL,"\t");
         while(subarr!=NULL){
-            if(subarr[0]!='0') {
-                subarr = strtok(NULL,"\t");
-                continue;
-            }
-            //printf("%s\n",subarr);
-            mr=atof(subarr);
+            if(subarr[0]=='n') {
+                mr = 0.0;
+            }else
+                mr=atof(subarr);
             if(mr>0.1) mr=0.1;
             chh_heatmap[j_len] = mr;
             subarr = strtok(NULL,"\t");

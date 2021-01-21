@@ -8,8 +8,8 @@
 #include "limits.h"
 #include <map>
 #include <sstream>
-#define CHROMSIZE 1000
-#define BATBUF 10000
+#define CHROMSIZE 100
+#define BATBUF 2000
 
 struct Methy_Hash
 {
@@ -326,26 +326,27 @@ int main(int argc, char* argv[])
 
 			GeneDensity GeneD_List[Genome_Count];
 			Methy_Hash Methy_List[Genome_Count];
+			fprintf(stderr, "Ngenome: %d\n",Genome_Count);
 			for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
 			{
-				printf("%s, ",Genome_Offsets[i].Genome);
+				fprintf(stderr, "%s.%d, ",Genome_Offsets[i].Genome, Genome_Offsets[i+1].Offset);
 				String_Hash[Genome_Offsets[i].Genome]=i;
 				//meth ini
-				Methy_List[i].plusMethContext =new char[Genome_Offsets[i+1].Offset]();
-				Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset]();
-				Methy_List[i].plusCount_C = new int[Genome_Offsets[i+1].Offset]();
-				Methy_List[i].plusCount_CT = new int[Genome_Offsets[i+1].Offset]();
-				Methy_List[i].NegCount_C = new int[Genome_Offsets[i+1].Offset]();
-				Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset]();
+				Methy_List[i].plusMethContext =new char[Genome_Offsets[i+1].Offset];
+				Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset];
+				Methy_List[i].plusCount_C = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].plusCount_CT = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].NegCount_C = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].Index=i;
 				//Methy_List[i].binsPlusCount_C =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsPlusCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_C =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//unsigned long len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
-				GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset]();
-				GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset]();
-				GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset]();
+				GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset];
+				GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset];
+				GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset];
 				GeneD_List[i].Index=i;
 			}
 			printf("Loaded\n");
@@ -415,12 +416,12 @@ int main(int argc, char* argv[])
 			printf("%d, %d\n", nLevel, longerlen);
 			for ( int i=0;i<3;i++)
 			{//0--UP 1--BODY 2--DOWN
-				methGff_List[i].CG_C=new long[longerlen]();
-				methGff_List[i].CHG_C=new long[longerlen]();
-				methGff_List[i].CHH_C=new long[longerlen]();
-				methGff_List[i].CG_CT=new long[longerlen]();
-				methGff_List[i].CHG_CT=new long[longerlen]();
-				methGff_List[i].CHH_CT=new long[longerlen]();
+				methGff_List[i].CG_C=new long[longerlen];
+				methGff_List[i].CHG_C=new long[longerlen];
+				methGff_List[i].CHH_C=new long[longerlen];
+				methGff_List[i].CG_CT=new long[longerlen];
+				methGff_List[i].CHG_CT=new long[longerlen];
+				methGff_List[i].CHH_CT=new long[longerlen];
 				methGff_List[i].AverPerCG=0;
 				methGff_List[i].AverPerCHG=0;
 				methGff_List[i].AverPerCHH=0;
@@ -435,20 +436,20 @@ int main(int argc, char* argv[])
 			//TSS and center profile
 			Methy_Gff methGff_TSS;
 			int profilelen = nLevel*2;
-			methGff_TSS.CG_C=new long[profilelen]();
-			methGff_TSS.CHG_C=new long[profilelen]();
-			methGff_TSS.CHH_C=new long[profilelen]();
-			methGff_TSS.CG_CT=new long[profilelen]();
-			methGff_TSS.CHG_CT=new long[profilelen]();
-			methGff_TSS.CHH_CT=new long[profilelen]();
+			methGff_TSS.CG_C=new long[profilelen];
+			methGff_TSS.CHG_C=new long[profilelen];
+			methGff_TSS.CHH_C=new long[profilelen];
+			methGff_TSS.CG_CT=new long[profilelen];
+			methGff_TSS.CHG_CT=new long[profilelen];
+			methGff_TSS.CHH_CT=new long[profilelen];
 
 			Methy_Gff methGff_center;
-			methGff_center.CG_C=new long[profilelen]();
-			methGff_center.CHG_C=new long[profilelen]();
-			methGff_center.CHH_C=new long[profilelen]();
-			methGff_center.CG_CT=new long[profilelen]();
-			methGff_center.CHG_CT=new long[profilelen]();
-			methGff_center.CHH_CT=new long[profilelen]();
+			methGff_center.CG_C=new long[profilelen];
+			methGff_center.CHG_C=new long[profilelen];
+			methGff_center.CHH_C=new long[profilelen];
+			methGff_center.CG_CT=new long[profilelen];
+			methGff_center.CHG_CT=new long[profilelen];
+			methGff_center.CHH_CT=new long[profilelen];
 
 			string du[3];
 			du[0]="UP";du[1]="BODY";du[2]="DOWN";
@@ -1333,8 +1334,8 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 //	int step = floor((double(end - start))*((double)binspan/1));
 //	unsigned nLevel=ceil(1/((double)binspan/1))-1;
         int nbins=0;
-        double* Smeth_cg=new double[nLevel]();double* Smeth_chg=new double[nLevel]();double* Smeth_chh=new double[nLevel]();
-        double* Smeth_c=new double[nLevel]();
+        double* Smeth_cg=new double[nLevel];double* Smeth_chg=new double[nLevel];double* Smeth_chh=new double[nLevel];
+        double* Smeth_c=new double[nLevel];
             int countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
             int countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,NegcountCG_1=0,countCHG_1=0,countCHH_1=0;
 

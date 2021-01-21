@@ -60,6 +60,13 @@ unsigned nLevel=ceil(1/(double)binspan)-1;//
 unsigned bodynLevel = nLevel;
 unsigned bodyLen=2000;
 unsigned longerlen = nLevel;
+//for heatmap
+unsigned heatmapbodyLen=2000;
+float heatmapbinspan=0.1;
+float heatmapbodyspan = 0.1;
+unsigned heatmapnLevel=ceil(1/(double)heatmapbinspan)-1;
+unsigned heatmapbodynLevel = heatmapnLevel;
+unsigned heatmaplongerlen = heatmapnLevel;
 string int2str(int &int_temp)
 {
         stringstream stream;
@@ -104,7 +111,8 @@ int main(int argc, char* argv[])
 		"\t--TSS            Caculate matrix for TSS. [Outfile: outPrefix.TSS.cg.n.txt]\n"
 		"\t--TTS            Caculate matrix for TTS. [Outfile: outPrefix.TTS.cg.n.txt] \n"
 		"\t--GENE           Caculate matrix for GENE and flank 2k. [Outfile: outPrefix.GENE.cg.n.txt] \n"
-		"\t-s|--step        Gene body and their flanking sequences using an overlapping sliding window of 2% of the sequence length at a step of 1% of the sequence length. So default step: 0.01 (1%)\n"
+		"\t-s|--step        Gene body and their flanking sequences using an overlapping sliding window of 2% of the sequence length at a step of 1% of the sequence length. So default step: 0.01 (1%), used for profile.\n"
+		"\t-hs|--heatmapstep        Gene body and their flanking sequences using an overlapping sliding window of 20% of the sequence length at a step of 10% of the sequence length. So default step: 0.1 (10%), used for heatmap.\n"
 		"\t-bl|--bodyLen    Body length to which all regions will be fit. (default: same as -d)\n"
 		"\t-S|--chromStep   Caculate the density of genes/TEs in chromsome using an overlapping sliding window of 100000bp at a step of 50000bp, must equal \"-s\" in Split.. default step: 50000(bp)\n"//
 		"\t-h|--help";
@@ -167,11 +175,20 @@ int main(int argc, char* argv[])
 			binspan=atof(argv[++i]);
 			nLevel=ceil(1/(double)binspan)-1;
 			printf("binspn: %f, nLevel: %d\n", binspan, nLevel);
+		}else if(!strcmp(argv[i], "-hs") || !strcmp(argv[i], "--heatmapstep"))
+		{
+			heatmapbinspan=atof(argv[++i]);
+			heatmapnLevel=ceil(1/(double)heatmapbinspan)-1;
+			printf("heatmapbinspn: %f, heatmapnLevel: %d\n", heatmapbinspan, heatmapnLevel);
 		}else if(!strcmp(argv[i], "-bl") || !strcmp(argv[i], "--bodyLen"))
 		{
 			bodyLen=atoi(argv[++i]);
 			bodyspan = binspan/((double)bodyLen/distance);
 			bodynLevel=ceil(1/(double)bodyspan)-1;
+			//
+			heatmapbodyLen=atoi(argv[++i]);
+			heatmapbodyspan = heatmapbinspan/((double)heatmapbodyLen/distance);
+			heatmapbodynLevel=ceil(1/(double)heatmapbodyspan)-1;
 		}
 		else if(!strcmp(argv[i], "--bins"))
 		{
@@ -256,9 +273,15 @@ int main(int argc, char* argv[])
 			if(bodyLen != distance){
 				bodyspan = binspan/((double)bodyLen/distance);
 				bodynLevel=ceil(1/(double)bodyspan)-1;
+				//heatmap
+				heatmapbodyspan = heatmapbinspan/((double)heatmapbodyLen/distance);
+				heatmapbodynLevel=ceil(1/(double)heatmapbodyspan)-1;
 			}else{
 				bodyspan=binspan;
 				bodynLevel = nLevel;
+				//heatmap
+				heatmapbodyspan=heatmapbinspan;
+				heatmapbodynLevel = heatmapnLevel;
 			}
 
 			printf("Output prefix: %s\n", Output_Name);
@@ -319,8 +342,7 @@ int main(int argc, char* argv[])
 				//Methy_List[i].binsPlusCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_C =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
-				
-				unsigned len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
+				//unsigned long len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
 				GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset]();
 				GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset]();
 				GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset]();
@@ -682,6 +704,7 @@ int main(int argc, char* argv[])
 				unsigned start=0,end=0;
 				Strand = '.';
 				float binspan_b = binspan;
+				float heatmapbinspan_b = heatmapbinspan;
 				while(fgets(Gff,BATBUF,GFFINFILE)!=0) //(!feof(GFFINFILE))
 				{
                     if(Gff[0]=='#') continue;
@@ -756,18 +779,18 @@ int main(int argc, char* argv[])
 							caculate(start-distance,start,Methy_List[H],Strand,methGff_List[2]);
 							if(TTS)
 							{
-								binspan = binspan/2.0;
+								heatmapbinspan = heatmapbinspan/2.0;
 								caculateHeatmap("TTS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEc,MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
-								binspan = binspan_b;
+								heatmapbinspan = heatmapbinspan_b;
 							}
 						}else 
 						{//Up
 							caculate(start-distance,start,Methy_List[H],Strand,methGff_List[0]);
 							if(TSS)
 							{
-								binspan = binspan/2.0;
+								heatmapbinspan = heatmapbinspan/2.0;
 								caculateHeatmap("TSS",start-distanceHeatmap,start+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEc,MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
-								binspan = binspan_b;
+								heatmapbinspan = heatmapbinspan_b;
 							}
 							if(GENE) {
 								caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, true); //,MethGff_TSS_OUTFILEcg_matrix, MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
@@ -798,10 +821,10 @@ int main(int argc, char* argv[])
 						if(Strand!='-' && GENE){
 							//binspan = binspan_b/2;
 							if(bodyLen != distance){
-								binspan = bodyspan;
+								heatmapbinspan = heatmapbodyspan;
 							}
 							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
-							binspan = binspan_b;
+							heatmapbinspan = heatmapbinspan_b;
 						}
 						//down
 						if(Strand=='-')
@@ -809,9 +832,9 @@ int main(int argc, char* argv[])
 							caculate(end,end+distance,Methy_List[H],Strand,methGff_List[0]);
 							if(TSS)
 							{
-								binspan = binspan/2.0;
+								heatmapbinspan = heatmapbinspan/2.0;
 								caculateHeatmap("TSS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TSS_OUTFILEc,MethGff_TSS_OUTFILEcg,MethGff_TSS_OUTFILEchg,MethGff_TSS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
-								binspan = binspan_b;
+								heatmapbinspan = heatmapbinspan_b;
 							}
 							if(GENE) {
 								caculateHeatmap("GENE",end,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom, start,end, true); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix, 
@@ -821,9 +844,9 @@ int main(int argc, char* argv[])
 							caculate(end,end+distance,Methy_List[H],Strand,methGff_List[2]);
 							if(TTS)
 							{
-								binspan = binspan/2.0;
+								heatmapbinspan = heatmapbinspan/2.0;
 								caculateHeatmap("TTS",end-distanceHeatmap,end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_TTS_OUTFILEc,MethGff_TTS_OUTFILEcg,MethGff_TTS_OUTFILEchg,MethGff_TTS_OUTFILEchh,Chrom,start,end); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
-								binspan = binspan_b;
+								heatmapbinspan = heatmapbinspan_b;
 							}
 							if(GENE) {
 								caculateHeatmap("GENE",end, end+distanceHeatmap,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //, MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix
@@ -832,10 +855,10 @@ int main(int argc, char* argv[])
 						if(Strand=='-' && GENE) {
 							//binspan = binspan_b/2;
 							if(bodyLen != distance){
-								binspan = bodyspan;
+								heatmapbinspan = heatmapbodyspan;
 							}
 							caculateHeatmap("GENE",start,end,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end,false); // MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
-							binspan = binspan_b;
+							heatmapbinspan = heatmapbinspan_b;
 							caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
 						}
 						if(GENE) {
@@ -885,7 +908,7 @@ int main(int argc, char* argv[])
 				for ( int i=0;i<Genome_Count;i++)
 				{
 					unsigned pnCoverage=0,plusCoverage=0,NegCoverage=0,pnCoverage_1=0,plusCoverage_1=0,NegCoverage_1=0;int nbins=0;
-					unsigned len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
+					unsigned long len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
 					for(int l=0;l<Genome_Offsets[i+1].Offset;l++)
 					{
 						pnCoverage+=GeneD_List[i].PN_Cover[l];
@@ -1305,8 +1328,8 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 
 //caculate gene heatmap //http://www.sciencedirect.com/science/article/pii/S0092867413002225  //Fig.6G
 void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffc,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS, int geneE , bool printtitle){ //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
-        int step = floor((double(end - start))*((double)binspan/2)); //5%  2.5% step
-	unsigned nLevel=ceil(1/((double)binspan/2))-1;
+        int step = floor((double(end - start))*((double)heatmapbinspan/2)); //5%  2.5% step
+	unsigned nLevel=ceil(1/((double)heatmapbinspan/2))-1;
 //	int step = floor((double(end - start))*((double)binspan/1));
 //	unsigned nLevel=ceil(1/((double)binspan/1))-1;
         int nbins=0;

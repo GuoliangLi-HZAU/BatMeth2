@@ -164,6 +164,7 @@ FILE* LOC_OUT_CG;
 FILE* LOC_OUT_CHG;
 FILE* LOC_OUT_CHH;
 int coverage=4;
+int maxcoverage=500;
 int binspan=50000;
 int nCs=1;
 bool printwigfile = false;
@@ -193,6 +194,7 @@ int main(int argc, char* argv[])
 		"\t-m|--methratio        [MethFileNamePrefix]  Predix of methratio output file\n"
 		"\t-Q [int]              caculate the methratio while read QulityScore >= Q. default:20\n"
 		"\t-c|--coverage         >= <INT> coverage. default:4\n"
+		"\t--maxcoverage         <= <INT> coverage. default:500\n"
 		"\t-nC		             >= <INT> nCs per region. default:1\n"
 		"\t-R |--Regions         Bins for DMR caculate , default 1kb .\n"
 		"\t--binsfile            DNA methylation level distributions in chrosome, default output file: {methratioPrefix}.methBins.txt\n"
@@ -270,6 +272,9 @@ int main(int argc, char* argv[])
 		else if(!strcmp(argv[i],"-c") || !strcmp(argv[i],"--coverage"))
 		{
 			coverage=atoi(argv[++i]);
+        }else if(!strcmp(argv[i],"--maxcoverage"))
+		{
+			maxcoverage=atoi(argv[++i]);
         }else if(!strcmp(argv[i],"-nC"))
 		{
 			nCs=atoi(argv[++i]);
@@ -327,7 +332,7 @@ int main(int argc, char* argv[])
                 mCcatero=Prefix;
                 mCcatero+=".mCcatero.txt";
 
-		printf("Coverage and validC: %d %d\n", coverage, nCs);	
+		printf("Coverage and validC: %d %d, %d\n", coverage, maxcoverage, nCs);	
       try
 		{
 			time(&Start_Time);
@@ -563,12 +568,12 @@ int main(int argc, char* argv[])
 				fclose(mC_DENSITY);
 
 				FILE* mC_catero=File_Open(mCcatero.c_str(),"w");
-				fprintf(mC_catero,"\nM\t%lu\nMh\t%lu\nH\t%lu\nhU\t%lu\nU\t%lu",M,Mh,H_AllC,hU,U);
+				fprintf(mC_catero,"M\t%lu\nMh\t%lu\nH\t%lu\nhU\t%lu\nU\t%lu",M,Mh,H_AllC,hU,U);
 				fprintf(mC_catero,"\nCpG_M\t%lu\nCpG_Mh\t%lu\nCpG_H\t%lu\nCpG_hU\t%lu\nCpG_U\t%lu",M_CG,Mh_CG,H_CG,hU_CG,U_CG);
-                                fprintf(mC_catero,"\nmC\t%f\n", double (1*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount) );
-                                fprintf(mC_catero,"mCG\t%f\n", double (1*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
-                                fprintf(mC_catero,"mCHG\t%f\n", double (1*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
-                                fprintf(mC_catero,"mCHH\t%f\n", double (1*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
+				fprintf(mC_catero,"\nmC\t%f\n", double (1*(plus_mCGcount+plus_mCHGcount+plus_mCHHcount+Neg_mCGcount+Neg_mCHGcount+Neg_mCHHcount))/double (plusCGcount+plusCHGcount+plusCHHcount+NegCGcount+NegCHGcount+NegCHHcount) );
+				fprintf(mC_catero,"mCG\t%f\n", double (1*(plus_mCGcount+Neg_mCGcount))/double (plusCGcount+NegCGcount));
+				fprintf(mC_catero,"mCHG\t%f\n", double (1*(plus_mCHGcount+Neg_mCHGcount))/double (plusCHGcount+NegCHGcount));
+				fprintf(mC_catero,"mCHH\t%f\n", double (1*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
 
 				fclose(mC_catero);
 				//+
@@ -791,13 +796,13 @@ void print_meth_tofile(int genome_id, ARGS* args){
 		            if( (nb!=nbins && l==(nb+1)*binspan-1) || i==args->Genome_Offsets[i+1].Offset-1){
 		                if(nb<=nbins && nb>0){
 		                	
-		                	if(pluscountCG+pluscountCG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCG\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCG+pluscountperCG_1)/(pluscountCG+pluscountCG_1)) );
-		                	if(pluscountCHG+pluscountCHG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCHG\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCHG+pluscountperCHG_1)/(pluscountCHG+pluscountCHG_1)) );
-		                	if(pluscountCHH+pluscountCHH_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCHH\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCHH+pluscountperCHH_1)/(pluscountCHH+pluscountCHH_1)) );
+		                	if(pluscountCG+pluscountCG_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCG\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCG+pluscountperCG_1)/(pluscountCG+pluscountCG_1)) );
+		                	if(pluscountCHG+pluscountCHG_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCHG\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCHG+pluscountperCHG_1)/(pluscountCHG+pluscountCHG_1)) );
+		                	if(pluscountCHH+pluscountCHH_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCHH\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCHH+pluscountperCHH_1)/(pluscountCHH+pluscountCHH_1)) );
 
-		                	if(NegcountCG+NegcountCG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCG\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCG+NegcountperCG_1)/(NegcountCG+NegcountCG_1)));
-		                	if(NegcountCHG+NegcountCHG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCHG\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCHG+NegcountperCHG_1)/(NegcountCHG+NegcountCHG_1)));
-		                	if(NegcountCHH+NegcountCHH_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCHH\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCHH+NegcountperCHH_1)/(NegcountCHH+NegcountCHH_1)) );
+		                	if(NegcountCG+NegcountCG_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCG\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCG+NegcountperCG_1)/(NegcountCG+NegcountCG_1)));
+		                	if(NegcountCHG+NegcountCHG_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCHG\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCHG+NegcountperCHG_1)/(NegcountCHG+NegcountCHG_1)));
+		                	if(NegcountCHH+NegcountCHH_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t-%f\tCHH\n",args->Genome_Offsets[i].Genome,nb,((double)(NegcountperCHH+NegcountperCHH_1)/(NegcountCHH+NegcountCHH_1)) );
 		                	/*
 		                	if(pluscountCG+pluscountCG_1+NegcountCG+NegcountCG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCG\n",Genome_Offsets[i].Genome,nb,((double)(pluscountperCG+pluscountperCG_1+NegcountperCG+NegcountperCG_1)/(pluscountCG+pluscountCG_1+NegcountCG+NegcountCG_1)) );
 		                	if(pluscountCHG+pluscountCHG_1+NegcountCHG+NegcountCHG_1>coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCHG\n",Genome_Offsets[i].Genome,nb,((double)(pluscountperCHG+pluscountperCHG_1+NegcountperCHG+NegcountperCHG_1)/(pluscountCHG+pluscountCHG_1+NegcountCHG+NegcountCHG_1)) );
@@ -867,9 +872,9 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					if(l+1< args->Genome_Offsets[i+1].Offset) charFor1=toupper(args->Genome_List[i].Genome[l+1]);
 					if(l+2< args->Genome_Offsets[i+1].Offset) charFor2=toupper(args->Genome_List[i].Genome[l+2]);
 					int Cover = C_count+T_count;
-                                        for(int nc=0; nc<15; nc++){
-                                            if(Cover>nc){ CoverC[nc]++; }
-                                        }
+					for(int nc=0; nc<15; nc++){
+						if(Cover>nc){ CoverC[nc]++; }
+					}
 
 					if(charFor1=='G') //(args.Methy_List[i].MethContext[l]==1)
 					{
@@ -912,8 +917,8 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					}
 					else context="NA";
 					
-                                        if(Cover<coverage)
-                                         continue;
+					if(Cover<coverage || Cover > maxcoverage)
+						continue;
 					//methratio	
 					float PlusMethratio;
 					if(revGA>0) 
@@ -1046,7 +1051,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					}
 					else context="NA";
 
-                                        if(Cover<coverage) continue;
+                    if(Cover<coverage || Cover > maxcoverage) continue;
 					//methratio	
 					float NegMethratio;
 					if(revGA>0)

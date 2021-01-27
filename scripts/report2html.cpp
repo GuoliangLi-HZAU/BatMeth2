@@ -10,7 +10,7 @@
 //#include <ctime>
 #include <time.h>
 
-#define BATBUF 50000
+#define BATBUF 5000
 #define BT2_VER "2.1"
 
 using namespace std;
@@ -147,8 +147,10 @@ int main(int argc, char* argv[]){
     while(fgets(s2t, BATBUF, AlignF)!=0){
         if(s2t == NULL) continue;
         char *subarr = strtok(s2t,"\t");
+        printf("HHH2 %s\n", subarr);
         strcpy(opt1, subarr);
         subarr = strtok(NULL,"\t");
+        printf("HHH2 %s\n", subarr);
         strcpy(opt2, subarr);
         outputRow(ofs, opt1, opt2);
     }

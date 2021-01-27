@@ -13,10 +13,11 @@
 
 struct Methy_Hash
 {
-	int *plusCount_C,*plusCount_CT;
-	int *NegCount_C,*NegCount_CT;
-	char *plusMethContext;
-	char *NegMethContext;
+	int *mergeCount_C,*mergeCount_CT;
+	//int *mergeStrand;
+	//int *NegCount_C,*NegCount_CT;
+	char *mergeMethContext;
+	//char *NegMethContext;
 	int Index;
 //	int *binsPlusCount_C,*binsPlusCount_CT;
 //	int *binsNegCount_C,*binsNegCount_CT;
@@ -48,6 +49,7 @@ map <string,int> Context_Hash;
 FILE* File_Open(const char* File_Name,const char* Mode);
 void Show_Progress(float Percentage);
 void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List);
+void caculatebody(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List);
 void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List,GeneDensity & GeneD_List);
 void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,char Strand,const char* id,FILE *methGffc,FILE *methGffcg,FILE *methGffchg,FILE *methGffchh,char* chrom, int geneS,int geneE,bool printtitle=true); //FILE *methGffcg_matrix,FILE *methGffchg_matrix,FILE *methGffchh_matrix ,
 #define Init_Progress()	printf("======================]\r[");//progress bar....
@@ -324,7 +326,7 @@ int main(int argc, char* argv[])
 			}
 			Genome_Count--;
 
-			GeneDensity GeneD_List[Genome_Count];
+			//GeneDensity GeneD_List[Genome_Count];
 			Methy_Hash Methy_List[Genome_Count];
 			fprintf(stderr, "Ngenome: %d\n",Genome_Count);
 			for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
@@ -332,22 +334,25 @@ int main(int argc, char* argv[])
 				fprintf(stderr, "%s.%d, ",Genome_Offsets[i].Genome, Genome_Offsets[i+1].Offset);
 				String_Hash[Genome_Offsets[i].Genome]=i;
 				//meth ini
-				Methy_List[i].plusMethContext =new char[Genome_Offsets[i+1].Offset];
-				Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset];
-				Methy_List[i].plusCount_C = new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].plusCount_CT = new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].NegCount_C = new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].mergeMethContext =new char[Genome_Offsets[i+1].Offset];
+				//Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset];
+				Methy_List[i].mergeCount_C = new int[Genome_Offsets[i+1].Offset];
+				Methy_List[i].mergeCount_CT = new int[Genome_Offsets[i+1].Offset];
+				memset(Methy_List[i].mergeCount_C,0,Genome_Offsets[i+1].Offset);
+				memset(Methy_List[i].mergeCount_CT,0,Genome_Offsets[i+1].Offset);
+				//Methy_List[i].mergeStrand = new int[Genome_Offsets[i+1].Offset];
+				//Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].Index=i;
 				//Methy_List[i].binsPlusCount_C =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsPlusCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_C =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//Methy_List[i].binsNegCount_CT =new int[(int)ceil((double)Genome_Offsets[i+1].Offset/binsStep)];
 				//unsigned long len=ceil(Genome_Offsets[i+1].Offset/double(chromStep))-1;
-				GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset];
-				GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset];
-				GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset];
-				GeneD_List[i].Index=i;
+				//rm this part
+				//GeneD_List[i].PN_Cover=new unsigned[Genome_Offsets[i+1].Offset];
+				//GeneD_List[i].plusCover=new unsigned[Genome_Offsets[i+1].Offset];
+				//GeneD_List[i].NegCover=new unsigned[Genome_Offsets[i+1].Offset];
+				//GeneD_List[i].Index=i;
 			}
 			printf("Loaded\n");
 			string CG="CG",CHG="CHG",CHH="CHH";
@@ -367,6 +372,7 @@ int main(int argc, char* argv[])
 			fseek(INFILE, 0L, SEEK_END);off64_t File_Size=ftello64(INFILE);rewind(INFILE);
 			Init_Progress();
 			fgets(Buf,BATBUF,INFILE);//read first header marker..
+			int H = -1;
 			while (!feof(INFILE)) 
 			{
 				Total_Reads++;
@@ -387,21 +393,20 @@ int main(int argc, char* argv[])
 				if(countCT<Coverage) continue;
 				if(countCT > maxcover) continue;
 				if(countC > countCT) printf("Wrong pos %d, %d %d\n", pos, countC, countCT);
-				int H=String_Hash[Chrom];
+				H=String_Hash[Chrom];
 				pos--;//0-- for array start 0
+				//printf("%s %d %d %d\n", Chrom, pos, countC, countCT);
 				//int whichBins = (int)floor((double)pos/binsStep);//1000
+				Methy_List[H].mergeMethContext[pos]=Context_Hash[context];
+				Methy_List[H].mergeCount_C[pos]=countC;
 				if(Strand=='+')
 				{
-					Methy_List[H].plusMethContext[pos]=Context_Hash[context];
-					Methy_List[H].plusCount_C[pos]=countC;
-					Methy_List[H].plusCount_CT[pos]=countCT;
+					Methy_List[H].mergeCount_CT[pos]=countCT;
 					//Methy_List[H].binsPlusCount_C[whichBins]+=countC;
 					//Methy_List[H].binsPlusCount_CT[whichBins]+=countCT;
 				}else if(Strand=='-')
 				{
-					Methy_List[H].NegMethContext[pos]=Context_Hash[context];
-					Methy_List[H].NegCount_C[pos]=countC;
-					Methy_List[H].NegCount_CT[pos]=countCT;
+					Methy_List[H].mergeCount_CT[pos]=-countCT;
 					//Methy_List[H].binsNegCount_C[whichBins]+=countC;
 					//Methy_List[H].binsNegCount_CT[whichBins]+=countCT;
 				}else printf("wrong strand...\n");
@@ -807,7 +812,7 @@ int main(int argc, char* argv[])
 						if(bodyLen != distance){
 							binspan = bodyspan;
 						}
-						caculate(start,end,Methy_List[H],Strand,methGff_List[1],GeneD_List[H]);
+						caculatebody(start,end,Methy_List[H],Strand,methGff_List[1]); //,GeneD_List[H]);
 						binspan = binspan_b;
 						//tss extend 2k，基因内部
 						/*
@@ -905,6 +910,7 @@ int main(int argc, char* argv[])
 				Done_Progress();
 
 				fprintf(stderr, "\nPrint methresult to files!\n");
+				/*
 				FILE* DensityGffOUTFILE=File_Open(D,mode);
 				for ( int i=0;i<Genome_Count;i++)
 				{
@@ -928,6 +934,7 @@ int main(int argc, char* argv[])
 					}
 				}
 				fclose(DensityGffOUTFILE);
+				*/
 				
 				FILE* MethGffOUTFILE=File_Open(N,mode);
                                 //C
@@ -1061,16 +1068,16 @@ int main(int argc, char* argv[])
 			//delete 
 			for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
 			{
-				delete[] Methy_List[i].plusMethContext;
-				delete[] Methy_List[i].NegMethContext;
-				delete[] Methy_List[i].plusCount_C ;
-				delete[] Methy_List[i].plusCount_CT ;
-				delete[] Methy_List[i].NegCount_C;
-				delete[] Methy_List[i].NegCount_CT;
+				delete[] Methy_List[i].mergeMethContext;
+				//delete[] Methy_List[i].NegMethContext;
+				delete[] Methy_List[i].mergeCount_C ;
+				delete[] Methy_List[i].mergeCount_CT ;
+				//delete[] Methy_List[i].mergeStrand;
+				//delete[] Methy_List[i].NegCount_CT;
 				
-				delete[] GeneD_List[i].PN_Cover;
-				delete[] GeneD_List[i].plusCover;
-				delete[] GeneD_List[i].NegCover;
+				//delete[] GeneD_List[i].PN_Cover;
+				//delete[] GeneD_List[i].plusCover;
+				//delete[] GeneD_List[i].NegCover;
 			}
 			for ( int i=0;i<3;i++)
 			{//0--UP 1--BODY 2--DOWN
@@ -1153,60 +1160,168 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                if(Strand=='+' || Strand=='.')
 	                {
 	                	GeneD_List.plusCover[i]=1;
-	                        if( MethyList.plusMethContext[i] ==1 ){
-	                            countperCG+= MethyList.plusCount_C[i];
-	                            countCG+=MethyList.plusCount_CT[i]; 
-	                            methGff_List.AverPerCG +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCG +=MethyList.plusCount_CT[i]; 
-	                            AverPerCG +=MethyList.plusCount_C[i];
-	                            AverCG +=MethyList.plusCount_CT[i]; 
+						if(MethyList.mergeCount_CT[i] > 0){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG+=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG +=MethyList.mergeCount_CT[i]; 
+	                            AverPerCG +=MethyList.mergeCount_C[i];
+	                            AverCG +=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCG++;
-	                        }else if( MethyList.plusMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.plusCount_C[i];
-	                            countCHG+=MethyList.plusCount_CT[i];
-	                            methGff_List.AverPerCHG +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCHG += MethyList.plusCount_CT[i];
-	                            AverPerCHG +=MethyList.plusCount_C[i];
-	                            AverCHG +=MethyList.plusCount_CT[i]; 
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG += MethyList.mergeCount_CT[i];
+	                            AverPerCHG +=MethyList.mergeCount_C[i];
+	                            AverCHG +=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCHG++;
-	                        }else if( MethyList.plusMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.plusCount_C[i];
-	                            countCHH+=MethyList.plusCount_CT[i];
-	                            methGff_List.AverPerCHH +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCHH +=MethyList.plusCount_CT[i];
-	                            AverPerCHH +=MethyList.plusCount_C[i];
-	                            AverCHH +=MethyList.plusCount_CT[i]; 
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH +=MethyList.mergeCount_CT[i];
+	                            AverPerCHH +=MethyList.mergeCount_C[i];
+	                            AverCHH +=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCHH++;
 	                        }
+						}
 			}
 			if(Strand=='-' || Strand=='.')
 			{
 				GeneD_List.NegCover[i]=1;
-	                        if( MethyList.NegMethContext[i] ==1 ){
-	                            countperCG+= MethyList.NegCount_C[i];
-	                            countCG+=MethyList.NegCount_CT[i]; 
-	                            methGff_List.AverPerCG +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCG +=MethyList.NegCount_CT[i]; 
-	                            AverPerCG +=MethyList.NegCount_C[i];
-	                            AverCG +=MethyList.NegCount_CT[i]; 
+				if(MethyList.mergeCount_CT[i] < 0){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG-=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG -=MethyList.mergeCount_CT[i]; 
+	                            AverPerCG +=MethyList.mergeCount_C[i];
+	                            AverCG -=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCG++;
-	                        }else if( MethyList.NegMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.NegCount_C[i];
-	                            countCHG+=MethyList.NegCount_CT[i];
-	                            methGff_List.AverPerCHG +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCHG += MethyList.NegCount_CT[i];
-	                            AverPerCHG +=MethyList.NegCount_C[i];
-	                            AverCHG +=MethyList.NegCount_CT[i]; 
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG -= MethyList.mergeCount_CT[i];
+	                            AverPerCHG +=MethyList.mergeCount_C[i];
+	                            AverCHG -=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCHG++;
-	                        }else if( MethyList.NegMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.NegCount_C[i];
-	                            countCHH+=MethyList.NegCount_CT[i];
-	                            methGff_List.AverPerCHH +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCHH +=MethyList.NegCount_CT[i];
-	                            AverPerCHH +=MethyList.NegCount_C[i];
-	                            AverCHH +=MethyList.NegCount_CT[i]; 
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH -=MethyList.mergeCount_CT[i];
+	                            AverPerCHH +=MethyList.mergeCount_C[i];
+	                            AverCHH -=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCHH++;
 	                        }
+				}
+			}
+                if( ( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end ) && end-start > nLevel ){
+                	if(i==end) nbins=nLevel;
+                    if(nbins<=nLevel &&nbins>0){
+                    	if(Strand=='+' || Strand=='.')
+                    	{
+	                            methGff_List.CG_C[nbins-1] += (countperCG+countperCG_1);
+	                            methGff_List.CG_CT[nbins-1] += (countCG+countCG_1);
+	                            methGff_List.CHG_C[nbins-1] += (countperCHG+countperCHG_1);
+	                            methGff_List.CHG_CT[nbins-1] += (countCHG+countCHG_1);
+	                            methGff_List.CHH_C[nbins-1] += (countperCHH+countperCHH_1);
+	                            methGff_List.CHH_CT[nbins-1] += (countCHH+countCHH_1);
+                        }
+                        else
+                        {
+	                            methGff_List.CG_C[nLevel-nbins] += (countperCG+countperCG_1);
+	                            methGff_List.CG_CT[nLevel-nbins] += (countCG+countCG_1);
+	                            methGff_List.CHG_C[nLevel-nbins] += (countperCHG+countperCHG_1);
+	                            methGff_List.CHG_CT[nLevel-nbins] += (countCHG+countCHG_1);
+	                            methGff_List.CHH_C[nLevel-nbins] += (countperCHH+countperCHH_1);
+	                            methGff_List.CHH_CT[nLevel-nbins] += (countCHH+countCHH_1);
+                        }
+						
+                    }
+                    countperCG_1=countperCG;countperCHG_1=countperCHG;countperCHH_1=countperCHH;countCG_1=countCG;countCHG_1=countCHG;countCHH_1=countCHH;
+                    nbins++;
+                    countperCG=0;countperCHG=0;countperCHH=0;countCG=0;countCHG=0;countCHH=0;
+                    
+                }
+      }
+}
+void caculatebody(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & methGff_List){
+        int step = floor((double(end - start))*binspan);// 5%  2.5% step
+		unsigned nLevel=ceil(1/(double)binspan)-1;
+        int nbins=0;
+        methGff_List.AverPerCG=0;methGff_List.AverCG=0;
+        methGff_List.AverPerCHG=0;methGff_List.AverCHG=0;
+        methGff_List.AverPerCHH=0;methGff_List.AverCHH=0;
+        
+            long countperCG=0,countperCHG=0,countperCHH=0,countCG=0,countCHG=0,countCHH=0;
+            long countperCG_1=0,countperCHG_1=0,countperCHH_1=0,countCG_1=0,countCHG_1=0,countCHH_1=0;    
+            for(int i=start;i<=end;i++)
+            {
+				//if(MethyList.plusCount_CT[i] < MethyList.plusCount_C[i]) continue;
+	                //context
+	                if(Strand=='+' || Strand=='.')
+	                {
+						if(MethyList.mergeCount_CT[i] > 0){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG+=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG +=MethyList.mergeCount_CT[i]; 
+	                            AverPerCG +=MethyList.mergeCount_C[i];
+	                            AverCG +=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCG++;
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG += MethyList.mergeCount_CT[i];
+	                            AverPerCHG +=MethyList.mergeCount_C[i];
+	                            AverCHG +=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCHG++;
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH +=MethyList.mergeCount_CT[i];
+	                            AverPerCHH +=MethyList.mergeCount_C[i];
+	                            AverCHH +=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCHH++;
+	                        }
+						}
+			}
+			if(Strand=='-' || Strand=='.')
+			{
+				if(MethyList.mergeCount_CT[i] < 0){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG-=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG -=MethyList.mergeCount_CT[i]; 
+	                            AverPerCG +=MethyList.mergeCount_C[i];
+	                            AverCG -=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCG++;
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG -= MethyList.mergeCount_CT[i];
+	                            AverPerCHG +=MethyList.mergeCount_C[i];
+	                            AverCHG -=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCHG++;
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH -=MethyList.mergeCount_CT[i];
+	                            AverPerCHH +=MethyList.mergeCount_C[i];
+	                            AverCHH -=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.countCHH++;
+	                        }
+				}
 			}
                 if( ( (nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end ) && end-start > nLevel ){
                 	if(i==end) nbins=nLevel;
@@ -1255,47 +1370,51 @@ void caculate(int start,int end,Methy_Hash MethyList,char Strand,Methy_Gff & met
 	                //context
 	               if(Strand=='+' || Strand=='.')
 	                {
-	                        if( MethyList.plusMethContext[i] ==1 ){
-	                            countperCG+= MethyList.plusCount_C[i];
-	                            countCG+=MethyList.plusCount_CT[i]; 
-	                            methGff_List.AverPerCG +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCG +=MethyList.plusCount_CT[i]; 
+						if(MethyList.mergeCount_CT[i] > 0){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG+=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG +=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCG++;
-	                        }else if( MethyList.plusMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.plusCount_C[i];
-	                            countCHG+=MethyList.plusCount_CT[i];
-	                            methGff_List.AverPerCHG +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCHG += MethyList.plusCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG += MethyList.mergeCount_CT[i];
 	                            methGff_List.countCHG++;
-	                        }else if( MethyList.plusMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.plusCount_C[i];
-	                            countCHH+=MethyList.plusCount_CT[i];
-	                            methGff_List.AverPerCHH +=MethyList.plusCount_C[i];
-	                            methGff_List.AverCHH +=MethyList.plusCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH+=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH +=MethyList.mergeCount_CT[i];
 	                            methGff_List.countCHH++;
 	                        }
+						}
 			}
 			if(Strand=='-' || Strand=='.')
 			{
-	                        if( MethyList.NegMethContext[i] ==1 ){
-	                            countperCG+= MethyList.NegCount_C[i];
-	                            countCG+=MethyList.NegCount_CT[i]; 
-	                            methGff_List.AverPerCG +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCG +=MethyList.NegCount_CT[i]; 
+				if(MethyList.mergeCount_CT[i] < 0 ){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG-=MethyList.mergeCount_CT[i]; 
+	                            methGff_List.AverPerCG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCG -=MethyList.mergeCount_CT[i]; 
 	                            methGff_List.countCG++;
-	                        }else if( MethyList.NegMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.NegCount_C[i];
-	                            countCHG+=MethyList.NegCount_CT[i];
-	                            methGff_List.AverPerCHG +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCHG += MethyList.NegCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHG +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHG -= MethyList.mergeCount_CT[i];
 	                            methGff_List.countCHG++;
-	                        }else if( MethyList.NegMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.NegCount_C[i];
-	                            countCHH+=MethyList.NegCount_CT[i];
-	                            methGff_List.AverPerCHH +=MethyList.NegCount_C[i];
-	                            methGff_List.AverCHH +=MethyList.NegCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH-=MethyList.mergeCount_CT[i];
+	                            methGff_List.AverPerCHH +=MethyList.mergeCount_C[i];
+	                            methGff_List.AverCHH -=MethyList.mergeCount_CT[i];
 	                            methGff_List.countCHH++;
 	                        }
+				}
 			}
                 if( ((nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end) && end-start > nLevel){
                 	if(i==end) nbins=nLevel;
@@ -1344,29 +1463,33 @@ void caculateHeatmap(const char* type,int start,int end,Methy_Hash MethyList,cha
 	                //context
 	               if(Strand=='+' || Strand=='.')
 	                {
-	                        if( MethyList.plusMethContext[i] ==1 ){
-	                            countperCG+= MethyList.plusCount_C[i];
-	                            countCG+=MethyList.plusCount_CT[i];
-	                        }else if( MethyList.plusMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.plusCount_C[i];
-	                            countCHG+=MethyList.plusCount_CT[i];
-	                        }else if( MethyList.plusMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.plusCount_C[i];
-	                            countCHH+=MethyList.plusCount_CT[i];
+						if(MethyList.mergeCount_CT[i] > 0 ){
+	                        if( MethyList.mergeMethContext[i] ==1 ){
+	                            countperCG+= MethyList.mergeCount_C[i];
+	                            countCG+=MethyList.mergeCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==2 ){
+	                            countperCHG+=MethyList.mergeCount_C[i];
+	                            countCHG+=MethyList.mergeCount_CT[i];
+	                        }else if( MethyList.mergeMethContext[i] ==3 ){
+	                            countperCHH+=MethyList.mergeCount_C[i];
+	                            countCHH+=MethyList.mergeCount_CT[i];
 	                        }
+						}
 			}
 			else if(Strand=='-' )//|| Strand=='.'
 			{
-	                        if( MethyList.NegMethContext[i] ==1 ){
-	                            countperCG+= MethyList.NegCount_C[i];
-	                            countCG+=MethyList.NegCount_CT[i]; 
-	                        }else if( MethyList.NegMethContext[i] ==2 ){
-	                            countperCHG+=MethyList.NegCount_C[i];
-	                            countCHG+=MethyList.NegCount_CT[i];
-	                        }else if( MethyList.NegMethContext[i] ==3 ){
-	                            countperCHH+=MethyList.NegCount_C[i];
-	                            countCHH+=MethyList.NegCount_CT[i];
-	                        }
+				if(MethyList.mergeCount_CT[i] < 0 ){
+						if( MethyList.mergeMethContext[i] ==1 ){
+							countperCG+= MethyList.mergeCount_C[i];
+							countCG-=MethyList.mergeCount_CT[i]; 
+						}else if( MethyList.mergeMethContext[i] ==2 ){
+							countperCHG+=MethyList.mergeCount_C[i];
+							countCHG-=MethyList.mergeCount_CT[i];
+						}else if( MethyList.mergeMethContext[i] ==3 ){
+							countperCHH+=MethyList.mergeCount_C[i];
+							countCHH-=MethyList.mergeCount_CT[i];
+						}
+				}
 			}
                 if( ((nbins!=nLevel && (i-start) == ((nbins+1)*step)) ||  i==end) && end-start > nLevel){
                     if(nbins<=nLevel &&nbins>0){

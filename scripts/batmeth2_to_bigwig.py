@@ -103,6 +103,8 @@ def readAllC( allCFileStr, outFileAr, OutCfileStr, printStrand):
 				except ValueError:
 					continue
 			value = float( lineAr[4] ) / float( lineAr[5] )
+            if value > 1:
+                value = 1.0
 			#if value == 0:  #skip 0
 			#	continue
 			isMeth = 0
@@ -143,8 +145,13 @@ def decodeMethType( mStr ):
 		return 'CHH'
 
 def sortBedFile( bedFileStr ):
-	command = 'bedSort {:s} {:s}'.format( bedFileStr, bedFileStr )
-	subprocess.call( command, shell=True )
+	#command = 'bedSort {:s} {:s}'.format( bedFileStr, bedFileStr )
+	#subprocess.call( command, shell=True )
+    bedFileStr2=bedFileStr+".temp"
+    command = 'sort -k1,1 -k2,2n {:s} > {:s}'.format( bedFileStr, bedFileStr2 )
+    subprocess.call( command, shell=True )
+    command = 'mv {:s} {:s}'.format( bedFileStr2, bedFileStr )
+    subprocess.call( command, shell=True )
 
 def processBedGraph( bedGraphStr, chrmFileStr ):
 
@@ -215,7 +222,7 @@ def parseInputs( argv ):
 	processInputs( allCFileAr, chrmFileStr, keepTmp, labelsAr, outID, baseMod, numProc, isSort ,printStrand)
 
 def printHelp():
-	print ("Usage: python3 allc_to_bigwig_pe.py [-keep] [-sort] [-L=labels] [-o=out_id] [-p=num_proc] <chrm_sizes>  <allC_file> [allC_file]*")
+	print ("Usage: python3 batmeth2_to_bigwig.py [-keep] [-sort] [-L=labels] [-o=out_id] [-p=num_proc] <chrm_sizes>  <allC_file> [allC_file]*")
 	print( 'Converts allC files to context-specific BigWig files' )
 	print( 'Note: bedGraphToBigWig and bedSort programs must be in the path' )
 	print( 'Required:' )

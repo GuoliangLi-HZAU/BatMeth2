@@ -35,7 +35,7 @@ int coverage = 4;
 int maxcoverage = 1000;
 int binCover = 1;
 int chromstep = 50000;
-
+float hs=0.4
 //methyGff
 float step = 0.01;
 int distance = 2000;
@@ -61,7 +61,7 @@ string programname;
 
 void usage(){
     fprintf(stderr, "\nBatMeth2 [mode] [paramaters]\n");
-    fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annoation, methyPlot, batDMR, visul2sample, DMCplot\n\n");
+    fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annotation, methyPlot, batDMR, visul2sample, DMCplot\n\n");
     fprintf(stderr, "Example:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -1 in1.fq.gz -2 in2.fq.gz --gff gene.gff -o outprefix\n");
     fprintf(stderr, "Or single-end:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -i in.fq.gz --gff gene.gff -o outprefix\n\n");
 //    ~/software_devp/batmeth2/bin/test pipel --aligner bwa-meth --go ~/practice/Genome/arabidopsis/arabidopsis_bwa-meth/TAIR10_chr_all.fa --fastp ~/software/fastp/fastp -g ~/practice/Genome/arabidopsis/arabidopsis_batmeth2_index/TAIR10_chr_all.fa -1 test1.fq -2 test2.fq --gff ~/practice/Genome/arabidopsis/TAIR10.gene.modify.gff -f 1 -o pipel.clean
@@ -69,7 +69,7 @@ void usage(){
     fprintf(stderr, "    Usage: BatMeth2 build_index genomefile. (wgbs data, must run this step first), or\n");
     fprintf(stderr, "    Usage: BatMeth2 build_index rrbs genomefile. (rrbs data)\n");
 
-    fprintf(stderr, "\n[pipel (Contains: align, calmeth, annoation, methyPlot)]\n");
+    fprintf(stderr, "\n[pipel (Contains: align, calmeth, annotation, methyPlot)]\n");
     fprintf(stderr, "[fastp location]\n");
     fprintf(stderr, "    --fastp    fastp program location.\n");
     fprintf(stderr, "               ** If --fastp is not defined, the input file should be clean data.\n");
@@ -103,11 +103,11 @@ void usage(){
     fprintf(stderr, "    --region    Bins for DMR calculate , default 1000bp .\n");
     fprintf(stderr, "    -f          for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file).\n");
 	fprintf(stderr, "    -n          maximum mismatches allowed due to seq. default 0.1 percentage of the read length. [0-0.3]\n");
-    fprintf(stderr, "\n[calmeth and annoation paramaters]\n");
+    fprintf(stderr, "\n[calmeth and annotation paramaters]\n");
     fprintf(stderr, "    --coverage    >= <INT> coverage. default:4\n");
     fprintf(stderr, "    --binCover    >= <INT> nCs per region. default:1\n");
     fprintf(stderr, "    --chromstep   Chromsome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n");
-    fprintf(stderr, "\n[annoation paramaters]\n");
+    fprintf(stderr, "\n[annotation paramaters]\n");
     fprintf(stderr, "    --gtf/--gff/--bed    Gtf or gff file / bed file\n");
     fprintf(stderr, "    --distance           DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000\n");
     fprintf(stderr, "    --step               Gene body and their flanking sequences using an overlapping sliding window of 0.02 of the sequence length at a step of 0.01 of the sequence length. So default step: 0.01 (1%)\n");
@@ -122,8 +122,8 @@ void usage(){
     fprintf(stderr, "    see the details in 'BatMeth2 align'\n");
     fprintf(stderr, "\n[calmeth paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 calmeth'\n");
-    fprintf(stderr, "\n[annotion paramaters:]\n");
-    fprintf(stderr, "    see the details in 'BatMeth2 annoation'\n");
+    fprintf(stderr, "\n[annotation paramaters:]\n");
+    fprintf(stderr, "    see the details in 'BatMeth2 annotation'\n");
     fprintf(stderr, "\n[methyPlot paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 methyPlot'\n");
     fprintf(stderr, "\n[batDMR paramaters:]\n");
@@ -249,7 +249,7 @@ void build_index(string para);
 string get_path(string filepath);
 void alignmentSingle(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix);
 void alignmentPaired(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix);
-void annoation(string outputdir, string output_prefix);
+void annotation(string outputdir, string output_prefix);
 void GetFileList(string PATH, FILE* outfile, string contain1);
 void printoutputfiles(string outputdir, string mkpath, string output_prefix);
 void FileList(string PATH, string contain1, string contain2, vector<string>& files2);
@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
 	}
 
     mode = argv[1];
-    if(mode != "build_index" && mode != "pipel" && mode != "align" && mode != "calmeth" && mode != "annoation" && mode != "methyPlot" && mode != "batDMR" && 
+    if(mode != "build_index" && mode != "pipel" && mode != "align" && mode != "calmeth" && mode != "annotation" && mode != "methyPlot" && mode != "batDMR" && 
     mode != "visul2sample" && mode != "DMCplot"){
     	fprintf(stderr, "\nNot a valid mode\n");
     	usage();
@@ -450,7 +450,7 @@ int main(int argc, char* argv[])
         	genome_index = genome_others;
         }
         if(gfffile == "None" && bedfile == "None"){
-            fprintf(stderr, "\nPlease defined gff/gtf/bed file for annoation analysis!\n");
+            fprintf(stderr, "\nPlease defined gff/gtf/bed file for annotation analysis!\n");
             exit(0);
         }
 	}
@@ -583,7 +583,7 @@ void *nprunpipel2(void *arg){
     align_result = outputdir + output_prefix + ".sort.bam";
     calmeth(align_result, outputdir, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Annotation ...\n");
-    annoation(outputdir, output_prefix);
+    annotation(outputdir, output_prefix);
     string methratioLogfile = outputdir + output_prefix + ".log.txt";
     string newlogfile = mkpath + output_prefix + ".methbasci.txt";
     string cmd = "cp ";
@@ -943,18 +943,18 @@ void alignmentPaired(string outputdir, string input_prefix, string input_prefix1
 	
 }
 
-void annoation(string outputdir, string output_prefix){
+void annotation(string outputdir, string output_prefix){
     if(gfffile == "None")
         return;
     string methratio = outputdir + output_prefix + ".methratio.txt";
     string cmd;
     if(gfffile != "None")
         if(GTF)
-            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gtf " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE";
+            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gtf " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + hs;
         else
-            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE";
+            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + hs;
     else if(bedfile != "None")
-        cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE";
+        cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs "+hs;
     else {
     	fprintf(stderr, "\nWarning: not defined gtf/gff/bed file, so skip annatation.\n");
     	return;
@@ -1197,7 +1197,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     align_result = outputdir + output_prefix + ".sort.bam";
     calmeth(align_result, outputdir, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Annotation ...\n");
-    annoation(outputdir, output_prefix);
+    annotation(outputdir, output_prefix);
     string methratioLogfile = outputdir + output_prefix + ".log.txt";
     string newlogfile = mkpath + output_prefix + ".methbasic.txt";
     string cmd = "cp ";
@@ -1243,7 +1243,7 @@ void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, 
         cmd = abspath + "calmeth " + para;
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }
-    else if (command == "annoation"){
+    else if (command == "annotation"){
         cmd = abspath + "methyGff " + para;
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }

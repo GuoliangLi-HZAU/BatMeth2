@@ -1049,7 +1049,8 @@ int main(int argc, const char **argv) {
     std::string outTmp;
     if( dmc_outfile.empty() ) outTmp=dmr_outfile;
     else outTmp=dmc_outfile;
-    chromLengthExact(Genome);// get chrom length
+    //chromLengthExact(Genome);// get chrom length
+    //string Genome_Len=Genome;Genome_Len+=".len";
     string Genome_Len=Genome;Genome_Len+=".len";
     FILE* GenomeLen=File_Open(Genome_Len.c_str(),"r");
     

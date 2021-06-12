@@ -4,13 +4,13 @@ BatMeth2: An Integrated Package for Bisulfite DNA Methylation Data Analysis with
 This is a README file for the usage of Batmeth2.
 --------------------------------------------------
 
-BatMeth2 tutotial: https://www.dna-asmdb.com/tools/batmeth2-tutorial/batmeth2.html
+BatMeth2 tutotial: https://batmeth2-docs.readthedocs.io
 
 REQUIREMENTS
 -------
 1) gcc (v4.8) , gsl library, zlib
 
-2) samtools (suggest: v1.3.1)
+2) samtools >= v1.3.1
 
 3) fastp, raw reads as input need
 
@@ -349,62 +349,6 @@ Command Format :  DMR [options] -g genome.fa -o_dm <DM_result>  -1 [Sample1-meth
 ​	-h|--help
 
 
-
-1. Pre-definded regions (Gene/TE/UTR/CDS...,but must run 'combined.element sample1 sample2 sample1out sample2out' before batDMR) 
-
-$ `BatMeth2 batDMR -g genome -L -o_dm dm.output.txt -1 [sample1.methC.txt replicates ..] -2 [sample2.methC.txt replicates ..]` 
-
-2. Auto define DMR region according the dmc 
-
-$ `BatMeth2 batDMR -g genome -o_dm dm.output.txt -o_dmr dmr.output.txt -1 [sample1.methC.txt replicates ..] -2 [sample2.methC.txt replicates ..]` 
-
-
-
-##### The output format
-
-```
-    1. dmc <br> Chrom position starnd context pvalue adjust_pvalue combine_pvalue corrected_pvalue cover_sample1 meth_sample1 cover_sample2 cover_sample2 meth.diff 
-    
-    2. dmr <br> Chrom start end dmr score meth.diff aver_corrected_pvalue 
-```
-
-##### Filter the result
-
-```bash
-awk '$6<0.05 && sqrt($11*$11)>0.6 ' H9vsIMR90.gene.dmr.txt > H9vsIMR90.gene.dmr.filter.txt
-```
-
-##### DM annotation
-
-BatMeth2:  DMCplot
-
-Command Format :   DMCannotationPlot [options] -o <Out_File> -G GENOME -g <GFF files..> -d <dmc file> -c<mC context>
-
-Usage:
-
-​	-o|--out       Output file name.
-
-​	-G|--genome    Genome file
-
-​	-d|--dmcFile   dmc file. Format: Chrome Location strand
-
-​                 Format: chr pos strand 
-
-​	-g|--gff       Gff files, 1 or more
-
-​	-c|--context   mC context, CG[default]/CHG/CHH/C. 
-
-​	-h|--help 
-
-
-
-```bash
-DMCannotationPlot [options] -o <Out_File> -G GENOME -g <GFF files.. eg: TE.gff gene.gff CDS.gff intron.gff lncRNA.gff ...> -d <dmc file> -c <mC context default: CG>
-```
-
-   **Attention:**<br>
-    *1.DMC file format : chr pos strand <br>
-    2.GFF files are separated by spaces*<br><br>
 
 ------
 

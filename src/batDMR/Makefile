@@ -29,6 +29,7 @@ CPPFLAGS =
 CXXFLAGS = -Wall -fmessage-length=50
 OPTFLAGS = -O2
 DEBUGFLAGS = -g
+CXXFLAGS =
 
 ifdef DEBUG
 CXXFLAGS += $(DEBUGFLAGS)
@@ -69,13 +70,13 @@ $(PROGS): $(addprefix $(CPP)/,GenomicRegion.o) \
 OBJS= regression.o combine_pvals.o merge.o
 
 batDMR: batDMR.cpp $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(INCLUDEARGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(INCLUDEARGS) $(LIBS)
 
 %.o : %.cpp %.hpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $< $(INCLUDEARGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $< $(INCLUDEARGS) $(LIBS)
 
 %: %.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(INCLUDEARGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(INCLUDEARGS) $(LIBS)
 
 clean:
 	@-rm -f $(PROGS) *.o *.so *.a *~

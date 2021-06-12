@@ -29,13 +29,13 @@ def readfile(filename):
             data = line.split()
             if nline == 0:
                 y.append(list(map(float,data[1:])))
-                myaver = np.array(map(float,data[1:]))
+                myaver = np.array(list(map(float,data[1:])))
             elif nline == 1:
                 z.append(list(map(float,data[1:])))
-                myaver+=np.array(map(float,data[1:]))
+                myaver+=np.array(list(map(float,data[1:])))
             elif nline == 2:
                 k.append(list(map(float,data[1:])))
-                myaver+=np.array(map(float,data[1:]))
+                myaver+=np.array(list(map(float,data[1:])))
                 myaver=myaver/3
                 averm.append(list(myaver))
             nline=nline+1
@@ -66,6 +66,7 @@ def plotline( plotx, ploty, title, label, nsample, legend, filename, scale_ls, i
         if(len(mycolor)>=nsample):
             ax.plot(plotx, ploty[prosamp], label=label[prosamp], color=mycolor[prosamp])
         else:
+            #print(prosamp, label,  label[prosamp])
             ax.plot(plotx, ploty[prosamp], label=label[prosamp]) 
         prosamp = prosamp +1
     #dashes = [10, 5, 100, 5]
@@ -92,7 +93,7 @@ def plotline( plotx, ploty, title, label, nsample, legend, filename, scale_ls, i
     #plt.axhline(y=0, xmin=0.5, xmax=0.505, linewidth=8, color='k' )
     #plt.axhline(y=0, xmin=0.505, xmax=0.95, linewidth=8, color='gray') 
     
-    print(scale_ls, index_ls, len(plotx))
+    #print(scale_ls, index_ls, len(plotx))
     #index_ls = ['-200bp','Start', "+200bp"]
     plt.xticks(scale_ls2,index_ls,color='k', size=12)
     ax.set_title(title,size=12)
@@ -162,10 +163,10 @@ def getArgs(args=None):
                         'then the corresponding X-axis label is UP TSS TES Down')
     parser.add_argument("-yl", "--ylabel",
                         default="",
-                        nargs='+',
+                        #nargs='+',
                         help='y-axis label')
     parser.add_argument( '-t', '--title',
-                        default=["CG meth", "CHG meth", "CHH meth"],
+                        default=["CG meth", "CHG meth", "CHH meth", "C meth"],
                         help='Title of the plot, to be printed on top of '
                         'the generated image. Leave blank for no title.',
                         nargs='+')
@@ -218,13 +219,14 @@ def getArgs(args=None):
                         )
     parser.add_argument('--context',
                         default="ALL",
-                        choices=["ALL", "C", "CG", "CHG","CHH"],
+                        #choices=["ALL", "C", "CG", "CHG","CHH"],
                         help='List of colors to use, should same as the number of samples,'
                         'Color names and html hex strings (e.g., #eeff22) are accepted. The color names should '
                         'be space separated. For example, --color red blue green ')
     parser.add_argument('--pergroup',
                         default=False,
-                        help='plot cg/ch of the same sample in one fig.')
+                        help='plot cg/ch of the same sample in one fig,'
+                        'only useful when have more than 1 sample input file')
     parser.add_argument("-ft", "--image_format",
                         default="pdf",
                         help="The file format, e.g. 'png', 'pdf', 'svg', ... "
@@ -239,6 +241,44 @@ def getArgs(args=None):
 
     return parser
 
+def plotmcline(Nfigure, context, lastlegend, plotx, y, z, k,
+    averm, title, label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin,ymax):
+    if(context=="ALL"):
+        Nfigure=4
+        if lastlegend:
+            showlegend = 12
+        plotline(plotx, averm, title[0], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
+        plotn+=1
+        plotline(plotx, y, title[1], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+        plotn+=1
+        plotline(plotx, z, title[2], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[1],ymax[1])
+        plotn+=1
+        showlegend = legend
+        plotline(plotx, k, title[3], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
+    elif(context=="CG"):
+        plotline(plotx, y, "CG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+    elif(context=="CHG"):
+        plotline(plotx, z, "CHG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+    elif(context=="CHH"):
+        plotline(plotx, k, "CHH meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+    elif(context=="C"):
+        plotline(plotx, averm, "mC meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
+
+def addlinedata(data, averm, y,z,k,x, context):
+    if(context=="ALL"):
+        data.append(y[x])
+        data.append(z[x])
+        data.append(k[x])
+        data.append(averm[x])
+    elif(context=="CG"):
+        data.append(y[x])
+    elif(context=="CHG"):
+        data.append(z[x])
+    elif(context=="CHH"):
+        data.append(k[x])
+    elif(context=="C"):
+        ata.append(averm[x])
+
 if __name__ == '__main__':
     #args = vars(ap.parse_args())
     args = getArgs().parse_args()
@@ -252,6 +292,7 @@ if __name__ == '__main__':
         readfile(args.mrfile[x])
 
     plotx = np.linspace(1, len(y[0]), len(y[0]))
+    #print(plotx)
     scale_ls = args.scale
     index_ls = args.xlabel
     if(len(scale_ls)+1 != len(index_ls) ):
@@ -331,10 +372,13 @@ if __name__ == '__main__':
     ymax=args.yMax
     context=args.context
 
+    newcontexts = context.split(',')
+    contextlen = len(newcontexts)
+
     mydpi=args.dpi
     data=[]
     perGroup = args.pergroup
-    if perGroup:
+    if nsample>1 and perGroup:
         fig = plt.figure(figsize=((4+figextend)*nsample,3))
         if(len(ymax)<nsample):
             skipyaxis = True
@@ -347,15 +391,21 @@ if __name__ == '__main__':
                     showlegend=legend
             if(len(ymin)<nsample):
                 ymin.append(0.0)
-            data.append(y[x])
-            data.append(z[x])
-            data.append(k[x])
-            data.append(averm[x])
-            print(data)
-            if skipyaxis:
-                plotline(plotx, data, label[x], title, 4, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,0,1)
+            if(context=="ALL"):
+                addlinedata(data, averm, y,z,k,x, context)
+                plotcontext = 4
+            elif contextlen > 1:
+                for context in newcontexts:
+                    addlinedata(data, averm, y,z,k,x, context)
+                plotcontext=contextlen
             else:
-                plotline(plotx, data, label[x], title, 4, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[x],ymax[x])
+                addlinedata(data, averm, y,z,k,x, context)
+                plotcontext=1
+            
+            if skipyaxis:
+                plotline(plotx, data, label[x], title, plotcontext, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,0,1)
+            else:
+                plotline(plotx, data, label[x], title, plotcontext, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[x],ymax[x])
             plotn +=1
             data=[]
     
@@ -370,18 +420,33 @@ if __name__ == '__main__':
     
     #if(len(mycolor) < nsample):
     #    mycolor=["#E4007F", "#00A0E9"]
+    Nfigure=1
     if(context=="ALL"):
         plotonly = False
         fig = plt.figure(figsize=((4+figextend)*4,3))
+        Nfigure=4
+    elif contextlen > 1:
+        plotonly = False
+        fig = plt.figure(figsize=((4+figextend)*contextlen,3))
+        Nfigure=contextlen
     else:
         plotonly = True
         fig = plt.figure(figsize=(4+figextend,3))
+        Nfigure=1
+    
     if(context=="ALL"):
         if(len(ymax)<4):
             skipyaxis = True
         while(len(ymax)<4):
             ymax.append(1.0)
         while(len(ymin)<4):
+            ymin.append(0.0)
+    elif contextlen > 1:
+        if(len(ymax)<contextlen):
+            skipyaxis = True
+        while(len(ymax)<contextlen):
+            ymax.append(1.0)
+        while(len(ymin)<contextlen):
             ymin.append(0.0)
     else:
         if(len(ymax)<1):
@@ -392,28 +457,19 @@ if __name__ == '__main__':
             ymin.append(0.0)
 
     plotn = 1
-    Nfigure=1
-    if(context=="ALL"):
-        Nfigure=4
+    if contextlen <= 1:
+        plotmcline(Nfigure, context, lastlegend, plotx, y, z, k, averm, title, label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin,ymax)
+    else:
         if lastlegend:
             showlegend = 12
-        plotline(plotx, averm, title[0], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
-        plotn+=1
-        plotline(plotx, y, title[1], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
-        plotn+=1
-        plotline(plotx, z, title[2], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[1],ymax[1])
-        plotn+=1
-        showlegend = legend
-        plotline(plotx, k, title[3], label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[2],ymax[2])
-    elif(context=="CG"):
-        plotline(plotx, y, "CG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
-    elif(context=="CHG"):
-        plotline(plotx, z, "CHG meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
-    elif(context=="CHH"):
-        plotline(plotx, k, "CHH meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
-    elif(context=="C"):
-        plotline(plotx, averm, "mC meth", label, nsample, legend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin[0],ymax[0])
-    
+        else:
+            showlegend = legend
+        for i in range(contextlen):
+            if i == contextlen-1:
+                showlegend = legend
+            plotmcline(Nfigure, newcontexts[i], lastlegend, plotx, y, z, k, averm, title, label, nsample, showlegend, filename, scale_ls2, index_ls, ylabel, plotn, mycolor,ymin,ymax)
+            plotn+=1
+
     #pdf.savefig(fig)
     plt.subplots_adjust(wspace=0.05, hspace=0.3)
     plt.tight_layout()

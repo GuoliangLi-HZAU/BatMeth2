@@ -155,7 +155,6 @@ long longestChr = 100000;
 string processingchr = "NULL";
 string newchr = "NULL";
 FILE* METHOUTFILE;
-FILE* METHWIGOUTFILE;
 FILE* BINsOUTFILE;
 FILE* REGION_OUT_CG;
 FILE* REGION_OUT_CHG;
@@ -167,7 +166,6 @@ int coverage=4;
 int maxcoverage=500;
 int binspan=50000;
 int nCs=1;
-bool printwigfile = false;
 //C coverage
 unsigned long totalC = 0;
 unsigned long totalG = 0;
@@ -214,7 +212,6 @@ int main(int argc, char* argv[])
 	strcpy(Output_Name, "None");
 	string Prefix="None";
 	string methOutfileName;
-	string methWigOutfileName;
 	string Geno;
 //	int Current_Option=0;
 	int InFileStart=0,InFileEnd=0;
@@ -422,8 +419,6 @@ int main(int argc, char* argv[])
 			if(Methratio){
 				methOutfileName=Prefix;methOutfileName+=".methratio.txt";
 				METHOUTFILE=File_Open(methOutfileName.c_str(),"w");
-				methWigOutfileName=Prefix;methWigOutfileName+=".meth.wig";
-				if(printwigfile) METHWIGOUTFILE=File_Open(methWigOutfileName.c_str(),"w");
 				binsOutfileName=Prefix;binsOutfileName+=".methBins.txt";
 				BINsOUTFILE=File_Open(binsOutfileName.c_str(),"w");
 				//---DMR
@@ -502,7 +497,6 @@ int main(int argc, char* argv[])
 			//
 			 if(Methratio){
 				fclose(METHOUTFILE);
-				if(printwigfile) fclose(METHWIGOUTFILE);
 				fclose(BINsOUTFILE);
 				fclose(REGION_OUT_CG);
 				fclose(REGION_OUT_CHG);
@@ -790,7 +784,6 @@ void print_meth_tofile(int genome_id, ARGS* args){
 			int nb=0,nbins = ceil(args->Genome_Offsets[i+1].Offset/binspan);
 			int nRegionBins = ceil(args->Genome_Offsets[i+1].Offset/RegionBins);
 			char * Genome = args->Genome_Offsets[i].Genome;
-			bool printwigheader=false;
 			for(int l=0;l<args->Genome_Offsets[i+1].Offset;l++)//loci
 			{
 		            if( (nb!=nbins && l==(nb+1)*binspan-1) || i==args->Genome_Offsets[i+1].Offset-1){
@@ -956,12 +949,6 @@ void print_meth_tofile(int genome_id, ARGS* args){
 			              
 					if(revGA>0) fprintf(METHOUTFILE,"%s\t%d\t+\t%s\t%d\t%d\t%f\t%0.001f\t%d\t%d\t%s\t%s\n",args->Genome_Offsets[i].Genome,l+1,context.c_str(),C_count,(C_count+T_count),PlusMethratio,float(C_count+T_count)*revGA,rev_G,(rev_A+rev_G),category.c_str(),Fivecontext.c_str());
 					else fprintf(METHOUTFILE,"%s\t%d\t+\t%s\t%d\t%d\t%f\tnull\t%d\t%d\t%s\t%s\n",args->Genome_Offsets[i].Genome,l+1,context.c_str(),C_count,(C_count+T_count),PlusMethratio,rev_G,(rev_A+rev_G),category.c_str(),Fivecontext.c_str());
-					//wig file
-					if(!printwigheader && printwigfile) {
-						fprintf(METHWIGOUTFILE,"variableStep chrom=%s\n", Genome);
-						printwigheader=true;
-					}
-					if(printwigfile) fprintf(METHWIGOUTFILE,"%d\t%0.001f\n", l+1, PlusMethratio);
 					if(!strcmp(context.c_str(),"CG")) fprintf(LOC_OUT_CG,"%s\t%d\t+\tCG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 					else if(!strcmp(context.c_str(),"CHG")) fprintf(LOC_OUT_CHG,"%s\t%d\t+\tCHG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 					else if(!strcmp(context.c_str(),"CHH")) fprintf(LOC_OUT_CHH,"%s\t%d\t+\tCHH\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
@@ -1088,13 +1075,6 @@ void print_meth_tofile(int genome_id, ARGS* args){
 			              }
 					if(revGA>0) fprintf(METHOUTFILE,"%s\t%d\t-\t%s\t%d\t%d\t%f\t%0.001f\t%d\t%d\t%s\t%s\n",args->Genome_Offsets[i].Genome,l+1,context.c_str(),C_count,(C_count+T_count),NegMethratio,float(C_count+T_count)*revGA,rev_G,(rev_G+rev_A),category.c_str(),Fcontext);
 					else fprintf(METHOUTFILE,"%s\t%d\t-\t%s\t%d\t%d\t%f\tnull\t%d\t%d\t%s\t%s\n",args->Genome_Offsets[i].Genome,l+1,context.c_str(),C_count,(C_count+T_count),NegMethratio,rev_G,(rev_G+rev_A),category.c_str(),Fcontext);
-
-					//wig
-					if(!printwigheader && printwigfile) {
-                                                        fprintf(METHWIGOUTFILE,"variableStep chrom=%s\n", Genome);
-                                                        printwigheader=true;
-                                                }
-                                        if(printwigfile) fprintf(METHWIGOUTFILE,"%d\t-%0.001f\n", l+1, NegMethratio);
 
 					if(!strcmp(context.c_str(),"CG")) fprintf(LOC_OUT_CG,"%s\t%d\t-\tCG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));
 					else if(!strcmp(context.c_str(),"CHG")) fprintf(LOC_OUT_CHG,"%s\t%d\t-\tCHG\t%d\t%d\n",Genome,l+1,C_count,(C_count+T_count));

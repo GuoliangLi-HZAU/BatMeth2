@@ -269,7 +269,7 @@ $(RECURSIVE_TARGETS):
 	  else \
 	    local_target="$$target"; \
 	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) LDFLAGS="$(LDFLAGS)" CXXFLAGS="$(CXXFLAGS)" $$local_target) \
 	  || eval $$failcom; \
 	done; \
 	if test "$$dot_seen" = "no"; then \

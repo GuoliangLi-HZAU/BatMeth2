@@ -27,4 +27,5 @@ then
 	$CPATH/build_indexX $BASEX GTOA
 	rm *.bin
 	$CPATH/build_indexX $BASEX
+    $CPATH/chrLenExtract $BASEX
 fi

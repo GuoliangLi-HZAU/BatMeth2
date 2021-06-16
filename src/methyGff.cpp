@@ -868,6 +868,7 @@ int main(int argc, char* argv[])
 							caculateHeatmap("GENE",start-distanceHeatmap,start,Methy_List[H],Strand,id.c_str(),MethGff_GENE_OUTFILEc,MethGff_GENE_OUTFILEcg,MethGff_GENE_OUTFILEchg,MethGff_GENE_OUTFILEchh,Chrom,start,end, false); //MethGff_TSS_OUTFILEcg_matrix,MethGff_TSS_OUTFILEchg_matrix,MethGff_TSS_OUTFILEchh_matrix,
 						}
 						if(GENE) {
+                            fprintf(MethGff_GENE_OUTFILEc, "\n");
 							fprintf(MethGff_GENE_OUTFILEcg, "\n");
 							fprintf(MethGff_GENE_OUTFILEchg, "\n");
 							fprintf(MethGff_GENE_OUTFILEchh, "\n");
@@ -888,17 +889,17 @@ int main(int argc, char* argv[])
 					{
 						if(i==0 && PU)//Promoter
 						{
-							if(methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH>0 && methGff_List[i].countCG+methGff_List[i].countCHG+methGff_List[i].countCHH >= nC) fprintf(MethGffpromoterOUTFILEc,"%s\t%d\t%c\tC\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG+methGff_List[i].AverPerCHG+methGff_List[i].AverPerCHH,methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH,id.c_str());
-							if(methGff_List[i].AverCG>0 && methGff_List[i].countCG >= nC) fprintf(MethGffpromoterOUTFILEcg,"%s\t%d\t%c\tCG\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG,methGff_List[i].AverCG,id.c_str());
-							if(methGff_List[i].AverCHG>0 && methGff_List[i].countCHG >= nC) fprintf(MethGffpromoterOUTFILEchg,"%s\t%d\t%c\tCHG\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHG,methGff_List[i].AverCHG,id.c_str());
-							if(methGff_List[i].AverCHH>0 && methGff_List[i].countCHH >= nC) fprintf(MethGffpromoterOUTFILEchh,"%s\t%d\t%c\tCHH\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHH,methGff_List[i].AverCHH,id.c_str());
+							if(methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH>0 && methGff_List[i].countCG+methGff_List[i].countCHG+methGff_List[i].countCHH >= nC) fprintf(MethGffpromoterOUTFILEc,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG+methGff_List[i].AverPerCHG+methGff_List[i].AverPerCHH,methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH,id.c_str());
+							if(methGff_List[i].AverCG>0 && methGff_List[i].countCG >= nC) fprintf(MethGffpromoterOUTFILEcg,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG,methGff_List[i].AverCG,id.c_str());
+							if(methGff_List[i].AverCHG>0 && methGff_List[i].countCHG >= nC) fprintf(MethGffpromoterOUTFILEchg,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHG,methGff_List[i].AverCHG,id.c_str());
+							if(methGff_List[i].AverCHH>0 && methGff_List[i].countCHH >= nC) fprintf(MethGffpromoterOUTFILEchh,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHH,methGff_List[i].AverCHH,id.c_str());
 						}
 						if(i==1 && Diff)//body
 						{
-							if(methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH>0 && methGff_List[i].countCG+methGff_List[i].countCHG+methGff_List[i].countCHH >= nC) fprintf(MethGffbodyOUTFILEc,"%s\t%d\t%c\tC\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG+methGff_List[i].AverPerCHG+methGff_List[i].AverPerCHH,methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH,id.c_str());
-							if(methGff_List[i].AverCG>0 && methGff_List[i].countCG >= nC) fprintf(MethGffbodyOUTFILEcg,"%s\t%d\t%c\tCG\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG,methGff_List[i].AverCG,id.c_str());
-							if(methGff_List[i].AverCHG>0 && methGff_List[i].countCHG >= nC) fprintf(MethGffbodyOUTFILEchg,"%s\t%d\t%c\tCHG\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHG,methGff_List[i].AverCHG,id.c_str());
-							if(methGff_List[i].AverCHH>0 && methGff_List[i].countCHH >= nC) fprintf(MethGffbodyOUTFILEchh,"%s\t%d\t%c\tCHH\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHH,methGff_List[i].AverCHH,id.c_str());
+							if(methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH>0 && methGff_List[i].countCG+methGff_List[i].countCHG+methGff_List[i].countCHH >= nC) fprintf(MethGffbodyOUTFILEc,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG+methGff_List[i].AverPerCHG+methGff_List[i].AverPerCHH,methGff_List[i].AverCG+methGff_List[i].AverCHG+methGff_List[i].AverCHH,id.c_str());
+							if(methGff_List[i].AverCG>0 && methGff_List[i].countCG >= nC) fprintf(MethGffbodyOUTFILEcg,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCG,methGff_List[i].AverCG,id.c_str());
+							if(methGff_List[i].AverCHG>0 && methGff_List[i].countCHG >= nC) fprintf(MethGffbodyOUTFILEchg,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHG,methGff_List[i].AverCHG,id.c_str());
+							if(methGff_List[i].AverCHH>0 && methGff_List[i].countCHH >= nC) fprintf(MethGffbodyOUTFILEchh,"%s\t%d\t%c\t%d\t%d\t%s\n",Chrom,start+1,Strand,methGff_List[i].AverPerCHH,methGff_List[i].AverCHH,id.c_str());
 						}
 						if(methGff_List[i].AverCG>0 && methGff_List[i].countCG >= nC) fprintf(MethGffAverOUTFILE,"CG\t%s\t%f\n",du[i].c_str(),(double)methGff_List[i].AverPerCG/(double)methGff_List[i].AverCG);
 						if(methGff_List[i].AverCHG>0 && methGff_List[i].countCHG >= nC) fprintf(MethGffAverOUTFILE,"CHG\t%s\t%f\n",du[i].c_str(),(double)methGff_List[i].AverPerCHG/(double)methGff_List[i].AverCHG);

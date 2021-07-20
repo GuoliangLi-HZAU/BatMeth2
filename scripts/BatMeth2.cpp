@@ -184,6 +184,24 @@ void executeCMD(const char *cmd, string outputdir, string output_prefix)
     pclose(ptr);
     ptr = NULL;
 }
+
+void executeCMDdir(const char *cmd, string outputdir, string output_prefix)
+{
+    char ps[1024]={0};
+    FILE *ptr;
+    strcpy(ps, cmd);
+    fprintf(stderr, "%s\n", cmd);
+    ptr=popen(ps, "w");
+
+    if(ptr==NULL)
+    {
+        fprintf(stderr, "\nRun program %s error, you can run this step alone.\n", ps);
+        exit(0);
+    }
+    pclose(ptr);
+    ptr = NULL;
+}
+
 size_t get_executable_path( char* processdir,char* processname, size_t len)
 {
 	char* path_end;
@@ -326,7 +344,7 @@ int main(int argc, char* argv[])
             	remove(rmfile.c_str());
             	deletelog=true;
             }
-            executeCMD(cmd.c_str(), outputdir, output_prefix);
+            executeCMDdir(cmd.c_str(), outputdir, output_prefix);
         }
         else if(!strcmp(argv[i], "-g"))
         	genome_index= argv[++i];

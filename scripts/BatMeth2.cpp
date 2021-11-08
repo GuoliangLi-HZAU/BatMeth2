@@ -35,7 +35,7 @@ int coverage = 4;
 int maxcoverage = 1000;
 int binCover = 1;
 int chromstep = 50000;
-float hs=0.4
+float hs=0.4;
 //methyGff
 float step = 0.01;
 int distance = 2000;
@@ -61,32 +61,34 @@ string programname;
 
 void usage(){
     fprintf(stderr, "\nBatMeth2 [mode] [paramaters]\n");
-    fprintf(stderr, "mode:  build_index, pipel, align, calmeth, annotation, methyPlot, batDMR, visul2sample, DMCplot\n\n");
+    fprintf(stderr, "mode:  index, pipel, align, calmeth, methyGff, methyPlot, batDMR, visul2sample, DMCplot\n\n");
     fprintf(stderr, "Example:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -1 in1.fq.gz -2 in2.fq.gz --gff gene.gff -o outprefix\n");
     fprintf(stderr, "Or single-end:\n   BatMeth2 pipel --fastp ~/location/to/fastp -g genome_indexed_by_batmeth2 -i in.fq.gz --gff gene.gff -o outprefix\n\n");
 //    ~/software_devp/batmeth2/bin/test pipel --aligner bwa-meth --go ~/practice/Genome/arabidopsis/arabidopsis_bwa-meth/TAIR10_chr_all.fa --fastp ~/software/fastp/fastp -g ~/practice/Genome/arabidopsis/arabidopsis_batmeth2_index/TAIR10_chr_all.fa -1 test1.fq -2 test2.fq --gff ~/practice/Genome/arabidopsis/TAIR10.gene.modify.gff -f 1 -o pipel.clean
     fprintf(stderr, "\n[build_index]\n");
-    fprintf(stderr, "    Usage: BatMeth2 build_index genomefile. (wgbs data, must run this step first), or\n");
-    fprintf(stderr, "    Usage: BatMeth2 build_index rrbs genomefile. (rrbs data)\n");
+    fprintf(stderr, "    Usage: BatMeth2 index -g genomefile. (wgbs data, must run this step first), or\n");
+    fprintf(stderr, "    Usage: BatMeth2 index_rrbs -g genomefile. (rrbs data)\n");
+    fprintf(stderr, "    -S    Set restriction enzyme digestion sites. default: [-S C-CGG] for MspI digestion.\n");
+    fprintf(stderr, "    --gp  Genome index output prefix, default: same as genome name.\n");
 
-    fprintf(stderr, "\n[pipel (Contains: align, calmeth, annotation, methyPlot)]\n");
+    fprintf(stderr, "\n[pipel (Contains: align, calmeth, methyGff, methyPlot)]\n");
     fprintf(stderr, "[fastp location]\n");
     fprintf(stderr, "    --fastp    fastp program location.\n");
     fprintf(stderr, "               ** If --fastp is not defined, the input file should be clean data.\n");
-    fprintf(stderr, "\n[select aligner]\n");
-    fprintf(stderr, "    --aligner         BatMeth2(default), bwa-meth(v1), bsmap, bismark2, \n");
-    fprintf(stderr, "                      or no (exit output_prefix.sam file, no need align again)\n");
-    fprintf(stderr, "    --bismark2para    bismark2 paramaters, contained by \"paramaters\"\n");
-    fprintf(stderr, "    --bsmsppara       bsmap paramaters\n");
-    fprintf(stderr, "    --bwamethpara     bwameth paramaters\n");
-    fprintf(stderr, "[other aligners paramaters]\n");
-    fprintf(stderr, "    --go              Name of the genome, contaion index build by aligner. (bwa-meth/bismark2)\n");
+    //fprintf(stderr, "\n[select aligner]\n");
+    //fprintf(stderr, "    --aligner         BatMeth2(default), bwa-meth(v1), bsmap, bismark2, \n");
+    //fprintf(stderr, "                      or no (exit output_prefix.sam file, no need align again)\n");
+    //fprintf(stderr, "    --bismark2para    bismark2 paramaters, contained by \"paramaters\"\n");
+    //fprintf(stderr, "    --bsmsppara       bsmap paramaters\n");
+    //fprintf(stderr, "    --bwamethpara     bwameth paramaters\n");
+    //fprintf(stderr, "[other aligners paramaters]\n");
+    //fprintf(stderr, "    --go              Name of the genome, contaion index build by aligner. (bwa-meth/bismark2)\n");
     fprintf(stderr, "\n[main paramaters]\n");
-    fprintf(stderr, "    --config [config file].   When we run pipel function in batches datasets, \n");
-    fprintf(stderr, "                              please fill in the specified configuration file. \n");
-    fprintf(stderr, "                              And there is a sample file (multirun.onf) in the BatMeth2 directory.\n");
-    fprintf(stderr, "    --mp [4]                  When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default.\n");
-    fprintf(stderr, "    --ap [24]                 When batch processing data, the number of samples to run at a time (default 4) * threads of each sample (default 6)\n");
+    //fprintf(stderr, "    --config [config file].   When we run pipel function in batches datasets, \n");
+    //fprintf(stderr, "                              please fill in the specified configuration file. \n");
+    //fprintf(stderr, "                              And there is a sample file (multirun.onf) in the BatMeth2 directory.\n");
+    //fprintf(stderr, "    --mp [4]                  When batch processing data, we set the number of samples to run at a time (-mp, default is 4), and each sample needs six threads (- P parameter) by default.\n");
+    //fprintf(stderr, "    --ap [24]                 When batch processing data, the number of samples to run at a time (default 4) * threads of each sample (default 6)\n");
     fprintf(stderr, "    -o [outprefix]            Name of output file prefix\n");
     fprintf(stderr, "    -O [out folder]           Output of result file to specified folder, default output to current folder (./)\n");
     fprintf(stderr, "    -of [SAM/BAM]             Output format, default BAM.\n");
@@ -103,14 +105,14 @@ void usage(){
     fprintf(stderr, "    --region    Bins for DMR calculate , default 1000bp .\n");
     fprintf(stderr, "    -f          for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file).\n");
 	fprintf(stderr, "    -n          maximum mismatches allowed due to seq. default 0.1 percentage of the read length. [0-0.3]\n");
-    fprintf(stderr, "\n[calmeth and annotation paramaters]\n");
+    fprintf(stderr, "\n[calmeth and methyGff paramaters]\n");
     fprintf(stderr, "    --coverage    >= <INT> coverage. default:4\n");
     fprintf(stderr, "    --binCover    >= <INT> nCs per region. default:1\n");
     fprintf(stderr, "    --chromstep   Chromsome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n");
-    fprintf(stderr, "\n[annotation paramaters]\n");
+    fprintf(stderr, "\n[methyGff paramaters]\n");
     fprintf(stderr, "    --gtf/--gff/--bed    Gtf or gff file / bed file\n");
     fprintf(stderr, "    --distance           DNA methylation level distributions in body and <INT>-bp flanking sequences. The distance of upstream and downstream. default:2000\n");
-    fprintf(stderr, "    --step               Gene body and their flanking sequences using an overlapping sliding window of 0.02 of the sequence length at a step of 0.01 of the sequence length. So default step: 0.01 (1%)\n");
+    fprintf(stderr, "    --step               Gene body and their flanking sequences using an overlapping sliding window of 0.02 of the sequence length at a step of 0.01 of the sequence length. So default step: 0.01 (1%) \n");
     fprintf(stderr, "    -C                   <= <INT> coverage. default:1000\n");
     fprintf(stderr, "\n[MethyPlot paramaters]\n");
     fprintf(stderr, "    --CG       CG ratio for heatmap, [0-1], default 0.6\n");
@@ -122,14 +124,12 @@ void usage(){
     fprintf(stderr, "    see the details in 'BatMeth2 align'\n");
     fprintf(stderr, "\n[calmeth paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 calmeth'\n");
-    fprintf(stderr, "\n[annotation paramaters:]\n");
-    fprintf(stderr, "    see the details in 'BatMeth2 annotation'\n");
+    fprintf(stderr, "\n[methyGff paramaters:]\n");
+    fprintf(stderr, "    see the details in 'BatMeth2 methyGff'\n");
     fprintf(stderr, "\n[methyPlot paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 methyPlot'\n");
     fprintf(stderr, "\n[batDMR paramaters:]\n");
     fprintf(stderr, "    see the details in 'BatMeth2 batDMR'\n");
-    fprintf(stderr, "\n[visul2sample paramaters:]\n");
-    fprintf(stderr, "    see the details in 'BatMeth2 visul2sample'\n\n");
 
     fprintf(stderr, "-h|--help   usage\n\nBatMeth2 is a naive tool, if you meet any problems or have good suggestion, please let us know. We will fix it asap!\nE-mail: qiangwei.zhou2013@gmail.com\n\n");
 }
@@ -167,9 +167,9 @@ void executeCMD(const char *cmd, string outputdir, string output_prefix)
     char ps[1024]={0};
     FILE *ptr;
     strcpy(ps, cmd);
-    fprintf(stderr, "%s\n", cmd);
+    fprintf(stderr, "[MM] %s\n", cmd);
     if(output_prefix != "None" && output_prefix != ""){
-	    string filelogname = outputdir + output_prefix + ".run.log";
+	    string filelogname = outputdir + output_prefix + ".cmd.log";
 	    FILE* flog = File_Open(filelogname.c_str(), "aw");
 	    fprintf(flog, "%s\n", cmd);
 	    fclose(flog);
@@ -263,7 +263,7 @@ string getstring(float n)
 
 //function
 void calmeth(string inputf, string outputdir, string output_prefix);
-void build_index(string para);
+void build_index(string para, string command);
 string get_path(string filepath);
 void alignmentSingle(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix);
 void alignmentPaired(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix);
@@ -278,7 +278,8 @@ void alignmentstate(string outputdir, string output_prefix, string mkpath);
 void methyPlot(string outputdir, string output_prefix);
 void fastptrim(string outputdir, string output_prefix, string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend);
 void runpipe(string outputdir, string output_prefix, string mkpath, string input_prefix, string input_prefix1, string input_prefix2, bool pairedend);
-void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix, string mkpath, bool pairedend);
+void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix, string mkpath, bool pairedend, \
+  string redss, string genome_index, string genomeprefix);
 void get_fileformat(char* processdir, string& processname);
 int MAX_PATH = 1000;
 void *nprunpipel(void *arg);
@@ -306,6 +307,24 @@ struct Threading
     ARGS Arg;
 };
 
+string bt2modeHelp = "BatMeth2 \n" \
+                     "index          prepare genome index, before analysis!\n" \
+                     "pipel          pipeline of DNA methylation data analysis \n" \
+                     "align          data alignment\n" \
+                     "calmeth        calculate DNA methylation level based on alignment file\n" \
+                     "methyGff       calculate DNA methylation distribution across gene/TE/peak/other regions based on methratio file\n" \
+                     "batDMR         calculate differential DNA methylation cytosine or region (DMC/DMR)\n" \
+                     "methyPlot      visulization of DNA methylation data\n" ;
+
+void indexUsage(){
+
+    fprintf(stderr, "BatMeth2 index\n");
+    fprintf(stderr, "    Usage: BatMeth2 index -g genomefile. (wgbs data, must run this step first), or\n");
+    fprintf(stderr, "    Usage: BatMeth2 index_rrbs -g genomefile. (rrbs data)\n");
+    fprintf(stderr, "    -S    Set restriction enzyme digestion sites. default: [-S C-CGG] for MspI digestion.\n");
+    fprintf(stderr, "    --gp  Genome index output prefix, default: same as genome name.\n");
+}
+
 std::vector<struct SAMPLE> v_samples;
 bool printbigwig = false;
 int main(int argc, char* argv[])
@@ -316,10 +335,12 @@ int main(int argc, char* argv[])
 	string input_prefix = "None";
 	string input_prefix1 = "";
 	string input_prefix2 = "";
+    string genomeprefix = "";
 	string mkpath;
 	int NTHREAD=4;
 	int allthreads =24;
 	bool deletelog=false;
+    string redss = "C-CGG";
 
 	for(int i=1;i<argc;i++)
     {
@@ -343,11 +364,17 @@ int main(int argc, char* argv[])
             	string rmfile = outputdir + output_prefix + ".run.log";
             	remove(rmfile.c_str());
             	deletelog=true;
+                rmfile = outputdir + output_prefix + ".cmd.log";
+            	remove(rmfile.c_str());
+            	deletelog=true;
             }
-            executeCMDdir(cmd.c_str(), outputdir, output_prefix);
+            if(outputdir!="./" && outputdir!=".")
+                executeCMDdir(cmd.c_str(), outputdir, output_prefix);
         }
         else if(!strcmp(argv[i], "-g"))
         	genome_index= argv[++i];
+        else if(!strcmp(argv[i], "--gp"))
+        	genomeprefix= argv[++i];
         else if(!strcmp(argv[i], "-of"))
                 outformat = argv[++i];
         else if(!strcmp(argv[i], "-p"))
@@ -415,7 +442,9 @@ int main(int argc, char* argv[])
         else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help") || !strcmp(argv[i], "-help")){
             usage();
             exit(0);
-        }
+        }else if(!strcmp(argv[i], "-S")){
+			redss = argv[++i];
+		}
     }
 
 	if (argc < 2){
@@ -424,7 +453,7 @@ int main(int argc, char* argv[])
 	}
 
     mode = argv[1];
-    if(mode != "build_index" && mode != "pipel" && mode != "align" && mode != "calmeth" && mode != "annotation" && mode != "methyPlot" && mode != "batDMR" && 
+    if(mode != "index" && mode != "index_rrbs" && mode != "pipel" && mode != "align" && mode != "calmeth" && mode != "methyGff" && mode != "methyPlot" && mode != "batDMR" && 
     mode != "visul2sample" && mode != "DMCplot"){
     	fprintf(stderr, "\nNot a valid mode\n");
     	usage();
@@ -447,6 +476,8 @@ int main(int argc, char* argv[])
 		string rmfile = outputdir + output_prefix + ".run.log";
 		remove(rmfile.c_str());
 		deletelog=true;
+        rmfile = outputdir + output_prefix + ".cmd.log";
+		remove(rmfile.c_str());
 	}
 
     if(mode == "align" && aligner == "BatMeth2"){
@@ -468,22 +499,30 @@ int main(int argc, char* argv[])
         	genome_index = genome_others;
         }
         if(gfffile == "None" && bedfile == "None"){
-            fprintf(stderr, "\nPlease defined gff/gtf/bed file for annotation analysis!\n");
+            fprintf(stderr, "\nPlease defined gff/gtf/bed file for methyGff analysis!\n");
             exit(0);
         }
 	}
     mkpath = outputdir;
+
+    if(mode == "mode"){
+        fprintf(stderr, "%s\n", bt2modeHelp.c_str());
+    }
     
 	if (argc < 4){
 	    if (mode == "pipel")
 	        usage();
 	    else
-	        detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend);
+	        detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend, 
+                redss, genome_index, genomeprefix);
 	    exit(0);
 	}
-    fprintf(stderr, "[ Program directory ] %s\n[ Program name ] %s\n",abspathtmp, processname);
-    fprintf(stderr, "[ Workdir ] %s\n", workdirtmp);
-    fprintf(stderr, "[ outputdir ] %s\n", outputdir.c_str());
+
+    if( mode != "index" && mode != "index_rrbs" ){
+        fprintf(stderr, "[ Program directory ] %s\n[ Program name ] %s\n",abspathtmp, processname);
+        fprintf(stderr, "[ Workdir ] %s\n", workdirtmp);
+        fprintf(stderr, "[ outputdir ] %s\n", outputdir.c_str());
+    }
 
 	if(configfile!="" && mode != "pipel"){
 		fprintf(stderr, "\nConfigure files only valid in pipel mode!\n");
@@ -518,7 +557,8 @@ int main(int argc, char* argv[])
 		fclose(configFp);
 
 	}else
-		detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend);
+		detect_mode(mode, argc, argv, outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, mkpath, pairedend, \
+            redss, genome_index, genomeprefix);
 
 }
 char* readline(char* s2t, int BATBUF, FILE* configFp){
@@ -645,17 +685,43 @@ void calmeth(string inputf, string outputdir, string output_prefix){
         cmd = cmd + " -Q " + getstring(Qual);
     if(region != 1000)
         cmd = cmd + " -R " + getstring(region);
+    cmd = cmd + " -as 1 ";
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
     executeCMD(cmd.c_str(), outputdir, output_prefix);
     return;
 }
 
-void build_index(string para){
-    if(para==""){
-        fprintf(stderr, "Must have genome file.\n");
+void build_index(string para, string mode, string outputdir, string output_prefix, string redss, \
+    string genome_index, string genomeprefix){
+    if(genome_index==""){
+        indexUsage();
         exit(0);
     }
-    string cmd = abspath + "build_all " + para; //sys.argv[2]
+    string cmd="";
+    //rrbs
+    if(mode == "index_rrbs"){
+        cmd = abspath + "build_index_rrbs -S " + redss + " " + genome_index;
+        executeCMD(cmd.c_str(), outputdir, output_prefix);
+        genome_index = genome_index + ".rrbs.fa";
+        //genome.rrbs.fa
+    }
+    //genome c2t
+    cmd=abspath + "genome2cg -g " + genome_index;
+    if(genomeprefix == ""){
+        genomeprefix = genome_index;
+    }else{
+        cmd = cmd + " -p " + genomeprefix;
+    }
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    //prepare bin and len
+    cmd=abspath + "genomebinLen " + genome_index;
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    //build index
+    cmd = abspath + "bwame index " + genomeprefix + ".batmeth2.fa";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+    return;
+
+    cmd = abspath + "memalign " + mode + " " + para; //sys.argv[2]
     string temp = "None";
     executeCMD(cmd.c_str(), temp, temp);
 }
@@ -968,11 +1034,11 @@ void annotation(string outputdir, string output_prefix){
     string cmd;
     if(gfffile != "None")
         if(GTF)
-            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gtf " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + hs;
+            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gtf " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + getstring(hs);
         else
-            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + hs;
+            cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -gff " + gfffile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs " + getstring(hs);
     else if(bedfile != "None")
-        cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs "+hs;
+        cmd = abspath + "methyGff" + " -o " + outputdir + output_prefix + " -G " + genome_index + " -b " + bedfile + " -m " + methratio + " -B -P --TSS --TTS --GENE -hs "+ getstring(hs);
     else {
     	fprintf(stderr, "\nWarning: not defined gtf/gff/bed file, so skip annatation.\n");
     	return;
@@ -1126,7 +1192,7 @@ void alignmentstate(string outputdir, string output_prefix, string mkpath){
     //FILE* Falignresults = File_Open(alignresults.c_str(), "w");
     //fprintf(Falignresults, "Value\tState\n");
     //fclose(Falignresults);
-    if(aligner != "BatMeth2" || outformat=="SAM"){
+    if(outformat=="SAM"){
         string alignsortbam = "samtools sort -m 2G -@ " + getstring(threads) +" -o " + outputdir + output_prefix + ".sort.bam " + outputdir + output_prefix + ".sam";
         alignsortbam = alignsortbam + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(alignsortbam.c_str(), outputdir, output_prefix);
@@ -1167,12 +1233,15 @@ void visul2sample(){
 }
 
 void fastptrim(string outputdir, string output_prefix, string input_prefix1, string input_prefix2, string input_prefix, string input_clean1, string input_clean2, string input_clean, bool pairedend){
+    string prefix = outputdir + output_prefix;
     if(fastp != ""){
     	string cmd;
         if(pairedend)
-            cmd = fastp + " -Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2;
+            cmd = fastp + " -Y 0 -i " + input_prefix1 + " -I " + input_prefix2 + " -o " + input_clean1 + " -O " + input_clean2 + " -h " + prefix + ".html" \
+                + " -j " + prefix + ".json";
         else
-        	cmd = fastp + " -Y 0 -i " + input_prefix + " -o " + input_clean;
+        	cmd = fastp + " -Y 0 -i " + input_prefix + " -o " + input_clean + " -h " + prefix + ".html" \
+                + " -j " + prefix + ".json";
         cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }
@@ -1188,6 +1257,188 @@ void mr2bw(string output_prefix, string outputdir){
     executeCMD(cmd.c_str(), outputdir, output_prefix);
 }
 
+void QCSingle(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix,
+    string &clean_input){
+    if(aligner == "no")
+        return;
+    if( (input_prefix == "None") || (output_prefix == "None")){
+        fprintf(stderr, "Please check the pramater.\ngenome: %s\ninput: %s\noutput_prefix: %s\n", genome_index.c_str(), input_prefix.c_str(), output_prefix.c_str());
+        exit(0);
+    }
+
+    //single-end QC
+    std::vector <string> infilelist;
+    std::vector<string> cleanfilelist;
+    std::vector<string> outfilelist1;
+
+    SplitString(input_prefix, infilelist, ",");
+
+    string cmd="";
+    //clean
+    
+    string input_clean;
+    string fileformat;
+    char temp[MAX_PATH];
+    int i;
+    string clenfiles="";
+    string outfiles=""; //for trans fq files
+    string cleanname = output_prefix;
+    
+    string out1_c2t;
+    for(int j=0;j<infilelist.size();j++){
+        for(i=0;i<infilelist[j].length();i++)
+        temp[i] = infilelist[j][i];
+        temp[i]='\0';
+        get_fileformat(temp, fileformat);
+        if( fileformat == "gz" || fileformat == "gzip" ){
+            //gzfilelist[j] = 1;
+            if(!cleanreads){
+                input_clean = getfilename(string(temp)) + "clean.gz";
+                out1_c2t = getfilename(string(temp)) + "clean.c2t.fq.gz";
+            }else{
+                out1_c2t = getfilename(string(temp)) + "c2t.fq.gz";
+            }
+        }else if(fileformat == "fq" || fileformat == "fastq"){
+            //gzfilelist[j] = 0;
+            if(!cleanreads){
+                input_clean = getfilename(string(temp)) + "clean.fq";
+                out1_c2t = getfilename(string(temp)) + "clean.c2t.fq.gz";
+            }else{
+                out1_c2t = getfilename(string(temp)) + "c2t.fq.gz";
+            }
+        }else{
+            fprintf(stderr, "\n%s is a unvalid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+            exit(0);
+        }
+        
+        string input_clean1;
+        string input_clean2;
+        if(!cleanreads){
+            if(infilelist.size() > 0) cleanname = getfilename(input_clean);
+            fprintf(stderr, "[ RMat ] raw reads: %s; clean reads: %s\n", infilelist[j].c_str(), cleanname.c_str());
+            fastptrim(outputdir, output_prefix, input_prefix1, input_prefix2, infilelist[j], input_clean1, input_clean2, outputdir + cleanname, false);
+            if(clean_input == ""){
+                clean_input = outputdir + cleanname;
+            }else{
+                clean_input = clean_input + "," + outputdir + cleanname;
+            }
+            infilelist[j]=cleanname;
+            cleanfilelist.push_back(cleanname);
+        }
+        outfilelist1.push_back(out1_c2t);
+    }
+
+}
+
+void QCPaired(string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix, 
+    string &clean_input1, string &clean_input2){
+    if(aligner == "no")
+        return;
+    if( (input_prefix1 == "") || (output_prefix == "") || (input_prefix2 == "")){
+        fprintf(stderr, "\nError! Please check the pramater.\ngenome: %s\ninput: %s, %s\noutput_prefix: %s\n", genome_index.c_str(), input_prefix1.c_str(), input_prefix2.c_str(),output_prefix.c_str());
+        exit(0);
+    }
+
+    //paired-end QC
+    std::vector<string> cleanfilelist1;
+    std::vector<string> cleanfilelist2;
+    std::vector<string> outfilelist1;
+    std::vector<string> outfilelist2;
+    std::vector <string> infilelist1;
+    std::vector <string> infilelist2;
+
+    SplitString(input_prefix1, infilelist1, ",");
+    SplitString(input_prefix2, infilelist2, ",");
+	string cmd="";
+    //clean
+    string input_clean1;
+    string out1_c2t;
+    string fileformat;
+    char temp[MAX_PATH];
+    int i=0;
+    string clenfiles1="";
+    string clenfiles2="";
+    string outfiles1="";
+    string outfiles2="";
+
+    string cleanname = output_prefix;
+    for(int j=0;j<infilelist1.size();j++){
+        for(i=0;i<infilelist1[j].length();i++)
+            temp[i] = infilelist1[j][i];
+        temp[i]='\0';
+        get_fileformat(temp, fileformat);
+        if( fileformat == "gz" || fileformat == "gzip" ) {
+            //gzfilelist_1[j] = 1;
+            if(!cleanreads){
+                input_clean1 = getfilename(string(temp)) + "clean.gz";
+                out1_c2t = getfilename(string(temp)) + "clean.c2t.fq.gz";
+            }else{
+                out1_c2t = getfilename(string(temp)) + "c2t.fq.gz";
+            }
+        }else if(fileformat == "fq" || fileformat == "fastq"){
+            //gzfilelist_1[j] = 0;
+            if(!cleanreads){
+                input_clean1 = getfilename(string(temp)) + "clean.fq";
+                out1_c2t = getfilename(string(temp)) + "clean.c2t.fq.gz";
+            }else{
+                out1_c2t = getfilename(string(temp)) + "c2t.fq.gz";
+            }
+        }else{
+            fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+            exit(0);
+        }
+        string input_clean;
+        string input_clean2;
+        
+        string out2_g2a;
+        for(i=0;i<infilelist2[j].length();i++)
+            temp[i] = infilelist2[j][i];
+        temp[i]='\0';
+        get_fileformat(temp, fileformat);
+        if( fileformat == "gz" || fileformat == "gzip" ) {
+            //gzfilelist_2[j] = 1;
+            if(!cleanreads){
+                input_clean2 = getfilename(string(temp)) + "clean.gz";
+                out2_g2a = getfilename(string(temp)) + "clean.g2a.fq.gz";
+            }else{
+                out2_g2a = getfilename(string(temp)) + "g2a.fq.gz";
+            }
+        }else if(fileformat == "fq" || fileformat == "fastq"){
+            //gzfilelist_2[j] = 0;
+            if(!cleanreads){
+                input_clean2 = getfilename(string(temp)) + "clean.fq";
+                out2_g2a = getfilename(string(temp)) + "clean.g2a.fq.gz";
+            }else{
+                out2_g2a = getfilename(string(temp)) + "g2a.fq.gz";
+            }
+        }else{
+            fprintf(stderr, "\n%s not a valid input files, should be fq/fastq or gz/gzip format!\n", fileformat.c_str());
+            exit(0);
+        }
+        if(!cleanreads) {
+            fprintf(stderr, "[ RMat ] raw reads: %s, %s; clean reads: %s, %s\n", infilelist1[j].c_str(), infilelist2[j].c_str(), input_clean1.c_str(), input_clean2.c_str());
+            if(infilelist1.size() > 0) cleanname = input_clean1;
+            fastptrim(outputdir, output_prefix, infilelist1[j], infilelist2[j], input_prefix, outputdir + input_clean1, outputdir + input_clean2, input_clean, true);
+            if(clean_input1 == ""){
+                clean_input1 = outputdir + input_clean1;
+                clean_input2 = outputdir + input_clean2;
+            }else{
+                clean_input1 = clean_input1 + "," + outputdir + input_clean1;
+                clean_input2 = clean_input2 + "," + outputdir + input_clean2;
+            }
+            infilelist1[j]=input_clean1;
+            infilelist2[j]=input_clean2;
+            cleanfilelist1.push_back(input_clean1);
+            cleanfilelist2.push_back(input_clean2);
+        }
+        outfilelist1.push_back(out1_c2t);
+        outfilelist2.push_back(out2_g2a);
+        //alignment
+        
+    }
+
+}
+
 // whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
 // on gff file or bed region, DNA methylation visulization. Differentail analysis use diffmeth function.
 
@@ -1199,14 +1450,50 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
 
     printparamter1(mkpath, input_prefix, input_prefix1, input_prefix2, outputdir, pairedend, output_prefix);
     printparamter2(mkpath, output_prefix);
+    
+    string clean_input1 = "", clean_input2 = "", clean_input = "";
+    if(fastp!=""){
+        fprintf(stderr, "[ BatMeth2 ] Clean reads ...\n");
+        
+        // read qc and c2t / g2a
+        if(input_prefix1!="" && input_prefix2!=""){
+            fprintf(stderr, "Process paired-end reads!\n");
+            QCPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, clean_input1, clean_input2);
+            // cleanfilelist1 cleanfilelist2
+        }
+        if(input_prefix!="None"){
+            fprintf(stderr, "Process single-end reads\n");
+            QCSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, clean_input);
+            // cleanfilelist
+        }
+    }
+
     fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
-    string align_result = outputdir + output_prefix + ".sam";
-    if(pairedend){
-        alignmentPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+    string align_result = outputdir + output_prefix + ".sort.bam";
+    string cmd = abspath + "memalign c2t";
+    if(fastp!=""){
+        if(pairedend){
+            cmd = cmd + " -1 " + clean_input1 + " -2 " + clean_input2;
+        }
+        if(input_prefix!="None"){
+            cmd = cmd + " -i " + clean_input;
+        }
+    }else{
+        if(pairedend){
+            cmd = cmd + " -1 " + input_prefix1 + " -2 " + input_prefix2;
+            //alignmentPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+        }
+        if(input_prefix!="None"){
+            cmd = cmd + " -i " + input_prefix;
+            //alignmentSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+        }
     }
-    else{
-        alignmentSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
-    }
+    
+    cmd = cmd + " -o " + output_prefix; // + " -O " + outputdir; //for log outfile
+    cmd = cmd + " | " + abspath + "bwame mem -t " + getstring(threads) + " -C -p -Y " + genome_index + ".batmeth2.fa -  | " \
+      + "samtools sort -@ "+ getstring(threads) + " -o " + align_result + " - ";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+
     fprintf(stderr, "[ BatMeth2 ] Alignment summary ...\n");
     fprintf(stderr, "[ BatMeth2 ] Sorting align file ...\n");
     fprintf(stderr, "[ BatMeth2 ] ");
@@ -1218,7 +1505,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     annotation(outputdir, output_prefix);
     string methratioLogfile = outputdir + output_prefix + ".log.txt";
     string newlogfile = mkpath + output_prefix + ".methbasic.txt";
-    string cmd = "cp ";
+    cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
     cmd += newlogfile;
     cmd = cmd + " >> " + outputdir + output_prefix + ".run.log 2>&1";
@@ -1236,7 +1523,9 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
 
 //"pipel", "index", "align", "calmeth", "anno", "visul", "diffmeth", "visuldiff", DManno"
 
-void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, string input_prefix, string input_prefix1, string input_prefix2, string output_prefix, string mkpath, bool pairedend){
+void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, string input_prefix, \
+  string input_prefix1, string input_prefix2, string output_prefix, string mkpath, bool pairedend, \
+  string redss, string genome_index, string genomeprefix){
     string command = mode;
     string para = "";
     string tmp;
@@ -1248,8 +1537,8 @@ void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, 
         }
     }
     string cmd;
-    if(command == "build_index")
-        build_index(para);
+    if(command == "index" || command == "index_rrbs")
+        build_index(para, command, outputdir, output_prefix, redss, genome_index, genomeprefix);
     else if(command == "pipel")
         runpipe(outputdir, output_prefix, mkpath, input_prefix, input_prefix1, input_prefix2, pairedend);
     else if (command == "align")
@@ -1261,7 +1550,7 @@ void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, 
         cmd = abspath + "calmeth " + para;
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }
-    else if (command == "annotation"){
+    else if (command == "methyGff"){
         cmd = abspath + "methyGff " + para;
         executeCMD(cmd.c_str(), outputdir, output_prefix);
     }

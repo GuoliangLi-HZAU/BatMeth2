@@ -289,7 +289,7 @@ int main(int argc, char* argv[])
 			printf("Output prefix: %s\n", Output_Name);
 			time(&Start_Time);
 
-			string L=Geno;L+=".ann.location";
+			string L=Geno;L+=".len"; //ann.location
 
 			FILE* Location_File=File_Open(L.c_str(),"r");
 			
@@ -297,49 +297,40 @@ int main(int argc, char* argv[])
 
 			struct Offset_Record
 			{
-				char Genome[40];
+				char Genome[1000];
 				unsigned Offset;
 			} Temp_OR; 
 
-			while (fgets(Temp_OR.Genome,39,Location_File)!=0)//count genomes..
+			while (fgets(Temp_OR.Genome,1000,Location_File)!=0)//count genomes..
 			{
-				fgets(Temp_OR.Genome,39,Location_File);
-				Genome_CountX++;	
+				Genome_CountX++;
 			}
 			rewind(Location_File);
-			Offset_Record Genome_Offsets[Genome_CountX+1];
+			Offset_Record Genome_Offsets[Genome_CountX];
 
 			int Genome_Count=0;
-			while (fgets(Genome_Offsets[Genome_Count].Genome,39,Location_File)!=0 && Genome_Count<=Genome_CountX)
+			char ChromLen[1000];
+			while (fgets(ChromLen,1000,Location_File)!=0 && Genome_Count<=Genome_CountX)
 			{
-				Genome_Offsets[Genome_Count].Offset=atoi(Genome_Offsets[Genome_Count].Genome);
-				fgets(Genome_Offsets[Genome_Count].Genome,39,Location_File);
-				for(int i=0;i<40;i++) 
-				{
-					if (Genome_Offsets[Genome_Count].Genome[i] == '\n' ||Genome_Offsets[Genome_Count].Genome[i] == '\r')
-					{ 
-						Genome_Offsets[Genome_Count].Genome[i]=0;
-						break;
-					} 
-				}
+				sscanf(ChromLen, "%s%u", Genome_Offsets[Genome_Count].Genome, &Genome_Offsets[Genome_Count].Offset);
+				//if(longestChr < Genome_Offsets[Genome_Count].Offset) longestChr = Genome_Offsets[Genome_Count].Offset;
 				Genome_Count++;	
 			}
-			Genome_Count--;
 
 			//GeneDensity GeneD_List[Genome_Count];
 			Methy_Hash Methy_List[Genome_Count];
 			fprintf(stderr, "Ngenome: %d\n",Genome_Count);
 			for ( int i=0;i<Genome_Count;i++)//Stores the location in value corresponding to has..
 			{
-				fprintf(stderr, "%s.%d, ",Genome_Offsets[i].Genome, Genome_Offsets[i+1].Offset);
+				fprintf(stderr, "%s.%d, ",Genome_Offsets[i].Genome, Genome_Offsets[i].Offset);
 				String_Hash[Genome_Offsets[i].Genome]=i;
 				//meth ini
-				Methy_List[i].mergeMethContext =new char[Genome_Offsets[i+1].Offset];
+				Methy_List[i].mergeMethContext =new char[Genome_Offsets[i].Offset];
 				//Methy_List[i].NegMethContext =new char[Genome_Offsets[i+1].Offset];
-				Methy_List[i].mergeCount_C = new int[Genome_Offsets[i+1].Offset];
-				Methy_List[i].mergeCount_CT = new int[Genome_Offsets[i+1].Offset];
-				memset(Methy_List[i].mergeCount_C,0,Genome_Offsets[i+1].Offset);
-				memset(Methy_List[i].mergeCount_CT,0,Genome_Offsets[i+1].Offset);
+				Methy_List[i].mergeCount_C = new int[Genome_Offsets[i].Offset];
+				Methy_List[i].mergeCount_CT = new int[Genome_Offsets[i].Offset];
+				memset(Methy_List[i].mergeCount_C,0,Genome_Offsets[i].Offset);
+				memset(Methy_List[i].mergeCount_CT,0,Genome_Offsets[i].Offset);
 				//Methy_List[i].mergeStrand = new int[Genome_Offsets[i+1].Offset];
 				//Methy_List[i].NegCount_CT = new int[Genome_Offsets[i+1].Offset];
 				Methy_List[i].Index=i;
@@ -355,10 +346,10 @@ int main(int argc, char* argv[])
 				//GeneD_List[i].Index=i;
 			}
 			printf("Loaded\n");
-			string CG="CG",CHG="CHG",CHH="CHH";
+			string CG="CG",CHG="CHG",CHH="CHH", CNN="CNN";
 			Context_Hash[CG.c_str()]=1;Context_Hash[CHG.c_str()]=2;Context_Hash[CHH.c_str()]=3;
 			
-			unsigned pos;float methratio=0;int countC=0,countCT=0;
+			long pos;float methratio=0;int countC=0,countCT=0;
 			//int revG=0,revGA=0;
 			//start to read batman hit file
 			int tembuf=1000;
@@ -388,7 +379,7 @@ int main(int argc, char* argv[])
 				fgets(Meth,BATBUF,INFILE);
 				//printf("%s\n", Meth);
 //				sscanf(Meth,"%s%u%s%s%*s%*s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);//,&revG,&revGA
-				sscanf(Meth,"%s%u%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);
+				sscanf(Meth,"%s%d%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);
 				//printf("111\n");	
 				if(countCT<Coverage) continue;
 				if(countCT > maxcover) continue;
@@ -397,6 +388,7 @@ int main(int argc, char* argv[])
 				pos--;//0-- for array start 0
 				//printf("%s %d %d %d\n", Chrom, pos, countC, countCT);
 				//int whichBins = (int)floor((double)pos/binsStep);//1000
+				if(H<0 || H>=Genome_Count || pos < 0 || countC < 0 || countCT <0 ) {fprintf(stderr, "Unexpected chromosome, %s %d %s %d %d\n", Chrom, pos, context, countC, countCT);  continue;}
 				Methy_List[H].mergeMethContext[pos]=Context_Hash[context];
 				Methy_List[H].mergeCount_C[pos]=countC;
 				if(Strand=='+')
@@ -769,15 +761,15 @@ int main(int argc, char* argv[])
 					if(end-start<beddistance) continue;
 					if(!InputBed && end-start < beddistance) fprintf(stderr, "Waring: element %s is too shoter to caculate heatmap.\n", id.c_str());
 					else if(end-start < beddistance) fprintf(stderr, "Waring: element %s:%d-%d is too shoter to caculate heatmap.\n", Chrom, start, end);
-                        	        map<string, int>::iterator it= String_Hash.find(Chrom);
-                	                if(it == String_Hash.end()) {
-        	                                printf("%s not detected meth\n", Chrom);
-	                                        strcpy(noChrom,Chrom);
-                                        	continue;
-                                	}
+					map<string, int>::iterator it= String_Hash.find(Chrom);
+					if(it == String_Hash.end()) {
+							printf("%s not detected meth\n", Chrom);
+							strcpy(noChrom,Chrom);
+							continue;
+					}
 					int H=String_Hash[Chrom];
 					
-					if(start>distance && end+distance <Genome_Offsets[H+1].Offset ) //&& end-start > nLevel 
+					if(start>distance && end+distance <Genome_Offsets[H].Offset ) //&& end-start > nLevel 
 					{
 						start--;end--;
 						if(Strand=='-')

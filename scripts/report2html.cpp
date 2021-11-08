@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
     string parafile2 = prefix + ".Paramater2.txt";
     //awk -v FS="\t" -v OFS="\t" '{gsub(/ /,"_",$2);print $2,$1}' alignresults.txt > alignresults2.txt
     string alignfile = prefix + ".align.log.txt";
-    string mrbasicfile = prefix + ".methbasic.txt";
+    string mrbasicfile = prefix + ".methlog.txt";
 
     ofstream ofs;
     ofs.open(htmlFile.c_str(), ifstream::out);
@@ -147,10 +147,10 @@ int main(int argc, char* argv[]){
     while(fgets(s2t, BATBUF, AlignF)!=0){
         if(s2t == NULL) continue;
         char *subarr = strtok(s2t,"\t");
-        printf("HHH2 %s\n", subarr);
+        //printf("HHH2 %s\n", subarr);
         strcpy(opt1, subarr);
         subarr = strtok(NULL,"\t");
-        printf("HHH2 %s\n", subarr);
+        //printf("HHH2 %s\n", subarr);
         strcpy(opt2, subarr);
         outputRow(ofs, opt1, opt2);
     }

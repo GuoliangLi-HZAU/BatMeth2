@@ -40,5 +40,5 @@ AC_TRY_COMPILE(	[#include <emmintrin.h>;#include <mmintrin.h>;],
 		AC_MSG_RESULT(This version of C does not support intrinsics. See the documentation for fixes. Compiling the slower non-MMX version... )
 	      )
 CFLAGS="$save_CFLAGS"
-AC_OUTPUT(Makefile src/Makefile scripts/Makefile)
+AC_OUTPUT(Makefile scripts/Makefile)
 #AC_OUTPUT(Makefile src/Makefile scripts/Makefile)

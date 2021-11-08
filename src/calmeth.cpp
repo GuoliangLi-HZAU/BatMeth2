@@ -67,7 +67,7 @@ struct Methy_Hash
 };
 struct Offset_Record
 {
-	char Genome[40];
+	char Genome[1000];
 	unsigned Offset;
 } Temp_OR; 
 typedef struct {
@@ -118,6 +118,7 @@ string remove_soft_split(string & cigar,int & Read_Len,int & pos);
 void ReverseC_Context(char* Dest,const char* seq,int & stringlength);
 //---------------------------------------------------------------------------------------------------------------
 unsigned Total_Reads_all;
+unsigned long Total_Reads=0, Total_mapped = 0, forward_mapped = 0, reverse_mapped = 0;
 //----mapping count
 unsigned Tot_Unique_Org=0;//total unique hits obtained
 unsigned ALL_MAP_Org=0;
@@ -178,6 +179,7 @@ unsigned long plus_mCGcount=0,plus_mCHGcount=0,plus_mCHHcount=0;
 unsigned long plusCGcount=0,plusCHGcount=0,plusCHHcount=0;
 unsigned long Neg_mCGcount=0,Neg_mCHGcount=0,Neg_mCHHcount=0;
 unsigned long NegCGcount=0,NegCHGcount=0,NegCHHcount=0;
+string Prefix="None";
 int main(int argc, char* argv[])
 {
 	time_t Start_Time,End_Time;
@@ -198,6 +200,7 @@ int main(int argc, char* argv[])
 		"\t--binsfile            DNA methylation level distributions in chrosome, default output file: {methratioPrefix}.methBins.txt\n"
 		"\t-s|--step             Chrosome using an overlapping sliding window of 100000bp at a step of 50000bp. default step: 50000(bp)\n"
 		"\t-r|--remove_dup       REMOVE_DUP, default:false\n"
+		"\t-as [0/1]             If print calculated alignment reads in sam/bam file. default:0\n"
 		"\t-f|--sam [outfile]    f for sam format outfile contain methState. default: sam format.\n"
 		"\t--sam-seq-beforeBS    Converting BS read to the genome sequences.\n"
 		"\t-h|--help";
@@ -210,7 +213,7 @@ int main(int argc, char* argv[])
 	int Genome_CountX=0;
 	char Output_Name[100];
 	strcpy(Output_Name, "None");
-	string Prefix="None";
+	//string Prefix="None";
 	string methOutfileName;
 	string Geno;
 //	int Current_Option=0;
@@ -220,6 +223,7 @@ int main(int argc, char* argv[])
 	
 //	int Par_Count=0;
 	std::string CMD;
+	int AlignSum = 0;
 
 	for(int i=1;i<argc;i++)
 	{
@@ -269,6 +273,9 @@ int main(int argc, char* argv[])
 		else if(!strcmp(argv[i],"-c") || !strcmp(argv[i],"--coverage"))
 		{
 			coverage=atoi(argv[++i]);
+        }else if(!strcmp(argv[i],"-as"))
+		{
+			AlignSum=atoi(argv[++i]);
         }else if(!strcmp(argv[i],"--maxcoverage"))
 		{
 			maxcoverage=atoi(argv[++i]);
@@ -315,7 +322,7 @@ int main(int argc, char* argv[])
 		printf("\nBatMeth2::Split v2.0\n");
 		string log;
                 log=Prefix;
-                log+=".log.txt";
+                log+=".methlog.txt";
 		FILE* OUTLOG=File_Open(log.c_str(),"w");
 		string mCdensity;
                 mCdensity=Prefix;  
@@ -336,7 +343,7 @@ int main(int argc, char* argv[])
 			Build_Pow10();
 			
 			string G=Geno;G+=".bin";
-			string L=Geno;L+=".ann.location";
+			string L=Geno;L+=".len"; //ann.location
 
 			FILE* BINFILE=File_Open(G.c_str(),"r");
 			FILE* Location_File=File_Open(L.c_str(),"r");
@@ -349,32 +356,25 @@ int main(int argc, char* argv[])
 				args.Marked_GenomeE=new char[Genome_Size+1];if(!args.Marked_GenomeE) throw("Insufficient memory to Mark genome..\n"); 
 			}
 			printf("Load Genome.. %s\n", Geno.c_str());
-			while (fgets(Temp_OR.Genome,39,Location_File)!=0)//count genomes..
+			while (fgets(Temp_OR.Genome,1000,Location_File)!=0)//count genomes..
 			{
-				fgets(Temp_OR.Genome,39,Location_File);
-				Genome_CountX++;	
+				//fgets(Temp_OR.Genome,39,Location_File);
+				Genome_CountX++;
 			}
 			rewind(Location_File);
 		
-			args.Genome_Offsets = new Offset_Record[Genome_CountX+1];
+			args.Genome_Offsets = new Offset_Record[Genome_CountX];
 			int Genome_Count=0;
-			while (fgets(args.Genome_Offsets[Genome_Count].Genome,39,Location_File)!=0 && Genome_Count<=Genome_CountX)
+			char ChromLen[1000];
+			while (fgets(ChromLen,1000,Location_File)!=0 && Genome_Count<=Genome_CountX)
 			{
-				args.Genome_Offsets[Genome_Count].Offset=atoi(args.Genome_Offsets[Genome_Count].Genome);
-				if(longestChr < args.Genome_Offsets[Genome_Count].Offset) longestChr = atoi(args.Genome_Offsets[Genome_Count].Genome);
-				fgets(args.Genome_Offsets[Genome_Count].Genome,39,Location_File);
-				for(int i=0;i<40;i++) 
-				{
-					//if (args.Genome_Offsets[Genome_Count].Genome[i] == '\n' ||args.Genome_Offsets[Genome_Count].Genome[i] == '\r')
-					if (args.Genome_Offsets[Genome_Count].Genome[i] == '\n' || args.Genome_Offsets[Genome_Count].Genome[i] == '\r' || args.Genome_Offsets[Genome_Count].Genome[i] == ' ' || args.Genome_Offsets[Genome_Count].Genome[i] == '\t') //genome name rm ' '
-					{ 
-						args.Genome_Offsets[Genome_Count].Genome[i]=0;
-						break;
-					} 
-				}
+				sscanf(ChromLen, "%s%u", args.Genome_Offsets[Genome_Count].Genome, &args.Genome_Offsets[Genome_Count].Offset);
+				//args.Genome_Offsets[Genome_Count].Offset=atoi(args.Genome_Offsets[Genome_Count].Genome);
+				if(longestChr < args.Genome_Offsets[Genome_Count].Offset) longestChr = args.Genome_Offsets[Genome_Count].Offset;
+				//fgets(args.Genome_Offsets[Genome_Count].Genome,39,Location_File);
 				Genome_Count++;	
 			}
-			Genome_Count--;
+			//Genome_Count--;
 			args.OUTFILE = NULL;
 			assert(longestChr>0);
 			printf("\nLongest chr: %d\n",longestChr);
@@ -387,7 +387,8 @@ int main(int argc, char* argv[])
 			{
 				String_Hash[args.Genome_Offsets[i].Genome]=i;
 				//unsigned char H=Hash(Genome_Offsets[i].Genome);
-				args.Genome_List[i].Genome=(Split_Point+=args.Genome_Offsets[i].Offset);
+				if(i==0) args.Genome_List[i].Genome = (Split_Point+=0);
+				else args.Genome_List[i].Genome=(Split_Point+=args.Genome_Offsets[i-1].Offset);
 				args.Genome_List[i].Index=i;
 				//meth ini
 			}
@@ -602,6 +603,16 @@ int main(int argc, char* argv[])
 				fprintf(OUTLOG,"mCHH/(CHH+THH)\t{%ld / %ld} = %f% \n",plus_mCHHcount+Neg_mCHHcount,plusCHHcount+NegCHHcount,double (100*(plus_mCHHcount+Neg_mCHHcount))/double (plusCHHcount+NegCHHcount) );
 			}
 
+            // print align summary
+			if(AlignSum){
+				log=Prefix + ".align.log.txt";
+				FILE* ALIGNLOG=File_Open(log.c_str(),"w");
+				fprintf(ALIGNLOG, "Total_reads\t%u\n", Total_Reads);
+				fprintf(ALIGNLOG, "Total_Mapped_Q%d\t%u\n", QualCut, Total_mapped);
+				fprintf(ALIGNLOG, "Mapped_forword\t%u\n", forward_mapped);
+				fprintf(ALIGNLOG, "Mapped_reverse\t%u\n", reverse_mapped);
+				fclose(ALIGNLOG);
+			}
 //delete
 			printf("Done and release memory!\n");
 			if(RELESEM){
@@ -781,12 +792,12 @@ void print_meth_tofile(int genome_id, ARGS* args){
 		               pluscountCHH=0,NegcountCHH=0;
 		    int pluscountperCG_1=0,pluscountperCHG_1=0,pluscountperCHH_1=0,NegcountperCG_1=0,NegcountperCHG_1=0,NegcountperCHH_1=0,pluscountCG_1=0,NegcountCG_1=0,pluscountCHG_1=0,
 		            NegcountCHG_1=0,pluscountCHH_1=0,NegcountCHH_1=0;  
-			int nb=0,nbins = ceil(args->Genome_Offsets[i+1].Offset/binspan);
-			int nRegionBins = ceil(args->Genome_Offsets[i+1].Offset/RegionBins);
+			int nb=0,nbins = ceil(args->Genome_Offsets[i].Offset/binspan);
+			int nRegionBins = ceil(args->Genome_Offsets[i].Offset/RegionBins);
 			char * Genome = args->Genome_Offsets[i].Genome;
-			for(int l=0;l<args->Genome_Offsets[i+1].Offset;l++)//loci
+			for(int l=0;l<args->Genome_Offsets[i].Offset;l++)//loci
 			{
-		            if( (nb!=nbins && l==(nb+1)*binspan-1) || i==args->Genome_Offsets[i+1].Offset-1){
+		            if( (nb!=nbins && l==(nb+1)*binspan-1) || i==args->Genome_Offsets[i].Offset-1){
 		                if(nb<=nbins && nb>0){
 		                	
 		                	if(pluscountCG+pluscountCG_1>=coverage) fprintf(BINsOUTFILE,"%s\t%d\t%f\tCG\n",args->Genome_Offsets[i].Genome,nb,((double)(pluscountperCG+pluscountperCG_1)/(pluscountCG+pluscountCG_1)) );
@@ -810,7 +821,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 		            //-----------DMR region--//
 				wBins=whichBins;
 				whichBins = floor((double)l/RegionBins);
-				if(wBins+1==whichBins || l==args->Genome_Offsets[i+1].Offset-1 )
+				if(wBins+1==whichBins || l==args->Genome_Offsets[i].Offset-1 )
 				{//chr10   60441   -       CHH     0       4
 					if(/*plusCG>=coverage && */count_plus_CG>=nCs ) fprintf(REGION_OUT_CG,"%s\t%d\t+\tCG\t%d\t%d\n",Genome,wBins*RegionBins+1,plus_mCG,plusCG);
 					if(count_neg_CG>=nCs) fprintf(REGION_OUT_CG,"%s\t%d\t-\tCG\t%d\t%d\n",Genome,wBins*RegionBins+1,Neg_mCG,NegCG);
@@ -841,12 +852,12 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					
 					string Fivecontext;
 					//char genome_Char = toupper(args->Genome_List[i].Genome[l]);
-					if(l+2+1 < args->Genome_Offsets[i+1].Offset)
+					if(l+2+1 < args->Genome_Offsets[i].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 5); //Genome_Seq.substr(l-2,5);
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 4); //Genome_Seq.substr(l-1,4);
 						else if(l==0) Fivecontext = "NN" + getstring(args->Genome_List[i].Genome, l, 3); //Genome_Seq.substr(l,3);
-					}else if(l+1+1 < args->Genome_Offsets[i+1].Offset)
+					}else if(l+1+1 < args->Genome_Offsets[i].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 4)+"N";
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 3)+"N";
@@ -862,8 +873,8 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					transform(Fivecontext.begin(), Fivecontext.end(), Fivecontext.begin(), ::toupper);
 
 					char charFor1='N',charFor2='N';//printf("\n%s\n",Fivecontext.c_str());
-					if(l+1< args->Genome_Offsets[i+1].Offset) charFor1=toupper(args->Genome_List[i].Genome[l+1]);
-					if(l+2< args->Genome_Offsets[i+1].Offset) charFor2=toupper(args->Genome_List[i].Genome[l+2]);
+					if(l+1< args->Genome_Offsets[i].Offset) charFor1=toupper(args->Genome_List[i].Genome[l+1]);
+					if(l+2< args->Genome_Offsets[i].Offset) charFor2=toupper(args->Genome_List[i].Genome[l+2]);
 					int Cover = C_count+T_count;
 					for(int nc=0; nc<15; nc++){
 						if(Cover>nc){ CoverC[nc]++; }
@@ -967,12 +978,12 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					//context
 					string Fivecontext;
 					//char genome_Char = toupper(Genome_Seq[l]);
-					if(l+2+1 < args->Genome_Offsets[i+1].Offset)
+					if(l+2+1 < args->Genome_Offsets[i].Offset)
 					{
 						if(l>=2 ) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 5);
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 4);
 						else if(l==0) Fivecontext = "NN" + getstring(args->Genome_List[i].Genome, l, 3);
-					}else if(l+1+1 < args->Genome_Offsets[i+1].Offset)
+					}else if(l+1+1 < args->Genome_Offsets[i].Offset)
 					{
 						if(l>=2) Fivecontext= getstring(args->Genome_List[i].Genome, l-2, 4)+"N";
 						else if(l==1) Fivecontext = "N" + getstring(args->Genome_List[i].Genome, l-1, 3)+"N";
@@ -986,7 +997,7 @@ void print_meth_tofile(int genome_id, ARGS* args){
 					int stringlength=strlen(Fivecontext.c_str());
 					char Fcontext[6];
 					memcpy(Fcontext,Fivecontext.c_str(),stringlength+1);
-					if(stringlength<5) printf("\n%d %d %d %s \n",strlen(Fivecontext.c_str()), l, args->Genome_Offsets[i+1].Offset, args->Genome_Offsets[i].Genome);
+					if(stringlength<5) printf("\n%d %d %d %s \n",strlen(Fivecontext.c_str()), l, args->Genome_Offsets[i].Offset, args->Genome_Offsets[i].Genome);
 					ReverseC_Context(Fcontext,Fivecontext.c_str(),stringlength);
 					
                                         int Cover = C_count+T_count;
@@ -1266,13 +1277,17 @@ int processbamread(const bam_header_t *header, const bam1_t *b, char* Dummy,int 
 
 void *Process_read(void *arg)
 {
-	unsigned Total_Reads=0;
+	//unsigned Total_Reads=0, Total_mapped = 0, forward_mapped = 0, reverse_mapped = 0;
+	string fileIS = Prefix + ".insert_size.1M.txt";
+	long process_vali = 0;
+	FILE* fIS = File_Open(fileIS.c_str(), "w");
+	int processed_vali = 0;
 	int Progress=0;Number_of_Tags=INITIAL_PROGRESS_READS;
 	Init_Progress();
 	int mismatch=0;int pos=0;int Top_Penalty=0;int mapQuality=0;int Flag=-1;
 	string readString="";
 	int hitType=0;
-        int fileprocess = 0;
+    int fileprocess = 0;
 	
 	string hits[MAX_HITS_ALLOWED];
 	char Comp_String[MAXTAG];for (int i=1;i<MAXTAG;Comp_String[i++]=0);
@@ -1293,7 +1308,7 @@ void *Process_read(void *arg)
 			fprintf(stderr, "\ntruncated file.\n");
 		}
 		hitType = 0;
-		Total_Reads++;
+		
 		Progress++;
 		fileprocess++;
 
@@ -1318,6 +1333,8 @@ void *Process_read(void *arg)
         printheader = false;
 		if(!bamformat)
 			sscanf(s2t,"%s%d%s%d%d%s%s%d%d%s%s",Dummy,&Flag,Chrom,&pos,&mapQuality,CIG,Chrom_P,&pos_P,&Insert_Size,forReadString,forQuality);
+		Total_Reads++;
+
 		map<string, int>::iterator iter;
 		int H = -1;
 		if(strcmp(newchr.c_str(), Chrom) != 0 ) newchr = Chrom;
@@ -1355,7 +1372,7 @@ void *Process_read(void *arg)
 		assert(Flag!=-1);
 		if(!bamformat){
 			if( (Flag & 0x100) || (Flag & 0x200) || (Flag & 0x400) || (Flag & 0x800) || (Flag & 0x4))
-        	    		continue;
+        	    continue;
 			if( !(Flag & 0x1) )
 			{
 				if(Flag==0)
@@ -1372,7 +1389,20 @@ void *Process_read(void *arg)
 				hitType=4;
 			if(hitType==0) continue;
 		}
-		int Nmismatch=conutMismatch(CIGr, ((ARGS *)arg)->Genome_Offsets[H+1].Offset, ((ARGS *)arg)->Genome_List[H].Genome, readString, pos, hitType);
+		// !(Flag & 0x100) && !(Flag & 0x200)
+		Total_mapped++;
+		if(hitType == 1 || hitType == 2) forward_mapped++;
+		else if(hitType == 4 || hitType == 3) reverse_mapped++;
+		if(strcmp(Chrom_P, "=") == 0) {
+			if(process_vali <= 1000000){
+				if(Insert_Size>=0 && Insert_Size<=2000){
+					fprintf(fIS, "%d\n", Insert_Size);
+					process_vali++;
+				}
+			}
+		}
+
+		int Nmismatch=conutMismatch(CIGr, ((ARGS *)arg)->Genome_Offsets[H].Offset, ((ARGS *)arg)->Genome_List[H].Genome, readString, pos, hitType);
 		if(Nmismatch > 0.5 + UPPER_MAX_MISMATCH * strlen(readString.c_str())) continue;
 		//char* Genome;
 		//
@@ -1415,7 +1445,7 @@ void *Process_read(void *arg)
 					for(int k=lens,r=RLens,g=Glens;k<length+lens;r++,k++,g++)
 					{
 						read_Methyl_Info[r] = '=';
-						if (pos+g-1 >= ((ARGS *)arg)->Genome_Offsets[Hash_Index+1].Offset) break;
+						if (pos+g-1 >= ((ARGS *)arg)->Genome_Offsets[Hash_Index].Offset) break;
 
 						char genome_Char = toupper(((ARGS *)arg)->Genome_List[H].Genome[pos+g-1]);//
 						char genome_CharFor1 = toupper(((ARGS *)arg)->Genome_List[H].Genome[pos+g+1-1]);
@@ -1604,6 +1634,7 @@ void *Process_read(void *arg)
 		}
 	}
 	free(s2t);
+	fclose(fIS);
 }
 
 void Print_Mismatch_Quality(FILE* OUTFILE_MM, int L) {

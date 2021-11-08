@@ -1,12 +1,8 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src scripts src/batDMR
+SUBDIRS = src/mealign src/samtools-0.1.18 src scripts src/batDMR
 script:
-	g++ $(CXXFLAGS) ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ $(CXXFLAGS) ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	g++ $(CXXFLAGS) ./scripts/report2html.cpp -o ./scripts/report2html 
 myinstall:
-	g++ $(CXXFLAGS) ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ $(CXXFLAGS) ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin
@@ -43,16 +39,17 @@ myinstall:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
 copy:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp -lpthread
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html
@@ -89,10 +86,13 @@ copy:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin

@@ -103,8 +103,8 @@ def readAllC( allCFileStr, outFileAr, OutCfileStr, printStrand):
 				except ValueError:
 					continue
 			value = float( lineAr[4] ) / float( lineAr[5] )
-            if value > 1:
-                value = 1.0
+			if value > 1:
+				value = 1.0
 			#if value == 0:  #skip 0
 			#	continue
 			isMeth = 0

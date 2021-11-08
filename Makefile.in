@@ -188,7 +188,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src scripts src/batDMR
+SUBDIRS = src/mealign src/samtools-0.1.18 src scripts src/batDMR
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -675,12 +675,8 @@ uninstall-am:
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 script:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html 
 myinstall:
-	g++ $(CXXFLAGS) ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ $(CXXFLAGS) ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin
@@ -700,14 +696,7 @@ myinstall:
 	cp scripts/build_revcmp bin 
 	cp scripts/complement.pl bin
 	cp scripts/ReverseComplteFQ bin
-	cp src/bwtformatdb bin 
-	cp src/reverse bin 
-	cp src/penguin bin 
-	cp src/penguin-a bin
 	cp src/calmeth bin
-	cp src/batmethindex bin
-	cp src/filter bin
-	cp bwtformatdb.ini bin
 	cp src/splitSam bin
 	cp src/methyGff bin
 	cp src/methyPlot bin
@@ -717,16 +706,17 @@ myinstall:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
 copy:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin
@@ -746,14 +736,7 @@ copy:
 	cp scripts/build_revcmp bin 
 	cp scripts/complement.pl bin
 	cp scripts/ReverseComplteFQ bin
-	cp src/bwtformatdb bin 
-	cp src/reverse bin 
-	cp src/penguin bin 
-	cp src/penguin-a bin
 	cp src/calmeth bin
-	cp src/batmethindex bin
-	cp src/filter bin
-	cp bwtformatdb.ini bin
 	cp src/splitSam bin
 	cp src/methyGff bin
 	cp src/methyPlot bin
@@ -763,12 +746,15 @@ copy:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

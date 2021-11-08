@@ -27,13 +27,18 @@ uname -v = #1 SMP Wed Oct 15 04:27:16 UTC 2014
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /public/home/qwzhou/software/qualimap_v2.2/
+PATH: /public/home/qwzhou/software/hisat2-2.1.0/
+PATH: /public/home/qwzhou/software/parallel-20190122/bin
+PATH: /public/home/qwzhou/miniconda3/condabin
+PATH: /public/home/qwzhou/software/autoconf-2.69/bin
+PATH: /public/home/qwzhou/miniconda3/bin/
 PATH: /public/home/qwzhou/software/axel/bin/
-PATH: /public/home/qwzhou/anaconda/bin
 PATH: /public/home/qwzhou/software_devp/methyhaplo/bin
 PATH: /public/home/qwzhou/software/fastp/
 PATH: /public/home/qwzhou/localperlv5.8/bin
 PATH: /public/home/qwzhou/software/emase/scripts
-PATH: /public/home/qwzhou/practice/mouse_tet2/WT-SC/test/batmeth2-qwgit/bin/
+PATH: /public/home/qwzhou/software_devp/batmeth2-run/bin
 PATH: /public/home/qwzhou/software/batmeth-1.04_mmx/bin
 PATH: /public/home/qwzhou/software/biscuit
 PATH: /public/home/qwzhou/software/jdk1.8.0_172/bin
@@ -102,42 +107,53 @@ configure:2630: result: gawk
 configure:2641: checking whether make sets $(MAKE)
 configure:2663: result: yes
 configure:2806: checking for g++
-configure:2822: found /usr/bin/g++
+configure:2822: found /public/home/qwzhou/miniconda3/bin//g++
 configure:2833: result: g++
 configure:2860: checking for C++ compiler version
 configure:2869: g++ --version >&5
-g++ (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-Copyright (C) 2010 Free Software Foundation, Inc.
+g++ (GCC) 4.8.5
+Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 configure:2880: $? = 0
 configure:2869: g++ -v >&5
-Using built-in specs.
-Target: x86_64-redhat-linux
-Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch_32=i686 --build=x86_64-redhat-linux
+Reading specs from /public/home/qwzhou/miniconda3/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.8.5/specs
+COLLECT_GCC=g++
+COLLECT_LTO_WRAPPER=/public/home/qwzhou/miniconda3/bin/../libexec/gcc/x86_64-unknown-linux-gnu/4.8.5/lto-wrapper
+Target: x86_64-unknown-linux-gnu
+Configured with: ./configure --prefix=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-gxx-include-dir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/gcc/include/c++ --bindir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/bin --datarootdir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/share --libdir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/lib --with-gmp=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-mpfr=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-mpc=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-isl=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-cloog=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --enable-checking=release --with-tune=generic --disable-multilib
 Thread model: posix
-gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC) 
+gcc version 4.8.5 (GCC) 
 configure:2880: $? = 0
 configure:2869: g++ -V >&5
-g++: '-V' option must have argument
+g++: error: unrecognized command line option '-V'
+g++: fatal error: no input files
+compilation terminated.
 configure:2880: $? = 1
 configure:2869: g++ -qversion >&5
-g++: unrecognized option '-qversion'
-g++: no input files
+g++: error: unrecognized command line option '-qversion'
+g++: fatal error: no input files
+compilation terminated.
 configure:2880: $? = 1
 configure:2900: checking whether the C++ compiler works
 configure:2922: g++   -L/public/home/qwzhou/software/packagesR/lib conftest.cpp  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libm.so when searching for -lm
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:2926: $? = 0
 configure:2974: result: yes
 configure:2977: checking for C++ compiler default output file name
 configure:2979: result: a.out
 configure:2985: checking for suffix of executables
 configure:2992: g++ -o conftest   -L/public/home/qwzhou/software/packagesR/lib conftest.cpp  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libm.so when searching for -lm
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:2996: $? = 0
 configure:3018: result: 
 configure:3040: checking whether we are cross compiling
 configure:3048: g++ -o conftest   -L/public/home/qwzhou/software/packagesR/lib conftest.cpp  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libm.so when searching for -lm
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:3052: $? = 0
 configure:3059: ./conftest
 configure:3063: $? = 0
@@ -159,29 +175,34 @@ configure:3294: result: GNU
 configure:3319: checking dependency style of g++
 configure:3429: result: gcc3
 configure:3492: checking for gcc
-configure:3508: found /usr/bin/gcc
+configure:3508: found /public/home/qwzhou/miniconda3/bin//gcc
 configure:3519: result: gcc
 configure:3748: checking for C compiler version
 configure:3757: gcc --version >&5
-gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-Copyright (C) 2010 Free Software Foundation, Inc.
+gcc (GCC) 4.8.5
+Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 configure:3768: $? = 0
 configure:3757: gcc -v >&5
-Using built-in specs.
-Target: x86_64-redhat-linux
-Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch_32=i686 --build=x86_64-redhat-linux
+Reading specs from /public/home/qwzhou/miniconda3/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.8.5/specs
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/public/home/qwzhou/miniconda3/bin/../libexec/gcc/x86_64-unknown-linux-gnu/4.8.5/lto-wrapper
+Target: x86_64-unknown-linux-gnu
+Configured with: ./configure --prefix=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-gxx-include-dir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/gcc/include/c++ --bindir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/bin --datarootdir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/share --libdir=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold/lib --with-gmp=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-mpfr=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-mpc=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-isl=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --with-cloog=/home/ray/mc-x64-2.7/conda-bld/gcc_1479223211463/_b_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold --enable-checking=release --with-tune=generic --disable-multilib
 Thread model: posix
-gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC) 
+gcc version 4.8.5 (GCC) 
 configure:3768: $? = 0
 configure:3757: gcc -V >&5
-gcc: '-V' option must have argument
+gcc: error: unrecognized command line option '-V'
+gcc: fatal error: no input files
+compilation terminated.
 configure:3768: $? = 1
 configure:3757: gcc -qversion >&5
-gcc: unrecognized option '-qversion'
-gcc: no input files
+gcc: error: unrecognized command line option '-qversion'
+gcc: fatal error: no input files
+compilation terminated.
 configure:3768: $? = 1
 configure:3772: checking whether we are using the GNU C compiler
 configure:3791: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftest.c >&5
@@ -201,7 +222,10 @@ configure:4120: checking how to run the C preprocessor
 configure:4151: gcc -E  conftest.c
 configure:4151: $? = 0
 configure:4165: gcc -E  conftest.c
-conftest.c:11:28: error: ac_nonexistent.h: No such file or directory
+conftest.c:11:28: fatal error: ac_nonexistent.h: No such file or directory
+ #include <ac_nonexistent.h>
+                            ^
+compilation terminated.
 configure:4165: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -219,7 +243,10 @@ configure:4190: result: gcc -E
 configure:4210: gcc -E  conftest.c
 configure:4210: $? = 0
 configure:4224: gcc -E  conftest.c
-conftest.c:11:28: error: ac_nonexistent.h: No such file or directory
+conftest.c:11:28: fatal error: ac_nonexistent.h: No such file or directory
+ #include <ac_nonexistent.h>
+                            ^
+compilation terminated.
 configure:4224: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -241,6 +268,7 @@ configure:4383: checking for ANSI C header files
 configure:4403: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftest.c >&5
 configure:4403: $? = 0
 configure:4476: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4476: $? = 0
 configure:4476: ./conftest
 configure:4476: $? = 0
@@ -348,7 +376,9 @@ configure:4608: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftes
 configure:4608: $? = 0
 configure:4608: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftest.c >&5
 conftest.c: In function 'main':
-conftest.c:66: error: expected expression before ')' token
+conftest.c:66:21: error: expected expression before ')' token
+ if (sizeof ((size_t)))
+                     ^
 configure:4608: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -435,7 +465,9 @@ configure:4688: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftes
 configure:4688: $? = 0
 configure:4688: gcc -c -I/public/home/qwzhou/software/packagesR/include  conftest.c >&5
 conftest.c: In function 'main':
-conftest.c:67: error: expected expression before ')' token
+conftest.c:67:24: error: expected expression before ')' token
+ if (sizeof ((ptrdiff_t)))
+                        ^
 configure:4688: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -514,6 +546,7 @@ configure:4702: checking for stdlib.h
 configure:4702: result: yes
 configure:4712: checking for GNU libc compatible malloc
 configure:4736: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4736: $? = 0
 configure:4736: ./conftest
 configure:4736: $? = 0
@@ -522,20 +555,25 @@ configure:4769: checking for stdlib.h
 configure:4769: result: yes
 configure:4779: checking for GNU libc compatible realloc
 configure:4803: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4803: $? = 0
 configure:4803: ./conftest
 configure:4803: $? = 0
 configure:4813: result: yes
 configure:4843: checking for vprintf
 configure:4843: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:59: warning: conflicting types for built-in function 'vprintf'
+conftest.c:59:6: warning: conflicting types for built-in function 'vprintf' [enabled by default]
+ char vprintf ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4843: $? = 0
 configure:4843: result: yes
 configure:4849: checking for _doprnt
 configure:4849: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-/tmp/ccAA5oYl.o: In function `main':
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
+/tmp/ccOsWEV1.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_doprnt'
-collect2: ld returned 1 exit status
+collect2: error: ld returned 1 exit status
 configure:4849: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -615,10 +653,13 @@ configure: failed program was:
 configure:4849: result: no
 configure:4863: checking for floor
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:60: warning: conflicting types for built-in function 'floor'
-/tmp/ccudCtWt.o: In function `main':
+conftest.c:60:6: warning: conflicting types for built-in function 'floor' [enabled by default]
+ char floor ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
+/tmp/ccqqifCt.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `floor'
-collect2: ld returned 1 exit status
+collect2: error: ld returned 1 exit status
 configure:4863: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -698,24 +739,34 @@ configure: failed program was:
 configure:4863: result: no
 configure:4863: checking for gettimeofday
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for memmove
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:61: warning: conflicting types for built-in function 'memmove'
+conftest.c:61:6: warning: conflicting types for built-in function 'memmove' [enabled by default]
+ char memmove ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for memset
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:62: warning: conflicting types for built-in function 'memset'
+conftest.c:62:6: warning: conflicting types for built-in function 'memset' [enabled by default]
+ char memset ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for pow
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:63: warning: conflicting types for built-in function 'pow'
-/tmp/ccn0XLS6.o: In function `main':
+conftest.c:63:6: warning: conflicting types for built-in function 'pow' [enabled by default]
+ char pow ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
+/tmp/cc29jUXq.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
-collect2: ld returned 1 exit status
+collect2: error: ld returned 1 exit status
 configure:4863: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -798,14 +849,18 @@ configure: failed program was:
 configure:4863: result: no
 configure:4863: checking for socket
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for sqrt
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:64: warning: conflicting types for built-in function 'sqrt'
-/tmp/ccneguRs.o: In function `main':
+conftest.c:64:6: warning: conflicting types for built-in function 'sqrt' [enabled by default]
+ char sqrt ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
+/tmp/ccYo9HDb.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sqrt'
-collect2: ld returned 1 exit status
+collect2: error: ld returned 1 exit status
 configure:4863: $? = 1
 configure: failed program was:
 | /* confdefs.h */
@@ -889,21 +944,30 @@ configure: failed program was:
 configure:4863: result: no
 configure:4863: checking for strchr
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:64: warning: conflicting types for built-in function 'strchr'
+conftest.c:64:6: warning: conflicting types for built-in function 'strchr' [enabled by default]
+ char strchr ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for strdup
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
-conftest.c:65: warning: conflicting types for built-in function 'strdup'
+conftest.c:65:6: warning: conflicting types for built-in function 'strdup' [enabled by default]
+ char strdup ();
+      ^
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4863: checking for strtoul
 configure:4863: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
+/usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
 configure:4863: $? = 0
 configure:4863: result: yes
 configure:4872: checking Checking for SIMD support and for a gcc bug...
 configure:4887: gcc -c -I/public/home/qwzhou/software/packagesR/include -msse2  conftest.c >&5
-conftest.c:44:23: warning: extra tokens at end of #include directive
+conftest.c:44:23: warning: extra tokens at end of #include directive [enabled by default]
+ #include <emmintrin.h>;#include <mmintrin.h>;
+                       ^
 configure:4887: $? = 0
 configure:4888: result: OK...
 configure:5036: creating ./config.status
@@ -923,12 +987,11 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on login
 
-config.status:879: creating Makefile
-config.status:879: creating src/Makefile
-config.status:879: creating scripts/Makefile
-config.status:879: creating config.h
-config.status:1060: config.h is unchanged
-config.status:1108: executing depfiles commands
+config.status:878: creating Makefile
+config.status:878: creating scripts/Makefile
+config.status:878: creating config.h
+config.status:1059: config.h is unchanged
+config.status:1107: executing depfiles commands
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -1015,14 +1078,14 @@ am_cv_CXX_dependencies_compiler_type=gcc3
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aclocal-1.11'
+ACLOCAL='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run aclocal-1.11'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run tar'
-AUTOCONF='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoconf'
-AUTOHEADER='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoheader'
-AUTOMAKE='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run automake-1.11'
+AMTAR='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run tar'
+AUTOCONF='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoconf'
+AUTOHEADER='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoheader'
+AUTOMAKE='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run automake-1.11'
 AWK='gawk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -1049,7 +1112,7 @@ LDFLAGS='-L/public/home/qwzhou/software/packagesR/lib'
 LIBOBJS=''
 LIBS=''
 LTLIBOBJS=''
-MAKEINFO='${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run makeinfo'
+MAKEINFO='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run makeinfo'
 MKDIR_P='/bin/mkdir -p'
 OBJEXT='o'
 PACKAGE='BatMeth'
@@ -1089,7 +1152,7 @@ host_alias=''
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /public/home/qwzhou/software_devp/batmeth2/install-sh'
+install_sh='${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'

@@ -98,11 +98,11 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run aclocal-1.11
-AMTAR = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run tar
-AUTOCONF = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoconf
-AUTOHEADER = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run autoheader
-AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run automake-1.11
+ACLOCAL = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run aclocal-1.11
+AMTAR = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run tar
+AUTOCONF = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoconf
+AUTOHEADER = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoheader
+AUTOMAKE = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run automake-1.11
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -130,7 +130,7 @@ LDFLAGS = -L/public/home/qwzhou/software/packagesR/lib
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/missing --run makeinfo
+MAKEINFO = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = BatMeth
@@ -144,10 +144,10 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = 
 VERSION = 2.00_mmx
-abs_builddir = /public/home/qwzhou/software_devp/batmeth2
-abs_srcdir = /public/home/qwzhou/software_devp/batmeth2
-abs_top_builddir = /public/home/qwzhou/software_devp/batmeth2
-abs_top_srcdir = /public/home/qwzhou/software_devp/batmeth2
+abs_builddir = /public/home/qwzhou/software_devp/batmeth2-bwa
+abs_srcdir = /public/home/qwzhou/software_devp/batmeth2-bwa
+abs_top_builddir = /public/home/qwzhou/software_devp/batmeth2-bwa
+abs_top_srcdir = /public/home/qwzhou/software_devp/batmeth2-bwa
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -167,7 +167,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /public/home/qwzhou/software_devp/batmeth2/install-sh
+install_sh = ${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -188,7 +188,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src scripts src/batDMR
+SUBDIRS = src/mealign src/samtools-0.1.18 src scripts src/batDMR
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -269,7 +269,7 @@ $(RECURSIVE_TARGETS):
 	  else \
 	    local_target="$$target"; \
 	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) LDFLAGS="$(LDFLAGS)" CXXFLAGS="$(CXXFLAGS)" $$local_target) \
 	  || eval $$failcom; \
 	done; \
 	if test "$$dot_seen" = "no"; then \
@@ -675,12 +675,8 @@ uninstall-am:
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 script:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	g++ ./scripts/report2html.cpp -o ./scripts/report2html 
 myinstall:
-	g++ $(CXXFLAGS) ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ $(CXXFLAGS) ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin
@@ -700,14 +696,7 @@ myinstall:
 	cp scripts/build_revcmp bin 
 	cp scripts/complement.pl bin
 	cp scripts/ReverseComplteFQ bin
-	cp src/bwtformatdb bin 
-	cp src/reverse bin 
-	cp src/penguin bin 
-	cp src/penguin-a bin
 	cp src/calmeth bin
-	cp src/batmethindex bin
-	cp src/filter bin
-	cp bwtformatdb.ini bin
 	cp src/splitSam bin
 	cp src/methyGff bin
 	cp src/methyPlot bin
@@ -717,16 +706,17 @@ myinstall:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
 copy:
-	g++ ./src/calmeth.cpp -o ./src/calmeth -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz 
-	g++ ./src/splitSam.cpp -o ./src/splitSam -m64 -I./src/samtools-0.1.18/ -L./src/samtools-0.1.18/ -lbam -lz -pthread 
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
 	cp scripts/bedGraphToBigWig bin
@@ -746,14 +736,7 @@ copy:
 	cp scripts/build_revcmp bin 
 	cp scripts/complement.pl bin
 	cp scripts/ReverseComplteFQ bin
-	cp src/bwtformatdb bin 
-	cp src/reverse bin 
-	cp src/penguin bin 
-	cp src/penguin-a bin
 	cp src/calmeth bin
-	cp src/batmethindex bin
-	cp src/filter bin
-	cp bwtformatdb.ini bin
 	cp src/splitSam bin
 	cp src/methyGff bin
 	cp src/methyPlot bin
@@ -763,12 +746,15 @@ copy:
 	cp scripts/GeneMethHeatmap ./bin/
 	cp scripts/chrLenExtract ./bin
 	cp scripts/combined.element* bin
-	cp scripts/batmeth2-align bin
 	cp scripts/BatMeth2 bin
 	cp scripts/build_ann_location.pl bin
 	cp scripts/preGenome bin
 	cp src/batDMR/batDMR ./bin
-	cp src/genome_filter bin
+	cp src/genome2cg bin
+	cp src/genomebinLen bin
+	cp src/memalign bin
+	cp src/build_index_rrbs bin
+	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -8,7 +8,7 @@
 #include <algorithm>
 
 int chromname_len=400;
-const int BUFSIZE=1000;
+const int BUFSIZE=10000;
 FILE* File_Open(const char* File_Name,const char* Mode);
 void rrbs_index(FILE* OUTrrbsfile, char* chr_id, std::string seq, int low_bound, int up_bound, char* redss);
 int NLen=50;

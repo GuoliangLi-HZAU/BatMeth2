@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
 	int Buf_Size=BUFSIZE;
 	bool In_Amb=false;
 	bool RANDMODE=false;
+    char seps[] = " \t\n\r";
+    char* token;
 	string genomefa = "";
     string prefix = "";
     string HELP = "genome2cg -g genome.fa\n" \
@@ -92,21 +94,22 @@ int main(int argc, char* argv[])
 			else
 			{
                 if(process == -1){ // C2T
-				    fprintf(GFILE,">f%s",Buffer+1);
+                    token = strtok(Buffer+1, seps);
+				    fprintf(GFILE,">f%s\n",token);
                     genomeFoffset = ftell(INFILE); // remeber offset, 此时记载的是行尾
-                    strcpy(chrom, Buffer);
+                    strcpy(chrom, token);
                     process = 0;
                     continue;
                 }
                 if(process == 0){ // G2A
-                    fprintf(GFILE,">r%s",chrom+1);
+                    fprintf(GFILE,">r%s\n",chrom);
                     fseek(INFILE, genomeFoffset, SEEK_SET);
                     process = -1;
                 }
 			}
 		}
         //last chrom, g2a
-        fprintf(GFILE,">r%s",chrom+1);
+        fprintf(GFILE,">r%s\n",chrom);
         fseek(INFILE, genomeFoffset, SEEK_SET);
         process = -1;
         while(fgets(Buffer,Buf_Size,INFILE)){

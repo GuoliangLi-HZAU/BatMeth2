@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 			
 			if (Buffer[0] != '>') 
 			{
-				for(i=0;Buffer[i] && Buffer[i]!='\n' && Buffer[i]!='\r' && i<Buf_Size ;i++)
+				for(i=0;Buffer[i] && Buffer[i]!='\n' && Buffer[i]!='\r' && Buffer[i]!='\t' && Buffer[i]!=' ' && i<Buf_Size ;i++)
 				{
 					Buffer[i]=Convert[Buffer[i]];
 					fputc((int)Buffer[i],BIN);
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-                                for(i=0;Buffer[i] && Buffer[i]!='\n' && Buffer[i]!='\r' && i<Buf_Size ;i++);
+                                for(i=0;Buffer[i] && Buffer[i]!='\n' && Buffer[i]!='\r' && Buffer[i]!='\t' && Buffer[i]!=' ' && i<Buf_Size ;i++);
                                 Buffer[i] = '\0';
                                 if(Offset == 0) {
                                     fprintf(NFILE,"%s",Buffer+1);

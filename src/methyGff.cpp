@@ -349,11 +349,11 @@ int main(int argc, char* argv[])
 			string CG="CG",CHG="CHG",CHH="CHH", CNN="CNN";
 			Context_Hash[CG.c_str()]=1;Context_Hash[CHG.c_str()]=2;Context_Hash[CHH.c_str()]=3;
 			
-			long pos;float methratio=0;int countC=0,countCT=0;
+			long pos=0;float methratio=0;int countC=0,countCT=0;
 			//int revG=0,revGA=0;
 			//start to read batman hit file
 			int tembuf=1000;
-			char Buf[tembuf],Meth[tembuf],Chrom[tembuf], noChrom[tembuf], Strand,context[tembuf],effCT[tembuf];
+			char Buf[tembuf],Meth[BATBUF],temp[tembuf],Chrom[tembuf],noChrom[tembuf], Strand,context[tembuf],effCT[tembuf];
 			printf("\nLoading methratio file...\n");
 			FILE* INFILE;//=File_Open(methInfileName,"r");
 		for(int f=InFileStart;f<=InFileEnd;f++)
@@ -363,7 +363,7 @@ int main(int argc, char* argv[])
 			fseek(INFILE, 0L, SEEK_END);off64_t File_Size=ftello64(INFILE);rewind(INFILE);
 			Init_Progress();
 			fgets(Buf,BATBUF,INFILE);//read first header marker..
-			int H = -1;
+			int H = -1; char *tokenPtr;
 			while (!feof(INFILE)) 
 			{
 				Total_Reads++;
@@ -377,9 +377,38 @@ int main(int argc, char* argv[])
 					Show_Progress(Current_Pos*100/File_Size);
 				}
 				fgets(Meth,BATBUF,INFILE);
+				if(Meth[0]=='#') continue;
 				//printf("%s\n", Meth);
 //				sscanf(Meth,"%s%u%s%s%*s%*s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);//,&revG,&revGA
-				sscanf(Meth,"%s%d%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);
+				tokenPtr=strtok(Meth,"\t");
+				if(tokenPtr!=NULL){
+					strcpy(Chrom, tokenPtr);
+				}
+				tokenPtr=strtok(NULL," ");
+				if(tokenPtr!=NULL){
+					strcpy(temp, tokenPtr);
+					pos = atol(temp);
+				}
+				tokenPtr=strtok(NULL," ");
+				if(tokenPtr!=NULL){
+					strcpy(temp, tokenPtr);
+					Strand = temp[0];
+				}
+				tokenPtr=strtok(NULL," ");
+				if(tokenPtr!=NULL){
+					strcpy(context, tokenPtr);
+				}
+				tokenPtr=strtok(NULL," ");
+				if(tokenPtr!=NULL){
+					strcpy(temp, tokenPtr);
+					countC = atol(temp);
+				}
+				tokenPtr=strtok(NULL," ");
+				if(tokenPtr!=NULL){
+					strcpy(temp, tokenPtr);
+					countCT = atol(temp);
+				}
+				//sscanf(Meth,"%s%d%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);
 				//printf("111\n");	
 				if(countCT<Coverage) continue;
 				if(countCT > maxcover) continue;

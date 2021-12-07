@@ -162,6 +162,23 @@ FILE* File_Open(const char* File_Name,const char* Mode)
         else return Handle;
 }
 
+void onlyexecuteCMD(const char *cmd, string errorinfor)
+{
+    char ps[1024]={0};
+    FILE *ptr;
+    strcpy(ps, cmd);
+    //fprintf(stderr, "[MM] %s\n", cmd);
+    ptr=popen(ps, "w");
+
+    if(ptr==NULL)
+    {
+        fprintf(stderr, "\n%s\n", errorinfor.c_str());
+        exit(0);
+    }
+    pclose(ptr);
+    ptr = NULL;
+}
+
 void executeCMD(const char *cmd, string outputdir, string output_prefix)
 {
     char ps[1024]={0};
@@ -458,6 +475,11 @@ int main(int argc, char* argv[])
     	fprintf(stderr, "\nNot a valid mode\n");
     	usage();
     	exit(0);
+    }
+    if(fastp!=""){
+        string cmd = "which " + fastp;
+        onlyexecuteCMD(cmd.c_str(), "Undetected fastp command, please check the location of fastp!!");
+        //exit(0); 
     }
     // workdir location
     char workdirtmp[MAX_PATH];   
@@ -1439,6 +1461,52 @@ void QCPaired(string outputdir, string input_prefix, string input_prefix1, strin
 
 }
 
+void alignment(string input_prefix1, string input_prefix2, string input_prefix, string outputdir,
+    string output_prefix, bool pairedend){
+    string clean_input1 = "", clean_input2 = "", clean_input = "";
+    if(fastp!=""){
+        fprintf(stderr, "[ BatMeth2 ] Clean reads ...\n");
+        
+        // read qc and c2t / g2a
+        if(input_prefix1!="" && input_prefix2!=""){
+            fprintf(stderr, "Process paired-end reads!\n");
+            QCPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, clean_input1, clean_input2);
+            // cleanfilelist1 cleanfilelist2
+        }
+        if(input_prefix!="None"){
+            fprintf(stderr, "Process single-end reads\n");
+            QCSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix, clean_input);
+            // cleanfilelist
+        }
+    }
+
+    fprintf(stderr, "[ BatMeth2 ] Alignment ...\n");
+    string align_result = outputdir + output_prefix + ".sort.bam";
+    string cmd = abspath + "memalign c2t";
+    if(fastp!=""){
+        if(pairedend){
+            cmd = cmd + " -1 " + clean_input1 + " -2 " + clean_input2;
+        }
+        if(input_prefix!="None"){
+            cmd = cmd + " -i " + clean_input;
+        }
+    }else{
+        if(pairedend){
+            cmd = cmd + " -1 " + input_prefix1 + " -2 " + input_prefix2;
+            //alignmentPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+        }
+        if(input_prefix!="None"){
+            cmd = cmd + " -i " + input_prefix;
+            //alignmentSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+        }
+    }
+    
+    cmd = cmd + " -o " + output_prefix; // + " -O " + outputdir; //for log outfile
+    cmd = cmd + " | " + abspath + "bwame mem -t " + getstring(threads) + " -C -p -Y " + genome_index + ".batmeth2.fa -  | " \
+      + "samtools sort -@ "+ getstring(threads) + " -o " + align_result + " - ";
+    executeCMD(cmd.c_str(), outputdir, output_prefix);
+}
+
 // whole pipeline for DNA methylation analysis. Contains alignment, calute meth level, DNA methylation annatation
 // on gff file or bed region, DNA methylation visulization. Differentail analysis use diffmeth function.
 
@@ -1542,10 +1610,7 @@ void detect_mode(string mode, int Nparas, char* paramaters[], string outputdir, 
     else if(command == "pipel")
         runpipe(outputdir, output_prefix, mkpath, input_prefix, input_prefix1, input_prefix2, pairedend);
     else if (command == "align")
-        if (pairedend)
-            alignmentPaired(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
-        else
-            alignmentSingle(outputdir, input_prefix, input_prefix1, input_prefix2, output_prefix);
+        alignment(input_prefix1, input_prefix2, input_prefix, outputdir, output_prefix, pairedend);
     else if (command == "calmeth"){
         cmd = abspath + "calmeth " + para;
         executeCMD(cmd.c_str(), outputdir, output_prefix);

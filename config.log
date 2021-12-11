@@ -573,7 +573,7 @@ configure:4843: result: yes
 configure:4849: checking for _doprnt
 configure:4849: gcc -o conftest -I/public/home/qwzhou/software/packagesR/include  -L/public/home/qwzhou/software/packagesR/lib conftest.c  >&5
 /usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
-/tmp/cc0n6jwM.o: In function `main':
+/tmp/cc0OOLWm.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_doprnt'
 collect2: error: ld returned 1 exit status
 configure:4849: $? = 1
@@ -659,7 +659,7 @@ conftest.c:60:6: warning: conflicting types for built-in function 'floor' [enabl
  char floor ();
       ^
 /usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
-/tmp/cc0ceVsa.o: In function `main':
+/tmp/cckM3Xau.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `floor'
 collect2: error: ld returned 1 exit status
 configure:4863: $? = 1
@@ -766,7 +766,7 @@ conftest.c:63:6: warning: conflicting types for built-in function 'pow' [enabled
  char pow ();
       ^
 /usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
-/tmp/ccMmVU5i.o: In function `main':
+/tmp/ccYzPIRZ.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: error: ld returned 1 exit status
 configure:4863: $? = 1
@@ -860,7 +860,7 @@ conftest.c:64:6: warning: conflicting types for built-in function 'sqrt' [enable
  char sqrt ();
       ^
 /usr/bin/ld: skipping incompatible /usr/lib/../lib/libc.so when searching for -lc
-/tmp/ccOZdhb3.o: In function `main':
+/tmp/cc0T3QZo.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sqrt'
 collect2: error: ld returned 1 exit status
 configure:4863: $? = 1

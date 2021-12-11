@@ -849,6 +849,16 @@ static inline void add_cigar(const mem_opt_t *opt, mem_aln_t *p, kstring_t *str,
 	} else kputc('*', str); // having a coordinate but unaligned (e.g. when copy_mate is true)
 }
 
+char getrevcomp(char iChar){
+	char oChar = 'N';
+    if(iChar == 'A' || iChar == 'a') oChar = 'T';
+	else if(iChar == 'T' || iChar == 't') oChar = 'A';
+	else if(iChar == 'G' || iChar == 'g') oChar = 'C';
+	else if(iChar == 'C' || iChar == 'c') oChar = 'G';
+	else oChar = 'N';
+	return oChar;
+}
+
 void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq1_t *s, int n, const mem_aln_t *list, int which, const mem_aln_t *m_)
 {
 	int i, l_name;
@@ -922,7 +932,7 @@ void mem_aln2sam(const mem_opt_t *opt, const bntseq_t *bns, kstring_t *str, bseq
 		ks_resize(str, str->l + (qe - qb) + 1);
 		//for (i = qe-1; i >= qb; --i) str->s[str->l++] = "TGCAN"[(int)s->seq[i]];
 		//是否可以用comment
-		for (i = qe-1; i >= qb; --i) str->s[str->l++] = s->comment[i+5];
+		for (i = qe-1; i >= qb; --i) str->s[str->l++] = getrevcomp(s->comment[i+5]);
 		kputc('\t', str);
 		if (s->qual) { // printf qual
 			ks_resize(str, str->l + (qe - qb) + 1);

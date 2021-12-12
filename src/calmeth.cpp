@@ -1629,8 +1629,8 @@ void *Process_read(void *arg)
             }
 		}
 		if(REMOVE_DUP){
-			((ARGS *)arg)->Marked_Genome[pos+G_Skip] |= Flag;
-			((ARGS *)arg)->Marked_GenomeE[pos+G_Skip+readString.size()] |= Flag;
+			((ARGS *)arg)->Marked_Genome[pos+G_Skip] |= Flag_rm;
+			((ARGS *)arg)->Marked_GenomeE[pos+G_Skip+readString.size()] |= Flag_rm;
 		}
 	}
 	free(s2t);

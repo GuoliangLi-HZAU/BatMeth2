@@ -384,30 +384,31 @@ int main(int argc, char* argv[])
 				if(tokenPtr!=NULL){
 					strcpy(Chrom, tokenPtr);
 				}
-				tokenPtr=strtok(NULL," ");
+				tokenPtr=strtok(NULL,"\t");
 				if(tokenPtr!=NULL){
 					strcpy(temp, tokenPtr);
 					pos = atol(temp);
 				}
-				tokenPtr=strtok(NULL," ");
+				tokenPtr=strtok(NULL,"\t");
 				if(tokenPtr!=NULL){
 					strcpy(temp, tokenPtr);
 					Strand = temp[0];
 				}
-				tokenPtr=strtok(NULL," ");
+				tokenPtr=strtok(NULL,"\t");
 				if(tokenPtr!=NULL){
 					strcpy(context, tokenPtr);
 				}
-				tokenPtr=strtok(NULL," ");
+				tokenPtr=strtok(NULL,"\t");
 				if(tokenPtr!=NULL){
 					strcpy(temp, tokenPtr);
-					countC = atol(temp);
+					countC = atoi(temp);
 				}
-				tokenPtr=strtok(NULL," ");
+				tokenPtr=strtok(NULL,"\t");
 				if(tokenPtr!=NULL){
 					strcpy(temp, tokenPtr);
-					countCT = atol(temp);
+					countCT = atoi(temp);
 				}
+                //fprintf(stderr, "%s %ld %c %s %ld %ld\n",Chrom,pos,Strand,context,countC,countCT);
 				//sscanf(Meth,"%s%d%s%s%d%d",Chrom,&pos,&Strand,context,&countC,&countCT);
 				//printf("111\n");	
 				if(countCT<Coverage) continue;

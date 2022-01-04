@@ -1,0 +1,11 @@
+#!/bin/sh
+
+Genome=$1
+INDEXTYPE=x
+SCRPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+CPATH=`dirname "$SCRPATH"`
+
+## ann bin
+perl $CPATH/build_ann_location.pl $Genome > ${Genome}.ann.location
+$CPATH/filter $Genome $INDEXTYPE >${Genome}.non
+rm ${Genome}.non

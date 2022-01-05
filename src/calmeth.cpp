@@ -1312,6 +1312,7 @@ void *Process_read(void *arg)
 		Progress++;
 		fileprocess++;
 
+        Total_Reads++;
 		if(bamformat) 
 		{
 			(r = samread(( (ARGS *)arg)->BamInFile, b));
@@ -1330,10 +1331,10 @@ void *Process_read(void *arg)
 		{
 			continue;
 		}
+
         printheader = false;
 		if(!bamformat)
 			sscanf(s2t,"%s%d%s%d%d%s%s%d%d%s%s",Dummy,&Flag,Chrom,&pos,&mapQuality,CIG,Chrom_P,&pos_P,&Insert_Size,forReadString,forQuality);
-		Total_Reads++;
 
 		map<string, int>::iterator iter;
 		int H = -1;

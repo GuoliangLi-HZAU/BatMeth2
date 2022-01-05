@@ -26,7 +26,7 @@ string bwamethparamaters="";
 string fastp="";
 
 //calmeth
-int Qual = 20;
+int Qual = 30;
 int redup = 1;
 int region = 1000;
 int sammeth = 0;
@@ -100,7 +100,7 @@ void usage(){
     fprintf(stderr, "    -g    Name of the genome mapped against, make sure build index first.\n");
     fprintf(stderr, "    -p    Launch <integer> threads\n");
     fprintf(stderr, "\n[calmeth paramaters]\n");
-    fprintf(stderr, "    --Qual      calculate the methratio while read QulityScore >= Q. default:20\n");
+    fprintf(stderr, "    --Qual      calculate the methratio while read QulityScore >= Q. default:30\n");
     fprintf(stderr, "    --redup     REMOVE_DUP, 0 or 1, default 1\n");
     fprintf(stderr, "    --region    Bins for DMR calculate , default 1000bp .\n");
     fprintf(stderr, "    -f          for sam format outfile contain methState. [0 or 1], default: 0 (dont output this file).\n");

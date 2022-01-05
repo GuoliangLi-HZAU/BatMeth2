@@ -1,8 +1,0 @@
-#!/bin/bash
-complement.pl $1
-echo Joining sequences
-cat $1 $1.cmp >$1cmp
-echo cleaning.....
-rm $1.cmp
-echo done !!!
-

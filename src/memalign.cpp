@@ -256,7 +256,7 @@ void convertfq(int Thread_ID, vector <string> filelist1,
 	    while ((gzinfile && Read_Tag_gz(gzfp_head,2,R) ) || (!gzinfile && Read_Tag(Input_head,2,R)))
 	    {
             R.Real_Len=0;
-	    	for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
+	    	for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n' && R.Tag_Copy[R.Real_Len]!='\t' && R.Tag_Copy[R.Real_Len]!=' ';R.Real_Len++);
             R.Tag_Copy[R.Real_Len]='\0';
             R.Quality[R.Real_Len]='\0';
             lentemp= 0;
@@ -319,7 +319,7 @@ void convertfq(int Thread_ID, vector <string> filelist1, vector <string> filelis
 	    while ((gzinfile && Read_Tag_gz(gzfp_head,gzfp_tail,2,R,M) ) || (!gzinfile && Read_Tag(Input_head,Input_tail,2,R,M)))
 	    {
             R.Real_Len=0;
-	    	for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n';R.Real_Len++);
+	    	for(;R.Tag_Copy[R.Real_Len]!=0 && R.Tag_Copy[R.Real_Len]!='\n' && R.Tag_Copy[R.Real_Len]!='\t' && R.Tag_Copy[R.Real_Len]!=' ';R.Real_Len++);
             R.Tag_Copy[R.Real_Len]='\0';
             R.Quality[R.Real_Len]='\0';
             lentemp= 0;
@@ -328,7 +328,7 @@ void convertfq(int Thread_ID, vector <string> filelist1, vector <string> filelis
 
             if(PAIRED){
                 M.Real_Len=0;
-                for(;M.Tag_Copy[M.Real_Len]!=0 && M.Tag_Copy[M.Real_Len]!='\n';M.Real_Len++);
+                for(;M.Tag_Copy[M.Real_Len]!=0 && M.Tag_Copy[M.Real_Len]!='\n' && M.Tag_Copy[M.Real_Len]!='\t' && M.Tag_Copy[M.Real_Len]!=' ';M.Real_Len++);
                 M.Tag_Copy[M.Real_Len]='\0';
                 M.Quality[M.Real_Len]='\0';
                 lentemp= 0;

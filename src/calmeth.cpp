@@ -440,6 +440,7 @@ int main(int argc, char* argv[])
 				fprintf(METHOUTFILE,"#chromsome\tloci\tstrand\tcontext\tC_count\tCT_count\tmethRatio\teff_CT_count\trev_G_count\trev_GA_count\tMethContext\t5context\n");
 			}
 
+            InFileEnd = InFileStart; //only can process 1 sample
 			for(int f=InFileStart;f<=InFileEnd;f++)
 			{
 				printf("\nProcessing %d out of %d. File: %s, %d\n\n", f-InFileStart+1,InFileEnd-InFileStart+1, argv[f], bamformat);
@@ -1637,7 +1638,7 @@ void *Process_read(void *arg)
 	}
     fprintf(stderr, "close and free short mem\n");
 	//free(s2t);
-	fclose(fIS);
+	if(fIS) fclose(fIS);
 }
 
 void Print_Mismatch_Quality(FILE* OUTFILE_MM, int L) {

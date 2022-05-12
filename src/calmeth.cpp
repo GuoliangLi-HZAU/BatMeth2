@@ -85,7 +85,7 @@ typedef struct {
    int ThreadID;
    off64_t File_Size;
 } ARGS;
-bool RELESEM = false;
+bool RELESEM = true;
 bool printheader = true;
 using namespace std;
 bool Collision=false;
@@ -1327,7 +1327,7 @@ void *Process_read(void *arg)
 			fileprocess = 0;
         }
 
-		if(s2t[0]=='@') 
+		if(!bamformat && s2t[0]=='@') 
 		{
 			continue;
 		}

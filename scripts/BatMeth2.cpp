@@ -1276,7 +1276,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     bmtools_profile(outputdir, output_prefix, 0); //body
     bmtools_profile(outputdir, output_prefix, 1); //TSS +".tss"
     bmtools_bodystats(outputdir, output_prefix);
-    string methratioLogfile = outputdir + output_prefix + ".log.txt";
+    string methratioLogfile = outputdir + output_prefix + ".methlog.txt";
     string newlogfile = mkpath + output_prefix + ".methbasic.txt";
     cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";

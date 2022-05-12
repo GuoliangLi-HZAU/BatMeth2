@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/public/home/qwzhou/software_devp/batmeth2-bwa'
+ac_pwd='/public/home/qwzhou/software_devp/batmeth2-txt'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -646,7 +646,7 @@ S["CXXFLAGS"]="-g -O2"
 S["CXX"]="g++"
 S["am__untar"]="${AMTAR} xf -"
 S["am__tar"]="${AMTAR} chof - \"$$tardir\""
-S["AMTAR"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run tar"
+S["AMTAR"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run tar"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
 S["AWK"]="gawk"
@@ -654,12 +654,12 @@ S["mkdir_p"]="/bin/mkdir -p"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
-S["install_sh"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/install-sh"
-S["MAKEINFO"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run makeinfo"
-S["AUTOHEADER"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoheader"
-S["AUTOMAKE"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run automake-1.11"
-S["AUTOCONF"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run autoconf"
-S["ACLOCAL"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-bwa/missing --run aclocal-1.11"
+S["install_sh"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/install-sh"
+S["MAKEINFO"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run makeinfo"
+S["AUTOHEADER"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run autoheader"
+S["AUTOMAKE"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run automake-1.11"
+S["AUTOCONF"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run autoconf"
+S["ACLOCAL"]="${SHELL} /public/home/qwzhou/software_devp/batmeth2-txt/missing --run aclocal-1.11"
 S["VERSION"]="2.00_mmx"
 S["PACKAGE"]="BatMeth"
 S["CYGPATH_W"]="echo"

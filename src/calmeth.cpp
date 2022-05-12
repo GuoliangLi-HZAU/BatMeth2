@@ -142,6 +142,7 @@ unsigned long non_met_CHH=0;
 unsigned long met_CHH=0;
 bool bamformat=false;
 
+int process1time = 0;
 int Sam=1;//1 true 0 false
 unsigned Number_of_Tags = 0;
 //}-----------------------------   GLOBAL VARIABLES  -------------------------------------------------
@@ -1278,6 +1279,8 @@ int processbamread(const bam_header_t *header, const bam1_t *b, char* Dummy,int 
 
 void *Process_read(void *arg)
 {
+    if(process1time > 0) return;
+    else process1time++;
 	//unsigned Total_Reads=0, Total_mapped = 0, forward_mapped = 0, reverse_mapped = 0;
 	string fileIS = Prefix + ".insert_size.1M.txt";
 	long process_vali = 0;

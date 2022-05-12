@@ -6,7 +6,7 @@ This is a README file for the usage of Batmeth2.
 
 BatMeth2 tutotial: https://batmeth2-docs.readthedocs.io
 
-Starting from this version, because the matching problem needs to be modified for a long time, we replaced the matching part written by ourselves with MEM matching, and added some Python visualization functions. At present, some functions are being added.
+Starting from this version, because the alignment problem needs to be modified for a long time, we replaced the align part written by ourselves with BWA MEM, and added some Python visualization functions. At present, some functions are being added.
 
 REQUIREMENTS
 -------

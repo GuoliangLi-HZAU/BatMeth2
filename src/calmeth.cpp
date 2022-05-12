@@ -1279,7 +1279,7 @@ int processbamread(const bam_header_t *header, const bam1_t *b, char* Dummy,int 
 
 void *Process_read(void *arg)
 {
-    if(process1time > 0) return;
+    if(process1time > 0) return NULL;
     else process1time++;
 	//unsigned Total_Reads=0, Total_mapped = 0, forward_mapped = 0, reverse_mapped = 0;
 	string fileIS = Prefix + ".insert_size.1M.txt";

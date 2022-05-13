@@ -1279,6 +1279,7 @@ int processbamread(const bam_header_t *header, const bam1_t *b, char* Dummy,int 
 
 void *Process_read(void *arg)
 {
+    fprintf(stderr, "start process alignment file\n");
     if(process1time > 0) return NULL;
     else process1time++;
 	//unsigned Total_Reads=0, Total_mapped = 0, forward_mapped = 0, reverse_mapped = 0;
@@ -1642,6 +1643,7 @@ void *Process_read(void *arg)
     fprintf(stderr, "close and free short mem\n");
 	//free(s2t);
 	if(fIS) fclose(fIS);
+    fprintf(stderr, "finish process alignment file\n");
 }
 
 void Print_Mismatch_Quality(FILE* OUTFILE_MM, int L) {

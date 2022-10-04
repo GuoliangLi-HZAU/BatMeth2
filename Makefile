@@ -716,6 +716,7 @@ myinstall:
 	cp src/build_index_rrbs bin
 	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
+	cp scripts/*py bin
 copy:
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	cp scripts/batmeth2_to_bigwig.py bin
@@ -756,6 +757,7 @@ copy:
 	cp src/build_index_rrbs bin
 	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
+	cp scripts/*py bin
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

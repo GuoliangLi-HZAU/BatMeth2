@@ -49,6 +49,7 @@ myinstall:
 	cp src/build_index_rrbs bin
 	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
+	cp scripts/*py bin
 copy:
 	if [ -d "bin" ]; then echo bin exists; else mkdir bin; fi
 	g++ -o ./scripts/BatMeth2 ./scripts/BatMeth2.cpp -lpthread
@@ -96,3 +97,4 @@ copy:
 	cp src/build_index_rrbs bin
 	cp src/mealign/bwame bin
 	cp src/build_index_rrbs bin
+	cp scripts/*py bin

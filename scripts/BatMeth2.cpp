@@ -504,8 +504,9 @@ int main(int argc, char* argv[])
 
     if(mode == "align" && aligner == "BatMeth2"){
         if(argc < 4){ 
-            string cmd = abspath + "batmeth2-align";
-            executeCMD(cmd.c_str(), outputdir, output_prefix);
+            usage();
+            //string cmd = abspath + "batmeth2-align";
+            //executeCMD(cmd.c_str(), outputdir, output_prefix);
             exit(0);
         }
     }

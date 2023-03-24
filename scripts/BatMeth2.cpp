@@ -1572,7 +1572,7 @@ void runpipe(string outputdir, string output_prefix, string mkpath, string input
     calmeth(align_result, outputdir, output_prefix);
     fprintf(stderr, "[ BatMeth2 ] Annotation ...\n");
     annotation(outputdir, output_prefix);
-    string methratioLogfile = outputdir + output_prefix + ".log.txt";
+    string methratioLogfile = outputdir + output_prefix + ".methlog.txt";
     string newlogfile = mkpath + output_prefix + ".methbasic.txt";
     cmd = "cp ";
     cmd += methratioLogfile; cmd+=" ";
